@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "rm": "rm -rf node_modules && rm yarn.lock || rd /s /q node_modules",

@@ -1,9 +1,9 @@
-import { SemanticICONS } from 'semantic-ui-react';
+import { SemanticICONS } from "semantic-ui-react";
 
 export enum AlertTypeModel {
-  Success = 'Success',
-  Failed = 'Failed',
-  Warning = 'Warning',
+  Success = "Success",
+  Failed = "Failed",
+  Warning = "Warning",
 }
 
 export interface AlertModel {

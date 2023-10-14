@@ -1,6 +1,6 @@
-import React, { memo, useEffect } from 'react';
-import './main.component.scss';
-import { Store } from '@services/store.service';
+import React, { memo, useEffect } from "react";
+import "./main.component.scss";
+import { Store } from "@services/store.service";
 
 export const MainComponent = memo(() => {
   //const state = useApi<DataModel>(API.getDataJson());

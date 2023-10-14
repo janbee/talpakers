@@ -1,0 +1,154 @@
+@import url(https://fonts.googleapis.com/css2?family=Quicksand&display=swap);
+body,
+html {
+  height: 100%;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family:
+    Quicksand,
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    Fira Sans,
+    Droid Sans,
+    Helvetica Neue,
+    sans-serif;
+  line-height: 22px;
+  margin: 0;
+  min-width: auto;
+}
+code {
+  font-family:
+    source-code-pro,
+    Menlo,
+    Monaco,
+    Consolas,
+    Courier New,
+    monospace;
+}
+#root {
+  background: #0e0e0e;
+  height: 100%;
+}
+#root .container {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  justify-content: center;
+  overflow: auto;
+  padding: 1em;
+  position: relative;
+}
+#root .container .ttl {
+  font-size: 23px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+.main-wrap {
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+.main-wrap .left-wing {
+  background: #eee;
+  padding: 50px;
+  width: 100px;
+}
+.main-wrap .card-wrap {
+  border-radius: 5px;
+  box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+  margin: 0 !important;
+  max-width: 995px !important;
+  min-height: 29.7cm !important;
+  width: auto !important;
+}
+.main-wrap .card-wrap.fixed-style {
+  box-shadow: none;
+  width: 995px !important;
+}
+.main-wrap .right-wing {
+  background: #eee;
+  width: 100px;
+}
+.main-wrap .right-wing .download-wrap {
+  margin-left: 10px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+.main-wrap .right-wing .download-wrap div {
+  position: relative;
+}
+.main-wrap .right-wing .download-wrap div .version {
+  background: #fff;
+  bottom: -11px;
+  font-size: 7px;
+  left: 23px;
+  position: absolute;
+  right: 23px;
+  text-align: center;
+  z-index: 1;
+}
+.main-wrap .right-wing .download-wrap .item {
+  cursor: pointer;
+}
+.main-wrap .header-wrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.main-wrap .header-wrap .left-wrap {
+  flex: 1.2 1;
+  min-width: 450px;
+  padding-left: 25px;
+  padding-right: 12px;
+  padding-top: 25px;
+}
+.main-wrap .header-wrap .right-wrap {
+  flex: 1 1;
+  min-width: 315px;
+  padding-left: 12px;
+  padding-right: 25px;
+  padding-top: 25px;
+}
+@media only screen and (max-width: 650px) {
+  .main-wrap .header-wrap .left-wrap {
+    min-width: 200px;
+  }
+}
+.main-wrap .divider {
+  background: #64bdf2;
+}
+.main-wrap .content-wrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.main-wrap .content-wrap .left-wrap {
+  flex: 1.2 1;
+  min-width: 450px;
+  padding-left: 25px;
+  padding-right: 12px;
+}
+.main-wrap .content-wrap .right-wrap {
+  flex: 1 1;
+  min-width: 315px;
+  padding-left: 12px;
+  padding-right: 25px;
+}
+@media only screen and (max-width: 650px) {
+  .main-wrap .content-wrap .left-wrap {
+    min-width: 200px;
+  }
+}
+/*# sourceMappingURL=main.61e132db.css.map*/

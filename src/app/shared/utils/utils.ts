@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Observable, Subject, Subscription } from "rxjs";
 
-export const useSubject = <T>(func: (objs: Subject<T>) => Observable<T>): Subject<T> => {
+export const useSubject = <T>(
+  func: (objs: Subject<T>) => Observable<T>,
+): Subject<T> => {
   const [subject, setSubject] = useState<Subject<T>>(new Subject<T>());
   useEffect(() => {
     const newSub = new Subject<T>();
@@ -32,8 +34,12 @@ export const useCallback$ = <T>(func: (obs$: Subject<T>) => Subscription) => {
   return useCallback((data?: T) => subject$.next(data as T), []);
 };
 
-export const useApi = <T>(obs$: Observable<T>): { loading: boolean; data?: T } => {
-  const [state, setState] = useState<{ loading: boolean; data?: T }>({ loading: true });
+export const useApi = <T>(
+  obs$: Observable<T>,
+): { loading: boolean; data?: T } => {
+  const [state, setState] = useState<{ loading: boolean; data?: T }>({
+    loading: true,
+  });
 
   useEffect(() => {
     const subs$ = obs$.subscribe((res) => {

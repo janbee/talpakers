@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Dimmer, Loader } from 'semantic-ui-react';
-import { Store } from '@services/store.service';
-import { AlertTypeModel } from '@models/custom.models';
+import React, { useEffect, useState } from "react";
+import { Dimmer, Loader } from "semantic-ui-react";
+import { Store } from "@services/store.service";
+import { AlertTypeModel } from "@models/custom.models";
 
 interface Props {
   loading: boolean;
@@ -10,7 +10,7 @@ interface Props {
 
 class State {
   loading = false;
-  content? = '';
+  content? = "";
 
   constructor(props: Props) {
     this.loading = props.loading;
@@ -43,7 +43,7 @@ export const LoaderComponent = (props: Props) => {
   return (
     <Dimmer
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
