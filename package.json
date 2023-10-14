@@ -1,6 +1,7 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.1",
+  "version": "0.1.4",
+  "homepage": "https://janbee.github.io/talpakers/build",
   "private": true,
   "scripts": {
     "rm": "rm -rf node_modules && rm yarn.lock || rd /s /q node_modules",
