@@ -1,0 +1,139 @@
+.main-wrap {
+  position: relative;
+  background: white;
+  display: flex;
+  flex-direction: row;
+
+  .left-wing {
+    width: 100px;
+    background: #eeeeee;
+    padding: 50px;
+  }
+
+  .card-wrap {
+    width: auto !important;
+    max-width: 995px !important;
+    min-height: 29.7cm !important;
+    border-radius: 5px;
+    box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    margin: 0 !important;
+
+
+    &.fixed-style {
+      width: 995px !important;
+      box-shadow: none;
+    }
+  }
+
+  .right-wing {
+    width: 100px;
+    background: #eeeeee;
+
+    .download-wrap {
+      position: sticky;
+      top: 0;
+      margin-left: 10px;
+
+      div {
+        position: relative;
+
+        .version {
+          position: absolute;
+          bottom: -11px;
+          font-size: 7px;
+          text-align: center;
+          left: 23px;
+          right: 23px;
+          background: #FFF;
+          z-index: 1;
+
+
+        }
+      }
+
+
+      .item {
+        cursor: pointer;
+      }
+    }
+  }
+
+
+  $leftFlex: 1.2;
+  $leftFlexMinWidth: 450px;
+  $rightFlexMinWidth: 315px;
+  $mediaLeftFlexMinWidth: 200px;
+
+  .header-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+
+    .left-wrap {
+      flex: $leftFlex;
+      padding-top: 25px;
+      padding-left: 25px;
+      padding-right: 12px;
+      min-width: $leftFlexMinWidth;
+    }
+
+    .right-wrap {
+      flex: 1;
+      padding-top: 25px;
+      padding-right: 25px;
+      padding-left: 12px;
+      min-width: $rightFlexMinWidth;
+    }
+
+    @media only screen and (max-width: 650px) {
+      .left-wrap {
+        min-width: $mediaLeftFlexMinWidth;
+      }
+
+      .right-wrap {
+      }
+    }
+
+
+  }
+
+  .divider {
+    background: #64bdf2;
+  }
+
+  .content-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    .left-wrap {
+      flex: $leftFlex;
+      padding-left: 25px;
+      padding-right: 12px;
+      min-width: $leftFlexMinWidth;
+
+    }
+
+    .right-wrap {
+      flex: 1;
+      padding-left: 12px;
+      padding-right: 25px;
+      min-width: $rightFlexMinWidth;
+    }
+
+    @media only screen and (max-width: 650px) {
+      .left-wrap {
+        min-width: $mediaLeftFlexMinWidth;
+      }
+
+      .right-wrap {
+      }
+    }
+
+  }
+
+
+}

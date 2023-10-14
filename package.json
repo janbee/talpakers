@@ -1,0 +1,86 @@
+{
+  "name": "play-ab-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "rm": "rm -rf node_modules && rm yarn.lock || rd /s /q node_modules",
+    "yrn:update": "yarn upgrade-interactive --latest",
+    "i": "yarn install",
+    "prettier:format": "prettier --write './**/*.{jsx,ts,tsx,css,md,json}'",
+    "prepare:husky": "rm -rf .husky & npx husky install && npx husky add .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && yarn build && npx --no-install lint-staged\"",
+    "------------------ ----------------------- ------------------": "",
+    "start": "craco start",
+    "build": "craco build && cp ./build/index.html ./",
+    "test": "craco test",
+    "------------------ git ------------------": "",
+    "git:add": "git add .",
+    "git:commit": "git commit -a -m 'auto'",
+    "git:push": "git push",
+    "git:run": "yarn run git:add && yarn run git:commit && yarn run git:push"
+  },
+  "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.5.5",
+    "@types/lodash": "^4.14.184",
+    "@types/node": "^20.8.6",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.11",
+    "react-router-dom": "6.16.0",
+    "react-scripts": "^5.0.1",
+    "rxjs": "^7.5.6",
+    "sass": "^1.54.4",
+    "ts-jest": "^29.1.1",
+    "use-font-face-observer": "^1.2.1",
+    "web-vitals": "^3.5.0",
+    "@types/realm": "^1.13.0",
+    "realm": "^12.2.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "core-js-pure": "^3.23.3",
+    "craco-alias": "^3.0.1",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-typescript": "^0.14.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^14.0.1",
+    "pre-commit": "^1.2.2",
+    "prettier": "^3.0.3",
+    "semantic-ui-react": "^2.0.4",
+    "typescript": "^4.7.4"
+  },
+  "lint-staged": {
+    "*.{jsx,ts,tsx,css,md,json}": [
+      "git add .",
+      "prettier --write './**/*.{ts,tsx}'"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
