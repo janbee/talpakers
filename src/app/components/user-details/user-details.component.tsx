@@ -53,7 +53,7 @@ export const UserDetailsComponent = memo(() => {
           let totalEarnings = 0;
           let winnings = 0;
           if (bets?.length) {
-            const totalStaked = sumBy(bets, (bet) => {
+            totalStaked = sumBy(bets, (bet) => {
               return sumBy(bet.details, "s");
             });
             const totalWinnings = sumBy(bets, (bet) => {
@@ -99,7 +99,7 @@ export const UserDetailsComponent = memo(() => {
         list: defaultList,
       }));
     });
-  }, []);
+  }, [email]);
 
   return (
     <div className="user-details-wrap">
