@@ -1,5 +1,3 @@
-import { SemanticICONS } from "semantic-ui-react";
-
 export enum AlertTypeModel {
   Success = "Success",
   Failed = "Failed",
@@ -12,27 +10,125 @@ export interface AlertModel {
   duration?: number;
 }
 
-export interface ContactsModel {
-  text: string;
-  icon?: SemanticICONS | string;
+export interface UserModel {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  data: any;
 }
 
-export interface WorkExperiencesModel {
-  company: string;
-  position: string;
-  duration: string;
-  jobDescription: string;
+export interface EarningsModel {
+  _id: string;
+  year: number;
+  startDate: string;
+  endDate: string;
+  bonus: number;
+  totalStaked: number;
+  winnings: number;
+  totalEarnings: number;
+  loading: boolean;
+  fetch: number;
 }
 
-export interface SkillsModel {
-  name: string;
-  level: number;
+export interface SettledBetsModel {
+  _id: number;
+  email: string;
+  team: string;
+  year: number;
+  details: Detail[];
+  startDate: string;
+  endDate: string;
 }
 
-export interface DataModel {
-  name: string;
-  intro: string;
-  contacts: ContactsModel[];
-  workExperiences: WorkExperiencesModel[];
-  skills: SkillsModel[];
+export interface Detail {
+  id: number;
+  uid: number;
+  u: string;
+  c: string;
+  bty: string;
+  ty: string;
+  stid: number;
+  st: string;
+  s: number;
+  w: number;
+  o: number;
+  cc: string;
+  lc: number;
+  tot: string;
+  ebsid: string;
+  details: Details;
+}
+
+export interface Details {
+  g: G;
+  c: C[];
+  i: I[];
+  IsFromDb: boolean;
+}
+
+export interface G {
+  id: number;
+  c: string;
+  t: string;
+  tid: number;
+  stid: number;
+  st: string;
+  mt: string;
+  un: string;
+  ufn: string;
+  cc: string;
+  p: boolean;
+  i: string;
+  cid: string;
+  cun: string;
+}
+
+export interface C {
+  ti: number;
+  c: string;
+  n: number;
+  csid: number;
+  cs: string;
+  us: number;
+  b: number;
+  pw: number;
+  w: number;
+  t: number;
+  o: number;
+  so: string;
+}
+
+export interface I {
+  itid: number;
+  t: string;
+  isid: number;
+  s: string;
+  sid: number;
+  sn: string;
+  cid: number;
+  cn: string;
+  tid: number;
+  tn: string;
+  tus: boolean;
+  mid: number;
+  sbv: string;
+  d: string;
+  ec: number;
+  brid: string;
+  mt: string;
+  sc: string;
+  ht: string;
+  at: string;
+  m: string;
+  b: boolean;
+  lc: boolean;
+  otid: number;
+  otn: string;
+  ootn: string;
+  oid: number;
+  on: string;
+  oon: string;
+  o: number;
+  iden: string;
+  spec: string;
 }

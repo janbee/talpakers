@@ -1,24 +1,31 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { AppRoutingComponent } from "@app/app-routing.component";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "@app/shared/component/error-fallback";
 import useFontFaceObserver from "use-font-face-observer";
-import { LoaderComponent } from "@utilities/loader.component";
-import { Store } from "@services/store.service";
-import { useObservable } from "@utilities/utils";
+import { useApi } from "@utilities/utils";
+import { API } from "@services/api.service";
+import { HeaderComponent } from "@components/header/header.component";
+import { LoaderComponent } from "@app/shared/component/loader.component";
 
 export const AppComponent = () => {
-  const loading = useObservable(Store.Loading$);
   const webFontsLoaded = useFontFaceObserver([{ family: `quicksand` }]);
-  console.log("AppComponent -------- ------- ------render");
+  const realm = useApi(API.$RealmDB.init());
+
+  console.log("AppComponent -------- ------- ------render", realm);
   return (
     <div className="container">
-      <LoaderComponent loading={!webFontsLoaded || loading} />
-      {webFontsLoaded && (
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <AppRoutingComponent />
-        </ErrorBoundary>
-      )}
+      <HeaderComponent />
+      <div className="content-wrap">
+        {webFontsLoaded && !realm.loading && (
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <Suspense fallback={<div>Loading...</div>}>
+              <AppRoutingComponent />
+            </Suspense>
+          </ErrorBoundary>
+        )}
+      </div>
+      <LoaderComponent />
     </div>
   );
 };

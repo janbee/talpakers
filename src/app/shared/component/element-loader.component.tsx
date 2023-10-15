@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Dimmer, Loader } from "semantic-ui-react";
-import { Store } from "@services/store.service";
-import { AlertTypeModel } from "@models/custom.models";
 
 interface Props {
   loading: boolean;
@@ -18,23 +16,8 @@ class State {
   }
 }
 
-export const LoaderComponent = (props: Props) => {
+export const ElementComponent = (props: Props) => {
   const [state, setState] = useState<State>(new State(props));
-
-  useEffect(() => {
-    const obs = Store.Alert$.subscribe((res) => {
-      if (res.type === AlertTypeModel.Failed) {
-        /*
-         * this will remove loader on api ERROR
-         * */
-        setState((prevState) => ({ ...prevState, loading: false }));
-      }
-    });
-
-    return () => {
-      obs.unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     setState((prevState) => ({ ...prevState, loading: props.loading }));
@@ -43,7 +26,7 @@ export const LoaderComponent = (props: Props) => {
   return (
     <Dimmer
       style={{
-        position: "fixed",
+        position: "absolute",
         top: 0,
         left: 0,
         right: 0,

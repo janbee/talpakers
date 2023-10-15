@@ -1,0 +1,17 @@
+.users-wrap {
+  display: flex;
+  margin: 15px;
+  justify-content: center;
+  flex: 1;
+
+  .segment {
+    flex: 1;
+    max-width: 33%;
+    min-width: 400px;
+    margin: 0;
+
+    tr {
+      cursor: pointer;
+    }
+  }
+}

@@ -9,20 +9,6 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
 
-/*
-function start() {
-  gapi.client
-    .init({
-      apiKey: '475886830174-ra4rb18pajgfvg6pa67nm4aoqmqr81vt.apps.googleusercontent.com',
-    })
-    .then(() => {
-      console.log('gaga-------------------------------------');
-    });
-}
-
-gapi.load('client', start);
-*/
-
 root.render(
   <HashRouter>
     <AppComponent />

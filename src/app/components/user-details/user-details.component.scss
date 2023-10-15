@@ -1,0 +1,95 @@
+.user-details-wrap {
+  display: flex;
+  margin: 0 0 15px 15px;
+  height: 100%;
+  flex: 1;
+  justify-content: center;
+
+
+  .segment {
+    flex: 1;
+    max-width: 100%;
+    min-width: 380px;
+    display: flex;
+    flex-direction: column;
+
+
+    .user-details-content-wrap {
+      overflow: auto;
+      flex: 1;
+      margin-top: 15px;
+
+      .mon-wrap {
+        .ttl-wrap {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          h3, h4 {
+            margin: 0;
+
+            &.winnings{
+              color: greenyellow;
+            }
+            &.losses{
+              color: #ff3a3a;
+            }
+          }
+
+        }
+
+        .week-wrap {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          margin-bottom: 25px;
+
+          .week {
+            aspect-ratio: 1;
+            height: 150px;
+            margin: 7px;
+            border-radius: 10px;
+            padding: 5px 10px;
+            background: #2a2a2a;
+            display: flex;
+            flex-direction: column;
+
+            .week-date {
+              align-items: center;
+              display: flex;
+              height: 30px;
+
+            }
+
+            .week-content {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+
+
+              .row-wrap {
+                display: flex;
+                justify-content: space-between;
+                flex: 1;
+                align-items: center;
+
+                span {
+                  &:nth-child(2) {
+                    font-weight: bold;
+
+                    &.winnings{
+                      color: greenyellow;
+                    }
+                    &.losses{
+                      color: #ff3a3a;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
