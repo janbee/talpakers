@@ -111,3 +111,5 @@ export const Money = (money: string | number, currency: string = "USD") => {
 
   return formatter.format(parseFloat(money.toString()));
 };
+
+const SwitchMap = () => {};

@@ -32,6 +32,7 @@ export const UsersComponent = memo(() => {
     <div className="users-wrap">
       <Segment inverted>
         <div className="ttl">Users</div>
+        <hr />
         <Table celled striped selectable inverted>
           <Table.Header>
             <Table.Row>

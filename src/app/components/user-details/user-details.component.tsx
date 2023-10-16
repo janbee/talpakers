@@ -13,6 +13,7 @@ import classNames from "classnames";
 class State {
   loading = false;
   list: { title: string; data: EarningsModel[] }[] = [];
+  yearTotalWinnings: number = 0;
 }
 
 export const UserDetailsComponent = memo(() => {
@@ -22,6 +23,7 @@ export const UserDetailsComponent = memo(() => {
 
   useEffect(() => {
     setState((prevState) => ({ ...prevState, loading: true }));
+
     API.getSettledBets({ email }).subscribe((res) => {
       console.log("gaga-----------------------------------getSettledBets--");
       const dataList = Array.from(Array(moment().isoWeeksInYear()).keys()).map(
@@ -54,6 +56,10 @@ export const UserDetailsComponent = memo(() => {
           let winnings = 0;
           if (bets?.length) {
             totalStaked = sumBy(bets, (bet) => {
+              console.log(
+                "gaga-----------sumBy--------------------------",
+                sumBy(bet.details, "s"),
+              );
               return sumBy(bet.details, "s");
             });
             const totalWinnings = sumBy(bets, (bet) => {
@@ -93,9 +99,14 @@ export const UserDetailsComponent = memo(() => {
 
       console.log("gaga-------------------------------------", defaultList);
 
+      const yearTotalWinnings = sumBy(defaultList, (item) => {
+        return sumBy(item.data, "winnings");
+      });
+
       setState((prevState) => ({
         ...prevState,
         loading: false,
+        yearTotalWinnings,
         list: defaultList,
       }));
     });
@@ -104,8 +115,21 @@ export const UserDetailsComponent = memo(() => {
   return (
     <div className="user-details-wrap">
       <Segment inverted>
-        <div className="ttl">{email}</div>
-
+        <div className="ttl">
+          <span>{email}</span>
+          <span>
+            {moment().format("YYYY")} earnings
+            <span
+              className={classNames({
+                winnings: state.yearTotalWinnings > 0,
+                losses: state.yearTotalWinnings < 0,
+              })}
+            >
+              {" " + Money(state.yearTotalWinnings)}
+            </span>
+          </span>
+        </div>
+        <hr />
         <div className="user-details-content-wrap">
           {state.list.map((mon) => {
             const total = sumBy(mon.data, "winnings");

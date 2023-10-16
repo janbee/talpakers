@@ -6,6 +6,8 @@
   justify-content: center;
 
 
+
+
   .segment {
     flex: 1;
     max-width: 100%;
@@ -13,6 +15,11 @@
     display: flex;
     flex-direction: column;
 
+
+    .ttl {
+      display: flex;
+      justify-content: space-between;
+    }
 
     .user-details-content-wrap {
       overflow: auto;
@@ -24,16 +31,10 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
 
           h3, h4 {
             margin: 0;
-
-            &.winnings{
-              color: greenyellow;
-            }
-            &.losses{
-              color: #ff3a3a;
-            }
           }
 
         }
@@ -76,13 +77,6 @@
                 span {
                   &:nth-child(2) {
                     font-weight: bold;
-
-                    &.winnings{
-                      color: greenyellow;
-                    }
-                    &.losses{
-                      color: #ff3a3a;
-                    }
                   }
                 }
               }
@@ -91,5 +85,13 @@
         }
       }
     }
+  }
+
+  .winnings {
+    color: greenyellow!important;
+  }
+
+  .losses {
+    color: #ff3a3a!important;
   }
 }
