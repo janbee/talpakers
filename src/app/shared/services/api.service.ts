@@ -42,6 +42,7 @@ class ApiService {
   }
 
   getUsers() {
+    console.log("gaga------------------getUsers-------------------");
     return this.$RealmDB
       .collection("user")
       .get()

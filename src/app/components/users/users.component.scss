@@ -12,6 +12,33 @@
     display: flex;
     flex-direction: column;
 
+    .ttl-wrap {
+      .icon {
+        cursor: pointer;
+      }
+    }
+
+    .status {
+      font-weight: bold;
+
+      &.done:before {
+        color: greenyellow;
+        content: "Done ";
+      }
+
+      &.in-progress:before {
+        color: #fbbd08;
+        content: "InProgress";
+      }
+
+      &.unknown:before {
+        color: #ff5f5f;
+        content: "UnKnown";
+      }
+
+
+    }
+
     tr {
       cursor: pointer;
     }

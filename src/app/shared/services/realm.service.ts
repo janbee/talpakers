@@ -126,12 +126,15 @@ export class RealmService {
   }
 
   collection(name: unknown) {
+    console.log("gaga----collection---------------------------------", name);
     const collection = this.client
       ?.db(this.mongoConfig.AppDB)
       .collection(name as unknown as string);
+
     this.CRUD.setCollection(
       collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
     );
+
     return this.CRUD;
   }
 }

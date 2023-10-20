@@ -1,42 +1,44 @@
 import React, { memo } from "react";
 import "./users.component.scss";
-import { Segment, Table } from "semantic-ui-react";
+import { Icon, Segment, Table } from "semantic-ui-react";
 import { useApi, useCallbackMemo } from "@utilities/utils";
 import { UserModel } from "@models/custom.models";
 import { API } from "@services/api.service";
 import moment from "moment";
 import { Outlet, useNavigate } from "react-router-dom";
+import { ElementComponent } from "@app/shared/component/element-loader.component";
+import classNames from "classnames";
+import { Simulate } from "react-dom/test-utils";
+import progress = Simulate.progress;
 
 export const UsersComponent = memo(() => {
-  const state = useApi<UserModel[]>(API.getUsers());
+  const state = useApi<UserModel[]>(() => API.getUsers(), {
+    withLoading: false,
+  });
 
   const navigate = useNavigate();
 
   const handleUserDetails = useCallbackMemo((user: UserModel) => {
-    console.log(
-      "gaga-------------------------------------",
-      user,
-      JSON.stringify(window.location.href),
-    );
     const currentLocation = JSON.stringify(window.location.href);
-
     navigate(`@${user._id}`, {
       relative: "route",
       replace: currentLocation.includes("@"),
     });
   }, []);
 
-  if (state.loading) return null;
-
   return (
     <div className="users-wrap">
       <Segment inverted>
-        <div className="ttl">Users</div>
+        <div className="row-wrap between ttl-wrap">
+          <span className="ttl">Users</span>
+          <Icon onClick={state.reload} name="refresh" />
+        </div>
         <hr />
         <Table celled striped selectable inverted>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Email</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
               <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -46,6 +48,16 @@ export const UsersComponent = memo(() => {
               return (
                 <Table.Row key={user._id} onClick={handleUserDetails(user)}>
                   <Table.Cell collapsing>{user._id}</Table.Cell>
+                  <Table.Cell collapsing>
+                    <span
+                      className={classNames({
+                        status: true,
+                        done: user.data?.isDoneForTheWeek === true,
+                        "in-progress": user.data?.isDoneForTheWeek === false,
+                        unknown: user.data?.isDoneForTheWeek === undefined,
+                      })}
+                    />
+                  </Table.Cell>
                   <Table.Cell textAlign="right">
                     {moment(user.updatedAt || user.createdAt).fromNow()}
                   </Table.Cell>
@@ -62,6 +74,7 @@ export const UsersComponent = memo(() => {
             </Table.Row>
           </Table.Footer>
         </Table>
+        <ElementComponent loading={state.loading} />
       </Segment>
       <Outlet />
     </div>

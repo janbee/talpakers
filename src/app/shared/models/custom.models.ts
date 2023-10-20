@@ -14,7 +14,27 @@ export interface UserModel {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
-  data: any;
+  data: UserDataModel;
+}
+
+export interface TalpakSettingModel {
+  bet: string;
+  lowerBet: string;
+  loopLimit: string;
+}
+
+export interface UserSessionModel {
+  EXTERNAL_PLAYER_ID: string;
+  ISID: string;
+  TWO_FACTOR_AUTH: string;
+}
+
+export interface UserDataModel {
+  isFreeAvailable?: boolean;
+  serverTime?: string;
+  userSession?: UserSessionModel;
+  settings?: TalpakSettingModel;
+  isDoneForTheWeek?: boolean;
 }
 
 export interface EarningsModel {

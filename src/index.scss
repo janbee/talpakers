@@ -53,5 +53,14 @@ code {
       border-top: 1px solid #000;
       border-bottom: 1px solid #333;
     }
+
+    .row-wrap{
+      display: flex;
+      flex-direction: row;
+
+      &.between{
+        justify-content: space-between;
+      }
+    }
   }
 }

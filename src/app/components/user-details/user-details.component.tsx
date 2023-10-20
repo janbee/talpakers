@@ -11,7 +11,7 @@ import { Money } from "@utilities/utils";
 import classNames from "classnames";
 
 class State {
-  loading = false;
+  loading = true;
   list: { title: string; data: EarningsModel[] }[] = [];
   yearTotalWinnings: number = 0;
 }
@@ -56,10 +56,6 @@ export const UserDetailsComponent = memo(() => {
           let winnings = 0;
           if (bets?.length) {
             totalStaked = sumBy(bets, (bet) => {
-              console.log(
-                "gaga-----------sumBy--------------------------",
-                sumBy(bet.details, "s"),
-              );
               return sumBy(bet.details, "s");
             });
             const totalWinnings = sumBy(bets, (bet) => {

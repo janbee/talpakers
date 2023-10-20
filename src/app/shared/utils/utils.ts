@@ -5,7 +5,14 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Observable, Subject, Subscription } from "rxjs";
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  switchMap,
+  tap,
+} from "rxjs";
 import { Store } from "@services/store.service";
 
 export const useSubject = <T>(
@@ -41,27 +48,48 @@ export const useCallback$ = <T>(func: (obs$: Subject<T>) => Subscription) => {
   return useCallback((data?: T) => subject$.next(data as T), []);
 };
 
+interface UseApiModel<T> {
+  loading: boolean;
+  data?: T;
+  reload?: () => void;
+  sub$: BehaviorSubject<boolean>;
+}
+
 export const useApi = <T>(
-  obs$: Observable<T>,
+  func: () => Observable<T>,
   options?: {
     withLoading: boolean;
   },
-): { loading: boolean; data?: T } => {
-  const [state, setState] = useState<{ loading: boolean; data?: T }>({
+): UseApiModel<T> => {
+  const [state, setState] = useState<UseApiModel<T>>({
     loading: true,
+    sub$: new BehaviorSubject(true),
+    reload: () => {
+      state.sub$.next(true);
+    },
   });
 
   useEffect(() => {
-    if (options?.withLoading !== false) {
-      Store.Loading$.next(true);
-    }
-    const subs$ = obs$.subscribe((res) => {
-      Store.Loading$.next(false);
-      setState((prevState) => ({ ...prevState, data: res, loading: false }));
-    });
+    const unsub = state.sub$
+      .pipe(
+        tap(() => {
+          console.log("gaga-------------------------------useApi------");
+          if (options?.withLoading !== false) {
+            Store.Loading$.next(true);
+          }
+          setState((prevState) => ({ ...prevState, loading: true }));
+        }),
+        switchMap(() => {
+          return func();
+        }),
+      )
+      .subscribe((res) => {
+        Store.Loading$.next(false);
+        setState((prevState) => ({ ...prevState, data: res, loading: false }));
+      });
 
     return () => {
-      subs$.unsubscribe();
+      unsub.unsubscribe();
     };
   }, []);
 
