@@ -111,7 +111,10 @@ export class RealmService {
   }
 
   init() {
-    const credentials = Realm.Credentials.anonymous();
+    const credentials = Realm.Credentials.emailPassword(
+      "admin@talpak.com",
+      "--------",
+    );
     return defer(() => this.app?.logIn(credentials)).pipe(
       catchError((err): any => {
         console.error("Failed to log in", err);
