@@ -52,9 +52,9 @@ export const UsersComponent = memo(() => {
                     <span
                       className={classNames({
                         status: true,
-                        done: user.data?.isDoneForTheWeek === true,
-                        "in-progress": user.data?.isDoneForTheWeek === false,
-                        unknown: user.data?.isDoneForTheWeek === undefined,
+                        done: user.data?.weekStatus?.done === true,
+                        "in-progress": user.data?.weekStatus?.done === false,
+                        unknown: user.data?.weekStatus?.done === undefined,
                       })}
                     />
                   </Table.Cell>

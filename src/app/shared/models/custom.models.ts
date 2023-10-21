@@ -34,7 +34,11 @@ export interface UserDataModel {
   serverTime?: string;
   userSession?: UserSessionModel;
   settings?: TalpakSettingModel;
-  isDoneForTheWeek?: boolean;
+  weekStatus?: {
+    done: boolean;
+    startDate: string;
+    endDate: string;
+  };
 }
 
 export interface EarningsModel {
@@ -151,4 +155,19 @@ export interface I {
   o: number;
   iden: string;
   spec: string;
+}
+
+export interface BetSummaryModel {
+  _id: string;
+  year: number;
+  startDate: string;
+  endDate: string;
+  email: string;
+  betSummary: {
+    totalStaked: string;
+    totalWinnings: string;
+    bonus: string;
+    totalEarnings: string;
+    winnings: string;
+  };
 }

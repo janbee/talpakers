@@ -24,8 +24,11 @@ export const UserDetailsComponent = memo(() => {
   useEffect(() => {
     setState((prevState) => ({ ...prevState, loading: true }));
 
-    API.getSettledBets({ email }).subscribe((res) => {
-      console.log("gaga-----------------------------------getSettledBets--");
+    API.getBetSummary({ email }).subscribe((res) => {
+      console.log(
+        "gaga-----------------------------------getSettledBets--",
+        res,
+      );
       const dataList = Array.from(Array(moment().isoWeeksInYear()).keys()).map(
         (weekNumber) => {
           const year = moment().format("YYYY");
@@ -43,42 +46,28 @@ export const UserDetailsComponent = memo(() => {
           weekStart.setUTCHours(0, 0, 0, 0);
           weekEnd.setUTCHours(23, 59, 59, 999);
 
-          const bets = res?.filter((item) => {
+          const betSummary = res?.find((item) => {
             return (
               item.startDate === weekStart.toISOString() &&
-              item.endDate === weekEnd.toISOString()
+              item.endDate === weekEnd.toISOString() &&
+              item.year === parseInt(year, 10)
             );
           });
 
-          let bonus = 0;
-          let totalStaked = 0;
-          let totalEarnings = 0;
-          let winnings = 0;
-          if (bets?.length) {
-            totalStaked = sumBy(bets, (bet) => {
-              return sumBy(bet.details, "s");
-            });
-            const totalWinnings = sumBy(bets, (bet) => {
-              return sumBy(bet.details, "w");
-            });
-            bonus = Math.floor(totalStaked / 75) * 10;
-
-            totalEarnings = totalWinnings - totalStaked;
-            bonus = bonus > 50 ? 50 : bonus;
-
-            winnings = bonus + totalEarnings;
-          }
-
+          console.log(
+            "gaga--------------------betSummary-----------------",
+            betSummary,
+          );
           return {
             _id: `${mon}-${weekNumber}`,
             mon: monNumber + "-" + mon,
             year,
             startDate: weekStart.toISOString(),
             endDate: weekEnd.toISOString(),
-            bonus,
-            totalStaked,
-            totalEarnings,
-            winnings,
+            bonus: betSummary?.betSummary.bonus || 0,
+            totalStaked: betSummary?.betSummary.totalStaked || 0,
+            totalEarnings: betSummary?.betSummary.totalEarnings || 0,
+            winnings: betSummary?.betSummary.winnings || 0,
             loading: false,
             fetch: 0,
             title: mon,
