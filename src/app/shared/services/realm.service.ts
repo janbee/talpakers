@@ -14,10 +14,14 @@ class CRUD {
   private collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any> =
     null as unknown as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>;
 
+  private currentUserId: any;
+
   setCollection(
     collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
+    currentUserId: any,
   ) {
     this.collection = collection;
+    this.currentUserId = currentUserId;
   }
 
   get(_id?: string | number): Observable<any> {
@@ -93,7 +97,7 @@ export class RealmService {
   private client?: globalThis.Realm.Services.MongoDB;
   private mongoConfig: { AppId: string; AppClient: string; AppDB: string } =
     {} as any;
-  private readonly CRUD: CRUD;
+  private collections: any = {};
 
   constructor(mongoConfig: {
     AppId: string;
@@ -106,8 +110,6 @@ export class RealmService {
     this.app = new Realm.App({
       id: this.mongoConfig.AppId,
     });
-
-    this.CRUD = new CRUD();
   }
 
   init() {
@@ -128,16 +130,23 @@ export class RealmService {
     );
   }
 
-  collection(name: unknown) {
-    console.log("gaga----collection---------------------------------", name);
-    const collection = this.client
-      ?.db(this.mongoConfig.AppDB)
-      .collection(name as unknown as string);
+  collection(name: string) {
+    if (!this.collections[name]) {
+      const crud = new CRUD();
+      const collection = this.client
+        ?.db(this.mongoConfig.AppDB)
+        .collection(name as unknown as string);
+      crud.setCollection(
+        collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
+        this.app.currentUser?.id,
+      );
+      this.collections[name] = {
+        CRUD: crud,
+      };
 
-    this.CRUD.setCollection(
-      collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
-    );
+      return this.collections[name].CRUD;
+    }
 
-    return this.CRUD;
+    return this.collections[name].CRUD;
   }
 }
