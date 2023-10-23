@@ -39,6 +39,7 @@ export interface UserDataModel {
     startDate: string;
     endDate: string;
   };
+  version: string;
 }
 
 export interface EarningsModel {

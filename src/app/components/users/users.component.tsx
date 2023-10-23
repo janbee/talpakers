@@ -8,8 +8,6 @@ import moment from "moment";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
 import classNames from "classnames";
-import { Simulate } from "react-dom/test-utils";
-import progress = Simulate.progress;
 
 export const UsersComponent = memo(() => {
   const state = useApi<UserModel[]>(() => API.getUsers(), {
@@ -39,6 +37,7 @@ export const UsersComponent = memo(() => {
             <Table.Row>
               <Table.HeaderCell>Email</Table.HeaderCell>
               <Table.HeaderCell>Status</Table.HeaderCell>
+              <Table.HeaderCell>Verion</Table.HeaderCell>
               <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -58,6 +57,7 @@ export const UsersComponent = memo(() => {
                       })}
                     />
                   </Table.Cell>
+                  <Table.Cell collapsing>{user.data?.version}</Table.Cell>
                   <Table.Cell textAlign="right">
                     {moment(user.updatedAt || user.createdAt).fromNow()}
                   </Table.Cell>

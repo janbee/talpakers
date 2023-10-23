@@ -1,9 +1,9 @@
 {
   "files": {
     "main.css": "/talpakers/build/static/css/main.3f1169a2.css",
-    "main.js": "/talpakers/build/static/js/main.dcc2f8e1.js",
+    "main.js": "/talpakers/build/static/js/main.c527daab.js",
     "static/css/978.a4e29f7b.chunk.css": "/talpakers/build/static/css/978.a4e29f7b.chunk.css",
-    "static/js/978.a8d524ca.chunk.js": "/talpakers/build/static/js/978.a8d524ca.chunk.js",
+    "static/js/978.beb235a1.chunk.js": "/talpakers/build/static/js/978.beb235a1.chunk.js",
     "static/css/615.1fcfd86e.chunk.css": "/talpakers/build/static/css/615.1fcfd86e.chunk.css",
     "static/js/615.c9678f9f.chunk.js": "/talpakers/build/static/js/615.c9678f9f.chunk.js",
     "static/js/853.17039446.chunk.js": "/talpakers/build/static/js/853.17039446.chunk.js",
@@ -13,9 +13,9 @@
     "static/js/675.abc99f13.chunk.js": "/talpakers/build/static/js/675.abc99f13.chunk.js",
     "index.html": "/talpakers/build/index.html",
     "main.3f1169a2.css.map": "/talpakers/build/static/css/main.3f1169a2.css.map",
-    "main.dcc2f8e1.js.map": "/talpakers/build/static/js/main.dcc2f8e1.js.map",
+    "main.c527daab.js.map": "/talpakers/build/static/js/main.c527daab.js.map",
     "978.a4e29f7b.chunk.css.map": "/talpakers/build/static/css/978.a4e29f7b.chunk.css.map",
-    "978.a8d524ca.chunk.js.map": "/talpakers/build/static/js/978.a8d524ca.chunk.js.map",
+    "978.beb235a1.chunk.js.map": "/talpakers/build/static/js/978.beb235a1.chunk.js.map",
     "615.1fcfd86e.chunk.css.map": "/talpakers/build/static/css/615.1fcfd86e.chunk.css.map",
     "615.c9678f9f.chunk.js.map": "/talpakers/build/static/js/615.c9678f9f.chunk.js.map",
     "496.ce434cfe.chunk.js.map": "/talpakers/build/static/js/496.ce434cfe.chunk.js.map",
@@ -25,6 +25,6 @@
   },
   "entrypoints": [
     "static/css/main.3f1169a2.css",
-    "static/js/main.dcc2f8e1.js"
+    "static/js/main.c527daab.js"
   ]
 }
