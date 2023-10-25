@@ -37,7 +37,7 @@ export const UsersComponent = memo(() => {
             <Table.Row>
               <Table.HeaderCell>Email</Table.HeaderCell>
               <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell>Verion</Table.HeaderCell>
+              <Table.HeaderCell>Version</Table.HeaderCell>
               <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
