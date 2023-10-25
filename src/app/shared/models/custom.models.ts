@@ -14,7 +14,7 @@ export interface UserModel {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
-  data: UserDataModel;
+  data?: UserDataModel;
 }
 
 export interface TalpakSettingModel {

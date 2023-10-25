@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import "./users.component.scss";
 import { Icon, Segment, Table } from "semantic-ui-react";
 import { useApi, useCallbackMemo } from "@utilities/utils";
@@ -44,6 +44,17 @@ export const UsersComponent = memo(() => {
 
           <Table.Body>
             {state.data?.map((user) => {
+              const date = moment();
+              const startDate = moment(date)
+                .startOf("week")
+                .add(1, "day")
+                .toISOString();
+              const endDate = moment(date).endOf("week").toISOString();
+              const weekStart = new Date(startDate);
+              const weekEnd = new Date(endDate);
+              weekStart.setUTCHours(0, 0, 0, 0);
+              weekEnd.setUTCHours(23, 59, 59, 999);
+
               return (
                 <Table.Row key={user._id} onClick={handleUserDetails(user)}>
                   <Table.Cell collapsing>{user._id}</Table.Cell>
@@ -54,6 +65,9 @@ export const UsersComponent = memo(() => {
                         done: user.data?.weekStatus?.done === true,
                         "in-progress": user.data?.weekStatus?.done === false,
                         unknown: user.data?.weekStatus?.done === undefined,
+                        waiting:
+                          weekStart.toISOString() !==
+                          user.data?.weekStatus?.startDate,
                       })}
                     />
                   </Table.Cell>
