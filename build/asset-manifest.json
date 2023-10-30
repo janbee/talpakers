@@ -1,9 +1,9 @@
 {
   "files": {
     "main.css": "/talpakers/build/static/css/main.3f1169a2.css",
-    "main.js": "/talpakers/build/static/js/main.042d4de1.js",
-    "static/css/978.3d336873.chunk.css": "/talpakers/build/static/css/978.3d336873.chunk.css",
-    "static/js/978.cd2d924f.chunk.js": "/talpakers/build/static/js/978.cd2d924f.chunk.js",
+    "main.js": "/talpakers/build/static/js/main.bf77aef3.js",
+    "static/css/978.98c91600.chunk.css": "/talpakers/build/static/css/978.98c91600.chunk.css",
+    "static/js/978.94731617.chunk.js": "/talpakers/build/static/js/978.94731617.chunk.js",
     "static/css/615.1fcfd86e.chunk.css": "/talpakers/build/static/css/615.1fcfd86e.chunk.css",
     "static/js/615.c9678f9f.chunk.js": "/talpakers/build/static/js/615.c9678f9f.chunk.js",
     "static/js/853.17039446.chunk.js": "/talpakers/build/static/js/853.17039446.chunk.js",
@@ -13,9 +13,9 @@
     "static/js/675.abc99f13.chunk.js": "/talpakers/build/static/js/675.abc99f13.chunk.js",
     "index.html": "/talpakers/build/index.html",
     "main.3f1169a2.css.map": "/talpakers/build/static/css/main.3f1169a2.css.map",
-    "main.042d4de1.js.map": "/talpakers/build/static/js/main.042d4de1.js.map",
-    "978.3d336873.chunk.css.map": "/talpakers/build/static/css/978.3d336873.chunk.css.map",
-    "978.cd2d924f.chunk.js.map": "/talpakers/build/static/js/978.cd2d924f.chunk.js.map",
+    "main.bf77aef3.js.map": "/talpakers/build/static/js/main.bf77aef3.js.map",
+    "978.98c91600.chunk.css.map": "/talpakers/build/static/css/978.98c91600.chunk.css.map",
+    "978.94731617.chunk.js.map": "/talpakers/build/static/js/978.94731617.chunk.js.map",
     "615.1fcfd86e.chunk.css.map": "/talpakers/build/static/css/615.1fcfd86e.chunk.css.map",
     "615.c9678f9f.chunk.js.map": "/talpakers/build/static/js/615.c9678f9f.chunk.js.map",
     "496.ce434cfe.chunk.js.map": "/talpakers/build/static/js/496.ce434cfe.chunk.js.map",
@@ -25,6 +25,6 @@
   },
   "entrypoints": [
     "static/css/main.3f1169a2.css",
-    "static/js/main.042d4de1.js"
+    "static/js/main.bf77aef3.js"
   ]
 }
