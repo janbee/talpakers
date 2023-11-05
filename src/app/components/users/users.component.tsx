@@ -44,34 +44,38 @@ export const UsersComponent = memo(() => {
 
           <Table.Body>
             {state.data?.map((user) => {
-              const today = new Date(
-                new Date().getTime() - new Date().getTimezoneOffset() * 60000,
-              );
+              const today = new Date();
+              today.setUTCHours(0, 0, 0, 0);
 
               const currentWeekDay = today.getDay();
-              const lessDays = currentWeekDay === 0 ? 6 : currentWeekDay - 1;
-              let weekStart = new Date(
-                new Date(today).setDate(today.getDate() - lessDays),
-              );
-              let weekEnd = new Date(
-                new Date(weekStart).setDate(weekStart.getDate() + 6),
-              );
 
-              weekStart = new Date(
-                weekStart.getTime() - new Date().getTimezoneOffset() * 60000,
-              );
-              weekEnd = new Date(
-                weekEnd.getTime() - new Date().getTimezoneOffset() * 60000,
-              );
+              const forWeekStart = new Date(today);
+              forWeekStart.setUTCHours(0, 0, 0, 0);
+              forWeekStart.setDate(today.getDate() - currentWeekDay);
 
+              const weekStart = new Date(forWeekStart);
               weekStart.setUTCHours(0, 0, 0, 0);
+
+              const forWeekEnd = new Date(weekStart);
+              forWeekEnd.setUTCHours(0, 0, 0, 0);
+              forWeekEnd.setDate(weekStart.getDate() + 6);
+
+              const weekEnd = new Date(forWeekEnd);
               weekEnd.setUTCHours(23, 59, 59, 999);
 
               console.log(
-                "gaga-----------------------asdasd--------------",
-                weekStart.toISOString() +
-                  "!==" +
-                  user.data?.weekStatus?.startDate,
+                "gaga------------------------------------",
+                JSON.stringify(
+                  {
+                    u: user._id,
+                    web:
+                      weekStart.toISOString() + " --- " + weekEnd.toISOString(),
+                    app: user.data?.weekStatus?.startDate,
+                    today,
+                  },
+                  null,
+                  2,
+                ),
               );
 
               return (
