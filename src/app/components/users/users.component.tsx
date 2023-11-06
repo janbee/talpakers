@@ -44,7 +44,9 @@ export const UsersComponent = memo(() => {
 
           <Table.Body>
             {state.data?.map((user) => {
-              const today = new Date();
+              const today = new Date(
+                new Date().getTime() - new Date().getTimezoneOffset() * 60000,
+              );
               today.setUTCHours(0, 0, 0, 0);
 
               const currentWeekDay = today.getDay();
@@ -72,6 +74,7 @@ export const UsersComponent = memo(() => {
                       weekStart.toISOString() + " --- " + weekEnd.toISOString(),
                     app: user.data?.weekStatus?.startDate,
                     today,
+                    today2: new Date(),
                   },
                   null,
                   2,
