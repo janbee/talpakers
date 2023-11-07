@@ -6,8 +6,6 @@
   justify-content: center;
 
 
-
-
   .segment {
     flex: 1;
     max-width: 100%;
@@ -19,6 +17,39 @@
     .ttl {
       display: flex;
       justify-content: space-between;
+
+      .row-wrap {
+        align-items: center;
+
+        .winnings-withdrawal-wrap {
+
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+
+          div {
+            line-height: 5px;
+            height: 13px;
+
+
+            span {
+              font-size: 12px;
+              text-align: right;
+              margin: 0 2px;
+              min-width: 65px;
+              display: inline-block;
+
+              &:last-child {
+                min-width: 59px;
+              }
+            }
+
+
+          }
+
+        }
+      }
+
     }
 
     .user-details-content-wrap {
@@ -45,8 +76,6 @@
           flex-wrap: wrap;
           margin-bottom: 25px;
 
-
-
           .week {
             aspect-ratio: 1;
             height: 150px;
@@ -59,7 +88,7 @@
             position: relative;
 
 
-            .has-withdrawal{
+            .has-withdrawal {
               background: red;
               position: absolute;
               width: 8px;
@@ -103,10 +132,10 @@
   }
 
   .winnings {
-    color: greenyellow!important;
+    color: greenyellow !important;
   }
 
   .losses {
-    color: #ff3a3a!important;
+    color: #ff3a3a !important;
   }
 }

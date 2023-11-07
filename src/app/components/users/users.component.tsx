@@ -32,88 +32,92 @@ export const UsersComponent = memo(() => {
           <Icon onClick={state.reload} name="refresh" />
         </div>
         <hr />
-        <Table celled striped selectable inverted>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Email</Table.HeaderCell>
-              <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell>Version</Table.HeaderCell>
-              <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
+        <div className="tbl-wrap">
+          <Table celled striped selectable inverted>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Email</Table.HeaderCell>
+                <Table.HeaderCell>Status</Table.HeaderCell>
+                <Table.HeaderCell>Version</Table.HeaderCell>
+                <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
 
-          <Table.Body>
-            {state.data?.map((user) => {
-              const today = new Date(
-                new Date().getTime() - new Date().getTimezoneOffset() * 60000,
-              );
-              today.setUTCHours(0, 0, 0, 0);
+            <Table.Body>
+              {state.data?.map((user) => {
+                const today = new Date(
+                  new Date().getTime() - new Date().getTimezoneOffset() * 60000,
+                );
+                today.setUTCHours(0, 0, 0, 0);
 
-              const currentWeekDay = today.getDay();
+                const currentWeekDay = today.getDay();
 
-              const forWeekStart = new Date(today);
-              forWeekStart.setUTCHours(0, 0, 0, 0);
-              forWeekStart.setDate(today.getDate() - currentWeekDay);
+                const forWeekStart = new Date(today);
+                forWeekStart.setUTCHours(0, 0, 0, 0);
+                forWeekStart.setDate(today.getDate() - currentWeekDay);
 
-              const weekStart = new Date(forWeekStart);
-              weekStart.setUTCHours(0, 0, 0, 0);
+                const weekStart = new Date(forWeekStart);
+                weekStart.setUTCHours(0, 0, 0, 0);
 
-              const forWeekEnd = new Date(weekStart);
-              forWeekEnd.setUTCHours(0, 0, 0, 0);
-              forWeekEnd.setDate(weekStart.getDate() + 6);
+                const forWeekEnd = new Date(weekStart);
+                forWeekEnd.setUTCHours(0, 0, 0, 0);
+                forWeekEnd.setDate(weekStart.getDate() + 6);
 
-              const weekEnd = new Date(forWeekEnd);
-              weekEnd.setUTCHours(23, 59, 59, 999);
+                const weekEnd = new Date(forWeekEnd);
+                weekEnd.setUTCHours(23, 59, 59, 999);
 
-              console.log(
-                "gaga------------------------------------",
-                JSON.stringify(
-                  {
-                    u: user._id,
-                    web:
-                      weekStart.toISOString() + " --- " + weekEnd.toISOString(),
-                    app: user.data?.weekStatus?.startDate,
-                    today,
-                    today2: new Date(),
-                  },
-                  null,
-                  2,
-                ),
-              );
+                console.log(
+                  "gaga------------------------------------",
+                  JSON.stringify(
+                    {
+                      u: user._id,
+                      web:
+                        weekStart.toISOString() +
+                        " --- " +
+                        weekEnd.toISOString(),
+                      app: user.data?.weekStatus?.startDate,
+                      today,
+                      today2: new Date(),
+                    },
+                    null,
+                    2,
+                  ),
+                );
 
-              return (
-                <Table.Row key={user._id} onClick={handleUserDetails(user)}>
-                  <Table.Cell collapsing>{user._id}</Table.Cell>
-                  <Table.Cell collapsing>
-                    <span
-                      className={classNames({
-                        status: true,
-                        done: user.data?.weekStatus?.done === true,
-                        "in-progress": user.data?.weekStatus?.done === false,
-                        unknown: user.data?.weekStatus?.done === undefined,
-                        waiting:
-                          weekStart.toISOString() !==
-                          user.data?.weekStatus?.startDate,
-                      })}
-                    />
-                  </Table.Cell>
-                  <Table.Cell collapsing>{user.data?.version}</Table.Cell>
-                  <Table.Cell textAlign="right">
-                    {moment(user.updatedAt || user.createdAt).fromNow()}
-                  </Table.Cell>
-                </Table.Row>
-              );
-            })}
-          </Table.Body>
+                return (
+                  <Table.Row key={user._id} onClick={handleUserDetails(user)}>
+                    <Table.Cell collapsing>{user._id}</Table.Cell>
+                    <Table.Cell collapsing>
+                      <span
+                        className={classNames({
+                          status: true,
+                          done: user.data?.weekStatus?.done === true,
+                          "in-progress": user.data?.weekStatus?.done === false,
+                          unknown: user.data?.weekStatus?.done === undefined,
+                          waiting:
+                            weekStart.toISOString() !==
+                            user.data?.weekStatus?.startDate,
+                        })}
+                      />
+                    </Table.Cell>
+                    <Table.Cell collapsing>{user.data?.version}</Table.Cell>
+                    <Table.Cell textAlign="right">
+                      {moment(user.updatedAt || user.createdAt).fromNow()}
+                    </Table.Cell>
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
 
-          <Table.Footer>
-            <Table.Row>
-              <Table.HeaderCell colSpan="100">
-                Total Users {state.data?.length}
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Footer>
-        </Table>
+            <Table.Footer>
+              <Table.Row>
+                <Table.HeaderCell colSpan="100">
+                  Total Users {state.data?.length}
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Footer>
+          </Table>
+        </div>
         <ElementComponent loading={state.loading} />
       </Segment>
       <Outlet />

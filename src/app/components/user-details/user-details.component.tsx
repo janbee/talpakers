@@ -15,6 +15,7 @@ class State {
   loading = true;
   list: { title: string; data: EarningsModel[] }[] = [];
   yearTotalWinnings: number = 0;
+  yearTotalWithdrawals: number = 0;
 }
 
 export const UserDetailsComponent = memo(() => {
@@ -139,10 +140,15 @@ export const UserDetailsComponent = memo(() => {
         return sumBy(item.data, "winnings");
       });
 
+      const yearTotalWithdrawals = sumBy(defaultList, (item) => {
+        return sumBy(item.data, "withdrawal.Amount");
+      });
+
       setState((prevState) => ({
         ...prevState,
         loading: false,
         yearTotalWinnings,
+        yearTotalWithdrawals,
         list: defaultList,
       }));
     });
@@ -153,17 +159,32 @@ export const UserDetailsComponent = memo(() => {
       <Segment inverted>
         <div className="ttl">
           <span>{email}</span>
-          <span>
-            {moment().format("YYYY")} earnings
-            <span
-              className={classNames({
-                winnings: state.yearTotalWinnings > 0,
-                losses: state.yearTotalWinnings < 0,
-              })}
-            >
-              {" " + Money(state.yearTotalWinnings)}
-            </span>
-          </span>
+          <div className="row-wrap between">
+            <span>{moment().format("YYYY")}</span>
+            <div className="winnings-withdrawal-wrap">
+              <div>
+                <span className="lbl">Earnings</span>
+                <span
+                  className={classNames({
+                    winnings: state.yearTotalWinnings > 0,
+                    losses: state.yearTotalWinnings < 0,
+                  })}
+                >
+                  {`${Money(state.yearTotalWinnings)}`}
+                </span>
+              </div>
+              <div>
+                <span className="lbl">Cashout</span>
+                <span
+                  className={classNames({
+                    losses: true,
+                  })}
+                >
+                  {`${Money(Math.abs(state.yearTotalWithdrawals || 0))}`}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
         <hr />
         <div className="user-details-content-wrap">
@@ -199,7 +220,9 @@ export const UserDetailsComponent = memo(() => {
                           >
                             <Popup.Header>Withdrawal</Popup.Header>
                             <Popup.Content>
-                              {Money(item.withdrawal.Amount)}
+                              {`${item.withdrawal.PaymentMethodInfo} ${Money(
+                                item.withdrawal.Amount,
+                              )}`}
                             </Popup.Content>
                           </Popup>
                         )}
