@@ -248,7 +248,7 @@ export const UserDetailsComponent = memo(() => {
                             <span>{Money(item.bonus)}</span>
                           </div>
 
-                          {item.winnings === 0 && item.totalStaked > 0 && (
+                          {(item.winnings === 0 && item.totalStaked > 0 && (
                             <div className="row-wrap">
                               <span>Winnings</span>
 
@@ -266,9 +266,7 @@ export const UserDetailsComponent = memo(() => {
                                 }
                               />
                             </div>
-                          )}
-
-                          {item.winnings > 0 && (
+                          )) || (
                             <div className="row-wrap">
                               <span>Winnings</span>
                               <span
