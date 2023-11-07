@@ -59,6 +59,7 @@ export interface EarningsModel {
   bonus: number;
   totalStaked: number;
   winnings: number;
+  approxWinnings: number;
   totalEarnings: number;
   loading: boolean;
   fetch: number;

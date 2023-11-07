@@ -99,7 +99,7 @@ export const UserDetailsComponent = memo(() => {
             );
           });
 
-          let winnings = betSummary?.betSummary.winnings || 0;
+          let winnings = 0;
 
           if (foundBonus && betSummary) {
             winnings =
@@ -116,6 +116,7 @@ export const UserDetailsComponent = memo(() => {
             totalStaked: betSummary?.betSummary.totalStaked || 0,
             totalEarnings: betSummary?.betSummary.totalEarnings || 0,
             winnings,
+            approxWinnings: betSummary?.betSummary.winnings || 0,
             loading: false,
             fetch: 0,
             title: mon,
@@ -246,17 +247,40 @@ export const UserDetailsComponent = memo(() => {
                             <span>Bonus</span>
                             <span>{Money(item.bonus)}</span>
                           </div>
-                          <div className="row-wrap">
-                            <span>Winnings</span>
-                            <span
-                              className={classNames({
-                                winnings: item.winnings > 0,
-                                losses: item.winnings < 0,
-                              })}
-                            >
-                              {Money(item.winnings)}
-                            </span>
-                          </div>
+
+                          {item.winnings === 0 && item.totalStaked > 0 && (
+                            <div className="row-wrap">
+                              <span>Winnings</span>
+
+                              <Popup
+                                content="Approximate Earnings."
+                                position="top center"
+                                trigger={
+                                  <span
+                                    className={classNames({
+                                      approx: true,
+                                    })}
+                                  >
+                                    {Money(item.approxWinnings)}
+                                  </span>
+                                }
+                              />
+                            </div>
+                          )}
+
+                          {item.winnings > 0 && (
+                            <div className="row-wrap">
+                              <span>Winnings</span>
+                              <span
+                                className={classNames({
+                                  winnings: item.winnings > 0,
+                                  losses: item.winnings < 0,
+                                })}
+                              >
+                                {Money(item.winnings)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
