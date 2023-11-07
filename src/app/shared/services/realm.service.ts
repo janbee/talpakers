@@ -9,6 +9,7 @@ import {
   of,
   tap,
 } from "rxjs";
+import { MongoCollection } from "@models/custom.models";
 
 class CRUD {
   private collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any> =
@@ -130,7 +131,7 @@ export class RealmService {
     );
   }
 
-  collection(name: string) {
+  collection(name: MongoCollection) {
     if (!this.collections[name]) {
       const crud = new CRUD();
       const collection = this.client

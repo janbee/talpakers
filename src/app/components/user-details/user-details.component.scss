@@ -45,6 +45,8 @@
           flex-wrap: wrap;
           margin-bottom: 25px;
 
+
+
           .week {
             aspect-ratio: 1;
             height: 150px;
@@ -54,6 +56,19 @@
             background: #2a2a2a;
             display: flex;
             flex-direction: column;
+            position: relative;
+
+
+            .has-withdrawal{
+              background: red;
+              position: absolute;
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              right: 5px;
+              cursor: pointer;
+            }
+
 
             .week-date {
               align-items: center;

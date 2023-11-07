@@ -3,9 +3,12 @@ import { Store } from "@services/store.service";
 import {
   AlertTypeModel,
   BetSummaryModel,
+  BonusModel,
+  MongoCollection,
   SettledBetsModel,
+  WithdrawalModel,
 } from "@models/custom.models";
-import { catchError, map, of, throwError, timeout, Observable } from "rxjs";
+import { catchError, map, Observable, of, throwError, timeout } from "rxjs";
 import { EJSON } from "bson";
 
 class ApiService {
@@ -25,7 +28,7 @@ class ApiService {
 
   getSettledBets(filter: Object): Observable<SettledBetsModel[] | null> {
     return this.$RealmDB
-      .collection("settledBets")
+      .collection(MongoCollection.SettledBets)
       .getBy(filter)
       .pipe(
         timeout({
@@ -47,7 +50,7 @@ class ApiService {
 
   getBetSummary(filter: Object): Observable<BetSummaryModel[] | null> {
     return this.$RealmDB
-      .collection("betSummary")
+      .collection(MongoCollection.BetSummary)
       .getBy(filter)
       .pipe(
         timeout({
@@ -67,10 +70,53 @@ class ApiService {
       );
   }
 
-  getUsers() {
-    console.log("gaga------------------getUsers-------------------");
+  getBonuses(filter: Object): Observable<BonusModel[] | null> {
     return this.$RealmDB
-      .collection("user")
+      .collection(MongoCollection.Bonuses)
+      .getBy(filter)
+      .pipe(
+        timeout({
+          each: 10000,
+          with: () =>
+            throwError(
+              () => "Server is taking too long to respond! getBonuses",
+            ),
+        }),
+        catchError((err) => {
+          ApiService.catchErrorAlert(err);
+          return of(null);
+        }),
+        map((res) => {
+          return EJSON.parse(JSON.stringify(res));
+        }),
+      );
+  }
+
+  getWithdrawals(filter: Object): Observable<WithdrawalModel[] | null> {
+    return this.$RealmDB
+      .collection(MongoCollection.Withdrawals)
+      .getBy(filter)
+      .pipe(
+        timeout({
+          each: 10000,
+          with: () =>
+            throwError(
+              () => "Server is taking too long to respond! getWithdrawals",
+            ),
+        }),
+        catchError((err) => {
+          ApiService.catchErrorAlert(err);
+          return of(null);
+        }),
+        map((res) => {
+          return EJSON.parse(JSON.stringify(res));
+        }),
+      );
+  }
+
+  getUsers() {
+    return this.$RealmDB
+      .collection(MongoCollection.User)
       .get()
       .pipe(
         timeout({

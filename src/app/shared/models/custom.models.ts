@@ -17,6 +17,14 @@ export interface UserModel {
   data?: UserDataModel;
 }
 
+export enum MongoCollection {
+  User = "user",
+  SettledBets = "settledBets",
+  BetSummary = "betSummary",
+  Bonuses = "bonuses",
+  Withdrawals = "withdrawals",
+}
+
 export interface TalpakSettingModel {
   bet: string;
   lowerBet: string;
@@ -46,6 +54,7 @@ export interface EarningsModel {
   _id: string;
   year: number;
   startDate: string;
+  title: string;
   endDate: string;
   bonus: number;
   totalStaked: number;
@@ -53,6 +62,7 @@ export interface EarningsModel {
   totalEarnings: number;
   loading: boolean;
   fetch: number;
+  withdrawal?: WithdrawalModel;
 }
 
 export interface SettledBetsModel {
@@ -165,10 +175,34 @@ export interface BetSummaryModel {
   endDate: string;
   email: string;
   betSummary: {
-    totalStaked: string;
-    totalWinnings: string;
-    bonus: string;
-    totalEarnings: string;
-    winnings: string;
+    totalStaked: number;
+    totalWinnings: number;
+    bonus: number;
+    totalEarnings: number;
+    winnings: number;
   };
+}
+
+export interface WithdrawalModel {
+  email: string;
+  Amount: number;
+  Balance: number;
+  PaymentMethodInfo: string;
+  ShoppingCartID: any;
+  TransactionDateTime: string;
+  TransactionID: string;
+  TransactionStatus: string;
+  TransactionType: string;
+}
+
+export interface BonusModel {
+  email: string;
+  TransactionDateTime: string;
+  TransactionType: string;
+  TransactionStatus: string;
+  TransactionID: string;
+  ShoppingCartID: any;
+  Amount: number;
+  Balance: number;
+  PaymentMethodInfo: string;
 }

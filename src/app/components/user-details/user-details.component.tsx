@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from "react";
 import "./user-details.component.scss";
-import { Header, Segment } from "semantic-ui-react";
+import { Header, Popup, Segment } from "semantic-ui-react";
 import { EarningsModel } from "@models/custom.models";
 import { API } from "@services/api.service";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
@@ -9,6 +9,7 @@ import moment from "moment";
 import { useLocation } from "react-router-dom";
 import { Money } from "@utilities/utils";
 import classNames from "classnames";
+import { forkJoin } from "rxjs";
 
 class State {
   loading = true;
@@ -24,11 +25,30 @@ export const UserDetailsComponent = memo(() => {
   useEffect(() => {
     setState((prevState) => ({ ...prevState, loading: true }));
 
-    API.getBetSummary({ email }).subscribe((res) => {
+    forkJoin([
+      API.getBetSummary({ email }),
+      API.getBonuses({ email }),
+      API.getWithdrawals({ email }),
+    ]).subscribe(([betSummaryList, bonusList, withdrawalList]) => {
+      const filteredBonusList = bonusList?.filter((item) => {
+        return (
+          item.TransactionStatus === "Approved" &&
+          item.TransactionType === "Bonus" &&
+          item.PaymentMethodInfo === "Bonus"
+        );
+      });
+      const filteredWithdrawalList = withdrawalList?.filter((item) => {
+        return item.TransactionStatus === "Approved";
+      });
       console.log(
-        "gaga-----------------------------------getSettledBets--",
-        res,
+        "gaga-------------------------------bonusList------",
+        filteredBonusList,
       );
+      console.log(
+        "gaga-------------------------------withdrawalList------",
+        filteredWithdrawalList,
+      );
+
       const dataList = Array.from(Array(moment().isoWeeksInYear()).keys()).map(
         (weekNumber) => {
           const year = moment().format("YYYY");
@@ -46,7 +66,7 @@ export const UserDetailsComponent = memo(() => {
           weekStart.setUTCHours(0, 0, 0, 0);
           weekEnd.setUTCHours(23, 59, 59, 999);
 
-          const betSummary = res?.find((item) => {
+          const betSummary = betSummaryList?.find((item) => {
             return (
               item.startDate === weekStart.toISOString() &&
               item.endDate === weekEnd.toISOString() &&
@@ -54,23 +74,51 @@ export const UserDetailsComponent = memo(() => {
             );
           });
 
-          console.log(
-            "gaga--------------------betSummary-----------------",
-            betSummary,
-          );
+          /*
+           * get bonus
+           * */
+          const foundBonus = filteredBonusList?.find((item) => {
+            const TransactionDateTime = moment(
+              item.TransactionDateTime,
+            ).subtract(7, "days");
+            return (
+              TransactionDateTime.isAfter(weekStart) &&
+              TransactionDateTime.isBefore(weekEnd)
+            );
+          });
+
+          /*
+           * get withdrawal
+           * */
+          const foundWithdrawal = filteredWithdrawalList?.find((item) => {
+            const TransactionDateTime = moment(item.TransactionDateTime);
+            return (
+              TransactionDateTime.isAfter(weekStart) &&
+              TransactionDateTime.isBefore(weekEnd)
+            );
+          });
+
+          let winnings = betSummary?.betSummary.winnings || 0;
+
+          if (foundBonus && betSummary) {
+            winnings =
+              foundBonus.Amount + (betSummary?.betSummary.totalEarnings || 0);
+          }
+
           return {
             _id: `${mon}-${weekNumber}`,
             mon: monNumber + "-" + mon,
             year,
             startDate: weekStart.toISOString(),
             endDate: weekEnd.toISOString(),
-            bonus: betSummary?.betSummary.bonus || 0,
+            bonus: foundBonus?.Amount || betSummary?.betSummary.bonus || 0,
             totalStaked: betSummary?.betSummary.totalStaked || 0,
             totalEarnings: betSummary?.betSummary.totalEarnings || 0,
-            winnings: betSummary?.betSummary.winnings || 0,
+            winnings,
             loading: false,
             fetch: 0,
             title: mon,
+            withdrawal: foundWithdrawal,
           };
         },
       );
@@ -82,7 +130,10 @@ export const UserDetailsComponent = memo(() => {
         };
       });
 
-      console.log("gaga-------------------------------------", defaultList);
+      console.log(
+        "gaga----------------------------defaultList---------",
+        defaultList,
+      );
 
       const yearTotalWinnings = sumBy(defaultList, (item) => {
         return sumBy(item.data, "winnings");
@@ -140,6 +191,19 @@ export const UserDetailsComponent = memo(() => {
                   {mon.data.map((item) => {
                     return (
                       <div key={item._id} className="week">
+                        {!!item.withdrawal && (
+                          <Popup
+                            on="click"
+                            position="top center"
+                            trigger={<div className="has-withdrawal" />}
+                          >
+                            <Popup.Header>Withdrawal</Popup.Header>
+                            <Popup.Content>
+                              {Money(item.withdrawal.Amount)}
+                            </Popup.Content>
+                          </Popup>
+                        )}
+
                         <div className="week-date">
                           <span>
                             {moment(item.startDate).utc().format("ddd DD")} -{" "}
