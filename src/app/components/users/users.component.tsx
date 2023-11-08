@@ -51,20 +51,18 @@ export const UsersComponent = memo(() => {
 
                 const currentWeekDay = today.getDay();
 
-                const forWeekStart = new Date(new Date(today).getTime() - tz);
+                const forWeekStart = new Date(today);
                 forWeekStart.setUTCHours(0, 0, 0, 0);
                 forWeekStart.setDate(today.getDate() - currentWeekDay);
 
-                const weekStart = new Date(
-                  new Date(forWeekStart).getTime() - tz,
-                );
+                const weekStart = new Date(forWeekStart);
                 weekStart.setUTCHours(0, 0, 0, 0);
 
-                const forWeekEnd = new Date(new Date(weekStart).getTime() - tz);
+                const forWeekEnd = new Date(weekStart);
                 forWeekEnd.setUTCHours(0, 0, 0, 0);
                 forWeekEnd.setDate(weekStart.getDate() + 6);
 
-                const weekEnd = new Date(new Date(forWeekEnd).getTime() - tz);
+                const weekEnd = new Date(forWeekEnd);
                 weekEnd.setUTCHours(23, 59, 59, 999);
 
                 console.log(
