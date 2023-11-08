@@ -45,25 +45,26 @@ export const UsersComponent = memo(() => {
 
             <Table.Body>
               {state.data?.map((user) => {
-                const today = new Date(
-                  new Date().getTime() - new Date().getTimezoneOffset() * 60000,
-                );
+                const tz = new Date().getTimezoneOffset() * 60000;
+                const today = new Date(new Date().getTime() - tz);
                 today.setUTCHours(0, 0, 0, 0);
 
                 const currentWeekDay = today.getDay();
 
-                const forWeekStart = new Date(today);
+                const forWeekStart = new Date(new Date(today).getTime() - tz);
                 forWeekStart.setUTCHours(0, 0, 0, 0);
                 forWeekStart.setDate(today.getDate() - currentWeekDay);
 
-                const weekStart = new Date(forWeekStart);
+                const weekStart = new Date(
+                  new Date(forWeekStart).getTime() - tz,
+                );
                 weekStart.setUTCHours(0, 0, 0, 0);
 
-                const forWeekEnd = new Date(weekStart);
+                const forWeekEnd = new Date(new Date(weekStart).getTime() - tz);
                 forWeekEnd.setUTCHours(0, 0, 0, 0);
                 forWeekEnd.setDate(weekStart.getDate() + 6);
 
-                const weekEnd = new Date(forWeekEnd);
+                const weekEnd = new Date(new Date(forWeekEnd).getTime() - tz);
                 weekEnd.setUTCHours(23, 59, 59, 999);
 
                 console.log(
