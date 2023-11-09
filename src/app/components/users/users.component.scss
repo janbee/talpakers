@@ -49,6 +49,25 @@
 
     tr {
       cursor: pointer;
+      position: relative;
+
+      &.selected{
+
+        td:first-child{
+          &:before{
+            background: #7e41ea !important;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 2px;
+            top: 0;
+            left: 0;
+          }
+        }
+
+
+
+      }
     }
   }
 }

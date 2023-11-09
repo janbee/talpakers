@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, SyntheticEvent, useCallback } from "react";
 import "./users.component.scss";
 import { Icon, Segment, Table } from "semantic-ui-react";
 import { useApi, useCallbackMemo } from "@utilities/utils";
@@ -13,17 +13,29 @@ export const UsersComponent = memo(() => {
   const state = useApi<UserModel[]>(() => API.getUsers(), {
     withLoading: false,
   });
-
+  const currentLocation = JSON.stringify(window.location.href);
   const navigate = useNavigate();
 
-  const handleUserDetails = useCallbackMemo((user: UserModel) => {
-    const currentLocation = JSON.stringify(window.location.href);
-    navigate(`@${user._id}`, {
-      relative: "route",
-      replace: currentLocation.includes("@"),
-    });
-  }, []);
+  const handleUserDetails = useCallbackMemo(
+    (user: UserModel) => {
+      console.log("gaga-------------------------------------", user);
+      navigate(`@${user._id}`, {
+        relative: "route",
+        replace: currentLocation.includes("@"),
+      });
+    },
+    [navigate],
+  );
 
+  const selected = currentLocation
+    .replaceAll('"', "")
+    .split("/")
+    .pop()
+    ?.replace("@", "");
+  console.log(
+    "gaga-------------------------------------render UsersComponent",
+    selected,
+  );
   return (
     <div className="users-wrap">
       <Segment inverted>
@@ -65,7 +77,7 @@ export const UsersComponent = memo(() => {
                 const weekEnd = new Date(forWeekEnd);
                 weekEnd.setUTCHours(23, 59, 59, 999);
 
-                console.log(
+                /*console.log(
                   "gaga------------------------------------",
                   JSON.stringify(
                     {
@@ -81,10 +93,16 @@ export const UsersComponent = memo(() => {
                     null,
                     2,
                   ),
-                );
+                );*/
 
                 return (
-                  <Table.Row key={user._id} onClick={handleUserDetails(user)}>
+                  <Table.Row
+                    className={classNames({
+                      selected: user._id === selected,
+                    })}
+                    key={user._id}
+                    onClick={handleUserDetails(user)}
+                  >
                     <Table.Cell collapsing>{user._id}</Table.Cell>
                     <Table.Cell collapsing>
                       <span
