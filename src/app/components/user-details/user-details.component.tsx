@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from "react";
 import "./user-details.component.scss";
-import { Header, Popup, Segment } from "semantic-ui-react";
-import { EarningsModel } from "@models/custom.models";
+import { Header, Icon, Label, Menu, Popup, Segment } from "semantic-ui-react";
+import { EarningsModel, UserModel } from "@models/custom.models";
 import { API } from "@services/api.service";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
 import { groupBy, sumBy } from "lodash";
@@ -16,6 +16,7 @@ class State {
   list: { title: string; data: EarningsModel[] }[] = [];
   yearTotalWinnings: number = 0;
   yearTotalWithdrawals: number = 0;
+  userDetails?: UserModel[] | null;
 }
 
 export const UserDetailsComponent = memo(() => {
@@ -30,7 +31,8 @@ export const UserDetailsComponent = memo(() => {
       API.getBetSummary({ email }),
       API.getBonuses({ email }),
       API.getWithdrawals({ email }),
-    ]).subscribe(([betSummaryList, bonusList, withdrawalList]) => {
+      API.getUser({ email }),
+    ]).subscribe(([betSummaryList, bonusList, withdrawalList, userDetails]) => {
       const filteredBonusList = bonusList?.filter((item) => {
         return (
           item.TransactionStatus === "Approved" &&
@@ -145,12 +147,17 @@ export const UserDetailsComponent = memo(() => {
         return sumBy(item.data, "withdrawal.Amount");
       });
 
+      console.log(
+        "gaga----------------------userDetails---------------",
+        userDetails,
+      );
       setState((prevState) => ({
         ...prevState,
         loading: false,
         yearTotalWinnings,
         yearTotalWithdrawals,
         list: defaultList,
+        userDetails,
       }));
     });
   }, [email]);
@@ -161,7 +168,38 @@ export const UserDetailsComponent = memo(() => {
         <div className="ttl">
           <span>{email}</span>
           <div className="row-wrap between">
-            <span>{moment().format("YYYY")}</span>
+            <Popup
+              on="hover"
+              basic
+              trigger={<Icon name="info circle" />}
+              position="bottom right"
+              mouseLeaveDelay={3000}
+            >
+              <Menu vertical>
+                <Menu.Item header>
+                  <span>Year {moment().format("YYYY")}</span>
+                </Menu.Item>
+                <Menu.Item>
+                  <Label color="green">
+                    {Money(state.userDetails?.[0].data?.userSession?.cash || 0)}
+                  </Label>
+                  <span>Cash</span>
+                </Menu.Item>
+
+                <Menu.Item>
+                  <Label color="green">{Money(state.yearTotalWinnings)}</Label>
+                  <span>Earnings</span>
+                </Menu.Item>
+
+                <Menu.Item>
+                  <Label color="purple">
+                    {Money(Math.abs(state.yearTotalWithdrawals || 0))}
+                  </Label>
+                  <span>Cashout</span>
+                </Menu.Item>
+              </Menu>
+            </Popup>
+            {/*<span>{moment().format("YYYY")}</span>
             <div className="winnings-withdrawal-wrap">
               <div>
                 <span className="lbl">Earnings</span>
@@ -184,7 +222,7 @@ export const UserDetailsComponent = memo(() => {
                   {`${Money(Math.abs(state.yearTotalWithdrawals || 0))}`}
                 </span>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
         <hr />

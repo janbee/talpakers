@@ -6,6 +6,7 @@ import {
   BonusModel,
   MongoCollection,
   SettledBetsModel,
+  UserModel,
   WithdrawalModel,
 } from "@models/custom.models";
 import { catchError, map, Observable, of, throwError, timeout } from "rxjs";
@@ -123,6 +124,26 @@ class ApiService {
           each: 10000,
           with: () =>
             throwError(() => "Server is taking too long to respond! getUsers"),
+        }),
+        catchError((err) => {
+          ApiService.catchErrorAlert(err);
+          return of(null);
+        }),
+        map((res) => {
+          return EJSON.parse(JSON.stringify(res));
+        }),
+      );
+  }
+
+  getUser(filter: Object): Observable<UserModel[] | null> {
+    return this.$RealmDB
+      .collection(MongoCollection.User)
+      .getBy(filter)
+      .pipe(
+        timeout({
+          each: 10000,
+          with: () =>
+            throwError(() => "Server is taking too long to respond! getUser"),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);

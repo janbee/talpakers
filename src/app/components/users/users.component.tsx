@@ -1,4 +1,4 @@
-import React, { memo, SyntheticEvent, useCallback } from "react";
+import React, { memo, SyntheticEvent, useCallback, useEffect } from "react";
 import "./users.component.scss";
 import { Icon, Segment, Table } from "semantic-ui-react";
 import { useApi, useCallbackMemo } from "@utilities/utils";
@@ -8,11 +8,13 @@ import moment from "moment";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
 import classNames from "classnames";
+import { Store } from "@services/store.service";
 
 export const UsersComponent = memo(() => {
   const state = useApi<UserModel[]>(() => API.getUsers(), {
     withLoading: false,
   });
+
   const currentLocation = JSON.stringify(window.location.href);
   const navigate = useNavigate();
 

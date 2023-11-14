@@ -35,6 +35,10 @@ export interface UserSessionModel {
   EXTERNAL_PLAYER_ID: string;
   ISID: string;
   TWO_FACTOR_AUTH: string;
+  ServerTime: string;
+  Email: string;
+  NET_SessionId: string;
+  cash: number;
 }
 
 export interface UserDataModel {
