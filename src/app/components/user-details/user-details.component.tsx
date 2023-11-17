@@ -194,7 +194,7 @@ export const UserDetailsComponent = memo(() => {
                 <Menu.Item>
                   <Header as="h4">Available Cashout</Header>
                   <p>
-                    <Label color="green">
+                    <Label color="orange">
                       {Money(
                         state.userDetails?.[0].data?.userSession?.cashout || 0,
                       )}
@@ -212,7 +212,7 @@ export const UserDetailsComponent = memo(() => {
                 <Menu.Item>
                   <Header as="h4">Total Cashout this year</Header>
                   <p>
-                    <Label color="purple">
+                    <Label color="red">
                       {" "}
                       {Money(Math.abs(state.yearTotalWithdrawals || 0))}
                     </Label>
