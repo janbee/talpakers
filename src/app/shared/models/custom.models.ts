@@ -32,13 +32,15 @@ export interface TalpakSettingModel {
 }
 
 export interface UserSessionModel {
-  EXTERNAL_PLAYER_ID: string;
   ISID: string;
-  TWO_FACTOR_AUTH: string;
-  ServerTime: string;
+  EXTERNAL_PLAYER_ID: string;
   Email: string;
   NET_SessionId: string;
+  id: string;
+  token: string;
+  ServerTime: string;
   cash: number;
+  cashout: number;
 }
 
 export interface UserDataModel {

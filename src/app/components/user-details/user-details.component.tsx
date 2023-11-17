@@ -173,29 +173,50 @@ export const UserDetailsComponent = memo(() => {
               basic
               trigger={<Icon name="info circle" />}
               position="bottom right"
-              mouseLeaveDelay={3000}
+              mouseLeaveDelay={60000}
             >
               <Menu vertical>
                 <Menu.Item header>
-                  <span>Year {moment().format("YYYY")}</span>
+                  <Header as="h3">
+                    Year {moment().format("YYYY")} Details
+                  </Header>
                 </Menu.Item>
                 <Menu.Item>
-                  <Label color="green">
-                    {Money(state.userDetails?.[0].data?.userSession?.cash || 0)}
-                  </Label>
-                  <span>Cash</span>
+                  <Header as="h4">Current Balance</Header>
+                  <p>
+                    <Label color="green">
+                      {Money(
+                        state.userDetails?.[0].data?.userSession?.cash || 0,
+                      )}
+                    </Label>
+                  </p>
                 </Menu.Item>
-
                 <Menu.Item>
-                  <Label color="green">{Money(state.yearTotalWinnings)}</Label>
-                  <span>Earnings</span>
+                  <Header as="h4">Available Cashout</Header>
+                  <p>
+                    <Label color="green">
+                      {Money(
+                        state.userDetails?.[0].data?.userSession?.cashout || 0,
+                      )}
+                    </Label>
+                  </p>
                 </Menu.Item>
-
                 <Menu.Item>
-                  <Label color="purple">
-                    {Money(Math.abs(state.yearTotalWithdrawals || 0))}
-                  </Label>
-                  <span>Cashout</span>
+                  <Header as="h4">Total Earnings this year</Header>
+                  <p>
+                    <Label color="purple">
+                      {Money(state.yearTotalWinnings)}
+                    </Label>
+                  </p>
+                </Menu.Item>
+                <Menu.Item>
+                  <Header as="h4">Total Cashout this year</Header>
+                  <p>
+                    <Label color="purple">
+                      {" "}
+                      {Money(Math.abs(state.yearTotalWithdrawals || 0))}
+                    </Label>
+                  </p>
                 </Menu.Item>
               </Menu>
             </Popup>
