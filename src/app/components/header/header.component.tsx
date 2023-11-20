@@ -2,6 +2,7 @@ import React, { memo, useCallback } from "react";
 import "./header.component.scss";
 import { Image } from "semantic-ui-react";
 import { useNavigate } from "react-router-dom";
+import packageInfo from "../../../../package.json";
 
 export const HeaderComponent = memo(() => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export const HeaderComponent = memo(() => {
         />
       </div>
       <span onClick={handleClick}>Talpakers</span>
+      <span className="version">v{packageInfo.version}</span>
     </div>
   );
 });
