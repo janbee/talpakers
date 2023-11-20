@@ -94,10 +94,15 @@ export const UserDetailsComponent = memo(() => {
            * get withdrawal
            * */
           const foundWithdrawal = filteredWithdrawalList?.find((item) => {
-            const TransactionDateTime = moment(item.TransactionDateTime);
+            const transactionDate = new Date(
+              item.TransactionDateTime.split("T")[0],
+            );
+            transactionDate.setUTCHours(0, 0, 0, 0);
+            const TransactionDateTime = moment(transactionDate.toISOString());
+
             return (
-              TransactionDateTime.isAfter(weekStart) &&
-              TransactionDateTime.isBefore(weekEnd)
+              TransactionDateTime.isSameOrAfter(weekStart) &&
+              TransactionDateTime.isSameOrBefore(weekEnd)
             );
           });
 
@@ -220,30 +225,6 @@ export const UserDetailsComponent = memo(() => {
                 </Menu.Item>
               </Menu>
             </Popup>
-            {/*<span>{moment().format("YYYY")}</span>
-            <div className="winnings-withdrawal-wrap">
-              <div>
-                <span className="lbl">Earnings</span>
-                <span
-                  className={classNames({
-                    winnings: state.yearTotalWinnings > 0,
-                    losses: state.yearTotalWinnings < 0,
-                  })}
-                >
-                  {`${Money(state.yearTotalWinnings)}`}
-                </span>
-              </div>
-              <div>
-                <span className="lbl">Cashout</span>
-                <span
-                  className={classNames({
-                    losses: true,
-                  })}
-                >
-                  {`${Money(Math.abs(state.yearTotalWithdrawals || 0))}`}
-                </span>
-              </div>
-            </div>*/}
           </div>
         </div>
         <hr />
