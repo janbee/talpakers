@@ -41,7 +41,9 @@ export const UserDetailsComponent = memo(() => {
         );
       });
       const filteredWithdrawalList = withdrawalList?.filter((item) => {
-        return ["Approved", "Pending"].includes(item.TransactionStatus);
+        return ["Approved", "Pending", "Sending to Processor"].includes(
+          item.TransactionStatus,
+        );
       });
       console.log(
         "gaga-------------------------------bonusList------",
@@ -258,6 +260,7 @@ export const UserDetailsComponent = memo(() => {
                             on="click"
                             position="top center"
                             trigger={<div className="has-withdrawal" />}
+                            flowing
                           >
                             <Popup.Header>
                               Withdrawal (
@@ -269,6 +272,9 @@ export const UserDetailsComponent = memo(() => {
                                   "green-light":
                                     item.withdrawal.TransactionStatus ===
                                     "Approved",
+                                  "blue-light":
+                                    item.withdrawal.TransactionStatus ===
+                                    "Sending to Processor",
                                 })}
                               >
                                 {item.withdrawal.TransactionStatus}

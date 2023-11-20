@@ -10,6 +10,7 @@ body {
   --green-light: #568e00;
   --red-light: #c30000;
   --yellow-light: #f2b400;
+  --blue-light: #1c50ff;
 
   --green-dark: greenyellow;
   --red-dark: #ff3a3a;
@@ -47,6 +48,10 @@ body {
 
   .yellow-light {
     color: var(--yellow-light) !important;
+  }
+
+  .blue-light {
+    color: var(--blue-light) !important;
   }
 }
 
