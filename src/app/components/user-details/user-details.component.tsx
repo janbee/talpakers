@@ -41,7 +41,7 @@ export const UserDetailsComponent = memo(() => {
         );
       });
       const filteredWithdrawalList = withdrawalList?.filter((item) => {
-        return item.TransactionStatus === "Approved";
+        return ["Approved", "Pending"].includes(item.TransactionStatus);
       });
       console.log(
         "gaga-------------------------------bonusList------",
