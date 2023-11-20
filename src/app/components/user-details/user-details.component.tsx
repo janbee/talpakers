@@ -259,7 +259,22 @@ export const UserDetailsComponent = memo(() => {
                             position="top center"
                             trigger={<div className="has-withdrawal" />}
                           >
-                            <Popup.Header>Withdrawal</Popup.Header>
+                            <Popup.Header>
+                              Withdrawal (
+                              <span
+                                className={classNames({
+                                  "yellow-light":
+                                    item.withdrawal.TransactionStatus ===
+                                    "Pending",
+                                  "green-light":
+                                    item.withdrawal.TransactionStatus ===
+                                    "Approved",
+                                })}
+                              >
+                                {item.withdrawal.TransactionStatus}
+                              </span>
+                              )
+                            </Popup.Header>
                             <Popup.Content>
                               {`${item.withdrawal.PaymentMethodInfo} ${Money(
                                 item.withdrawal.Amount,

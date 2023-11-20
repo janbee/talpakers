@@ -132,14 +132,14 @@
   }
 
   .winnings {
-    color: greenyellow !important;
+    color: var(--green-dark) !important;
   }
 
   .losses {
-    color: #ff3a3a !important;
+    color: var(--red-dark) !important;
   }
 
   .approx {
-    color: #fbbd08 !important;
+    color: var(--yellow-dark) !important;
   }
 }
