@@ -275,9 +275,10 @@ export const UserDetailsComponent = memo(() => {
                                   "green-light":
                                     item.withdrawal.TransactionStatus ===
                                     "Approved",
-                                  "blue-light":
-                                    item.withdrawal.TransactionStatus ===
+                                  "blue-light": [
+                                    "In Process",
                                     "Sending to Processor",
+                                  ].includes(item.withdrawal.TransactionStatus),
                                 })}
                               >
                                 {item.withdrawal.TransactionStatus}
