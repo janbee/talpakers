@@ -123,8 +123,7 @@ export const UsersComponent = memo(() => {
                           unknown: user.data?.weekStatus?.done === undefined,
                           waiting:
                             weekStart.toISOString() !==
-                            user.data?.weekStatus?.startDate,
-                          idle: isIdle,
+                              user.data?.weekStatus?.startDate || isIdle,
                         })}
                       />
                     </Table.Cell>
