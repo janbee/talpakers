@@ -12,6 +12,24 @@
     display: flex;
     flex-direction: column;
 
+    @media only screen and (max-width: 767px) {
+      min-width: 380px;
+      thead {
+        display: none !important;
+      }
+
+      tbody {
+        tr {
+          position: relative;
+
+          .right {
+            text-align: left;
+          }
+        }
+      }
+
+    }
+
     .ttl-wrap {
       .icon {
         cursor: pointer;
@@ -43,6 +61,11 @@
       &.waiting:before {
         color: #ff5f5f;
         content: "Wating";
+      }
+
+      &.idle:before {
+        color: #629dff;
+        content: "Idle";
       }
 
 

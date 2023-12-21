@@ -1,4 +1,4 @@
-import React, { memo, SyntheticEvent, useCallback, useEffect } from "react";
+import React, { memo } from "react";
 import "./users.component.scss";
 import { Icon, Segment, Table } from "semantic-ui-react";
 import { useApi, useCallbackMemo } from "@utilities/utils";
@@ -8,7 +8,6 @@ import moment from "moment";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
 import classNames from "classnames";
-import { Store } from "@services/store.service";
 
 export const UsersComponent = memo(() => {
   const state = useApi<UserModel[]>(() => API.getUsers(), {
@@ -97,6 +96,15 @@ export const UsersComponent = memo(() => {
                   ),
                 );*/
 
+                const inProgress = user.data?.weekStatus?.done === false;
+                const lastUpdate = moment(user.updatedAt || user.createdAt);
+                const duration = moment.duration(lastUpdate.diff(Date.now()));
+                const minutesPassed = Math.abs(duration.asMinutes());
+                let isIdle = false;
+                if (inProgress && minutesPassed >= 30) {
+                  isIdle = true;
+                }
+
                 return (
                   <Table.Row
                     className={classNames({
@@ -111,17 +119,18 @@ export const UsersComponent = memo(() => {
                         className={classNames({
                           status: true,
                           done: user.data?.weekStatus?.done === true,
-                          "in-progress": user.data?.weekStatus?.done === false,
+                          "in-progress": inProgress,
                           unknown: user.data?.weekStatus?.done === undefined,
                           waiting:
                             weekStart.toISOString() !==
                             user.data?.weekStatus?.startDate,
+                          idle: isIdle,
                         })}
                       />
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
                     <Table.Cell textAlign="right">
-                      {moment(user.updatedAt || user.createdAt).fromNow()}
+                      {lastUpdate.fromNow()}
                     </Table.Cell>
                   </Table.Row>
                 );
