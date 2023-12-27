@@ -37,7 +37,7 @@ export const UserDetailsComponent = memo(() => {
         return (
           item.TransactionStatus === "Approved" &&
           item.TransactionType === "Bonus" &&
-          item.PaymentMethodInfo === "Bonus"
+          ["IMMEDIATE BONUS", "Bonus"].includes(item.PaymentMethodInfo)
         );
       });
       const filteredWithdrawalList = withdrawalList?.filter((item) => {
