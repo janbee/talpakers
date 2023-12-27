@@ -306,7 +306,7 @@ export const UserDetailsComponent = memo(() => {
                           </div>
                           <div className="row-wrap">
                             <span>Earnings</span>
-                            <span>{Money(item.totalEarnings)}</span>
+                            <span>{Money(Math.floor(item.totalEarnings))}</span>
                           </div>
                           <div className="row-wrap">
                             <span>Bonus</span>
@@ -326,7 +326,7 @@ export const UserDetailsComponent = memo(() => {
                                       approx: true,
                                     })}
                                   >
-                                    {Money(item.approxWinnings)}
+                                    {Money(Math.floor(item.approxWinnings))}
                                   </span>
                                 }
                               />
@@ -340,7 +340,7 @@ export const UserDetailsComponent = memo(() => {
                                   losses: item.winnings < 0,
                                 })}
                               >
-                                {Money(item.winnings)}
+                                {Money(Math.floor(item.winnings))}
                               </span>
                             </div>
                           )}
