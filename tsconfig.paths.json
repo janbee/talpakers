@@ -7,7 +7,9 @@
       "@utilities/*": ["./app/shared/utils/*"],
       "@components/*": ["./app/components/*"],
       "@models/*": ["./app/shared/models/*"],
-      "@assets/*": ["./assets/*"]
+      "@assets/*": ["./assets/*"],
+      "crypto": ["node_modules/crypto-browserify"],
+      "stream": ["node_modules/stream-browserify"]
     },
     "jsx": "preserve"
   }

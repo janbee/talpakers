@@ -33,6 +33,7 @@ export const UsersComponent = memo(() => {
     .split("/")
     .pop()
     ?.replace("@", "");
+
   console.log(
     "gaga-------------------------------------render UsersComponent",
     selected,
@@ -113,7 +114,9 @@ export const UsersComponent = memo(() => {
                     key={user._id}
                     onClick={handleUserDetails(user)}
                   >
-                    <Table.Cell collapsing>{user._id}</Table.Cell>
+                    <Table.Cell collapsing>
+                      <span>{user._id}</span>
+                    </Table.Cell>
                     <Table.Cell collapsing>
                       <span
                         className={classNames({

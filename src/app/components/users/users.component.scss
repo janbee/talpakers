@@ -12,8 +12,10 @@
     display: flex;
     flex-direction: column;
 
+
+
     @media only screen and (max-width: 767px) {
-      min-width: 380px;
+      min-width: 280px;
       thead {
         display: none !important;
       }
@@ -117,6 +119,8 @@
           position: relative;
           color: #e9bcff;
           z-index: 2;
+          text-overflow: ellipsis;
+          overflow: hidden;
           $borderColor: #8d4ffc;
 
           &:first-child {
