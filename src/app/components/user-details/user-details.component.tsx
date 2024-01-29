@@ -53,10 +53,6 @@ export const UserDetailsComponent = memo(() => {
         "gaga-------------------------------bonusList------",
         filteredBonusList,
       );
-      console.log(
-        "gaga-------------------------------withdrawalList------",
-        filteredWithdrawalList,
-      );
 
       const dataList = Array.from(Array(moment().isoWeeksInYear()).keys()).map(
         (weekNumber) => {
@@ -85,8 +81,10 @@ export const UserDetailsComponent = memo(() => {
 
           /*
            * get bonus
+           * reverse to get the first occurrence not the latest
            * */
-          const foundBonus = filteredBonusList?.find((item) => {
+
+          const foundBonus = filteredBonusList?.reverse().find((item) => {
             const TransactionDateTime = moment(
               item.TransactionDateTime,
             ).subtract(7, "days");

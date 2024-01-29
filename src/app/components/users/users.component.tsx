@@ -97,6 +97,11 @@ export const UsersComponent = memo(() => {
                   ),
                 );*/
 
+                console.log(
+                  "gaga-----------------------123123--------user------",
+                  user,
+                );
+
                 const inProgress = user.data?.weekStatus?.done === false;
                 const lastUpdate = moment(user.updatedAt || user.createdAt);
                 const duration = moment.duration(lastUpdate.diff(Date.now()));
