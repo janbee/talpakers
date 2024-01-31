@@ -10,11 +10,12 @@ export interface AlertModel {
   duration?: number;
 }
 
-export interface UserModel {
+export interface UserDetailModel {
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  data?: UserDataModel;
+  build: string;
+  data: UserDataModel;
+  createdAt?: Date;
+  updatedAt?: Date | null;
 }
 
 export enum MongoCollection {
@@ -52,8 +53,9 @@ export interface UserDataModel {
     done: boolean;
     startDate: string;
     endDate: string;
+    winnings?: number;
   };
-  version: string;
+  version?: string;
 }
 
 export interface EarningsModel {

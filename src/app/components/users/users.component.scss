@@ -6,12 +6,10 @@
 
   .segment {
     flex: 1;
-    max-width: 33%;
     min-width: 525px;
     margin: 0;
     display: flex;
     flex-direction: column;
-
 
 
     @media only screen and (max-width: 767px) {
@@ -24,8 +22,8 @@
         tr {
           position: relative;
 
-          .right {
-            text-align: left;
+          td {
+            text-align: left !important;
           }
         }
       }
@@ -78,43 +76,6 @@
 
       &.selected {
 
-
-        /*td {
-          position: relative;
-          color: #e9bcff;
-          z-index: 2;
-          $borderColor: #8d4ffc;
-
-          &:first-child {
-            &:after {
-              border-left: 1px solid $borderColor;
-            }
-          }
-
-          &:last-child {
-
-            &:after {
-              border-right: 1px solid $borderColor;
-            }
-          }
-
-          &:after {
-            background: #332d3c !important;
-            content: "";
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            border-top: 1px solid $borderColor;
-            border-bottom: 1px solid $borderColor;
-
-
-          }
-        }*/
-
-
         td {
           position: relative;
           color: #e9bcff;
@@ -132,9 +93,46 @@
               left: 0;
               top: 0;
             }
+
+            &.multi-select:hover {
+              background: rgba(135, 75, 255, 0.3) !important;
+            }
+
+            background: rgba(135, 75, 255, 0.3);
           }
 
         }
+      }
+
+      td.selectable {
+        $w: 30px;
+        width: $w;
+        min-width: $w;
+        max-width: $w;
+
+        .checkbox{
+          display: flex;
+          height: 100%;
+        }
+
+        input, label {
+          opacity: 0 !important;
+          flex: 1;
+        }
+      }
+
+      td {
+        height: 40px;
+      }
+
+      .win {
+        color: var(--green-dark) !important;
+        font-weight: bold;
+      }
+
+      .lose {
+        color: var(--red-dark) !important;
+        font-weight: bold;
       }
     }
   }

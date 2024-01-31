@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from "react";
 import "./user-details.component.scss";
 import { Header, Icon, Label, Menu, Popup, Segment } from "semantic-ui-react";
-import { EarningsModel, UserModel } from "@models/custom.models";
+import { EarningsModel, UserDetailModel } from "@models/custom.models";
 import { API } from "@services/api.service";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
 import { groupBy, sumBy } from "lodash";
@@ -16,22 +16,23 @@ class State {
   list: { title: string; data: EarningsModel[] }[] = [];
   yearTotalWinnings: number = 0;
   yearTotalWithdrawals: number = 0;
-  userDetails?: UserModel[] | null;
+  userDetails?: UserDetailModel[] | null;
 }
 
 export const UserDetailsComponent = memo(() => {
   const { pathname } = useLocation();
-  const email = pathname.split("/").pop()?.replace("@", "");
+  const emails = pathname.split("/").pop()?.replace("@", "");
   const [state, setState] = useState<State>(new State());
 
   useEffect(() => {
     setState((prevState) => ({ ...prevState, loading: true }));
 
+    const emailArr = emails?.split(",");
     forkJoin([
-      API.getBetSummary({ email }),
-      API.getBonuses({ email }),
-      API.getWithdrawals({ email }),
-      API.getUser({ email }),
+      API.getBetSummary({ email: { $in: emailArr } }),
+      API.getBonuses({ email: { $in: emailArr } }),
+      API.getWithdrawals({ email: { $in: emailArr } }),
+      API.getUser({ email: { $in: emailArr } }),
     ]).subscribe(([betSummaryList, bonusList, withdrawalList, userDetails]) => {
       const filteredBonusList = bonusList?.filter((item) => {
         return (
@@ -41,6 +42,7 @@ export const UserDetailsComponent = memo(() => {
           item.Amount >= 10
         );
       });
+
       const filteredWithdrawalList = withdrawalList?.filter((item) => {
         return [
           "Approved",
@@ -49,10 +51,6 @@ export const UserDetailsComponent = memo(() => {
           "In Process",
         ].includes(item.TransactionStatus);
       });
-      console.log(
-        "gaga-------------------------------bonusList------",
-        filteredBonusList,
-      );
 
       const dataList = Array.from(Array(moment().isoWeeksInYear()).keys()).map(
         (weekNumber) => {
@@ -71,7 +69,7 @@ export const UserDetailsComponent = memo(() => {
           weekStart.setUTCHours(0, 0, 0, 0);
           weekEnd.setUTCHours(23, 59, 59, 999);
 
-          const betSummary = betSummaryList?.find((item) => {
+          const filteredBetSum = betSummaryList?.filter((item) => {
             return (
               item.startDate === weekStart.toISOString() &&
               item.endDate === weekEnd.toISOString() &&
@@ -83,16 +81,20 @@ export const UserDetailsComponent = memo(() => {
            * get bonus
            * reverse to get the first occurrence not the latest
            * */
-
-          const foundBonus = filteredBonusList?.reverse().find((item) => {
-            const TransactionDateTime = moment(
-              item.TransactionDateTime,
-            ).subtract(7, "days");
-            return (
-              TransactionDateTime.isAfter(weekStart) &&
-              TransactionDateTime.isBefore(weekEnd)
-            );
-          });
+          const filteredBonus = emailArr
+            ?.map((email) => {
+              return filteredBonusList?.reverse().find((item) => {
+                const TransactionDateTime = moment(
+                  item.TransactionDateTime,
+                ).subtract(7, "days");
+                return (
+                  TransactionDateTime.isAfter(weekStart) &&
+                  TransactionDateTime.isBefore(weekEnd) &&
+                  item.email === email
+                );
+              });
+            })
+            .filter(Boolean);
 
           /*
            * get withdrawal
@@ -112,9 +114,40 @@ export const UserDetailsComponent = memo(() => {
 
           let winnings = 0;
 
-          if (foundBonus && betSummary) {
+          const bonus = sumBy(
+            filteredBetSum,
+            (betSummary) => betSummary?.betSummary.bonus || 0,
+          );
+          const totalStaked = sumBy(
+            filteredBetSum,
+            (betSummary) => betSummary?.betSummary.totalStaked || 0,
+          );
+          const totalEarnings = sumBy(
+            filteredBetSum,
+            (betSummary) => betSummary?.betSummary.totalEarnings || 0,
+          );
+          let approxWinnings = sumBy(
+            filteredBetSum,
+            (betSummary) => betSummary?.betSummary.winnings || 0,
+          );
+
+          let playAbBonus = sumBy(
+            filteredBonus,
+            (foundBonus) => foundBonus?.Amount || 0,
+          );
+          if (filteredBonus?.length !== emailArr?.length) {
+            playAbBonus = bonus;
+          } else {
+            approxWinnings = 0;
+          }
+
+          if (filteredBonus?.length && filteredBetSum?.length) {
             winnings =
-              foundBonus.Amount + (betSummary?.betSummary.totalEarnings || 0);
+              playAbBonus +
+              sumBy(
+                filteredBetSum,
+                (betSummary) => betSummary?.betSummary.totalEarnings || 0,
+              );
           }
 
           return {
@@ -123,11 +156,11 @@ export const UserDetailsComponent = memo(() => {
             year,
             startDate: weekStart.toISOString(),
             endDate: weekEnd.toISOString(),
-            bonus: foundBonus?.Amount || betSummary?.betSummary.bonus || 0,
-            totalStaked: betSummary?.betSummary.totalStaked || 0,
-            totalEarnings: betSummary?.betSummary.totalEarnings || 0,
+            bonus: playAbBonus || bonus || 0,
+            totalStaked,
+            totalEarnings,
             winnings,
-            approxWinnings: betSummary?.betSummary.winnings || 0,
+            approxWinnings,
             loading: false,
             fetch: 0,
             title: mon,
@@ -143,11 +176,6 @@ export const UserDetailsComponent = memo(() => {
         };
       });
 
-      console.log(
-        "gaga----------------------------defaultList---------",
-        defaultList,
-      );
-
       const yearTotalWinnings = sumBy(defaultList, (item) => {
         return sumBy(item.data, "winnings");
       });
@@ -156,10 +184,6 @@ export const UserDetailsComponent = memo(() => {
         return sumBy(item.data, "withdrawal.Amount");
       });
 
-      console.log(
-        "gaga----------------------userDetails---------------",
-        userDetails,
-      );
       setState((prevState) => ({
         ...prevState,
         loading: false,
@@ -169,67 +193,80 @@ export const UserDetailsComponent = memo(() => {
         userDetails,
       }));
     });
-  }, [email]);
+  }, [emails]);
 
+  const hasMultiUser = (emails?.split(",") || []).length > 1;
   return (
-    <div className="user-details-wrap">
+    <div
+      className={classNames({
+        "user-details-wrap": true,
+        "multi-users": hasMultiUser,
+      })}
+    >
       <Segment inverted>
         <div className="ttl">
-          <span>{email}</span>
-          <div className="row-wrap between">
-            <Popup
-              on="hover"
-              basic
-              trigger={<Icon name="info circle" />}
-              position="bottom right"
-              mouseLeaveDelay={60000}
-            >
-              <Menu vertical>
-                <Menu.Item header>
-                  <Header as="h3">
-                    Year {moment().format("YYYY")} Details
-                  </Header>
-                </Menu.Item>
-                <Menu.Item>
-                  <Header as="h4">Current Balance</Header>
-                  <p>
-                    <Label color="green">
-                      {Money(
-                        state.userDetails?.[0].data?.userSession?.cash || 0,
-                      )}
-                    </Label>
-                  </p>
-                </Menu.Item>
-                <Menu.Item>
-                  <Header as="h4">Available Cashout</Header>
-                  <p>
-                    <Label color="orange">
-                      {Money(
-                        state.userDetails?.[0].data?.userSession?.cashout || 0,
-                      )}
-                    </Label>
-                  </p>
-                </Menu.Item>
-                <Menu.Item>
-                  <Header as="h4">Total Earnings this year</Header>
-                  <p>
-                    <Label color="purple">
-                      {Money(state.yearTotalWinnings)}
-                    </Label>
-                  </p>
-                </Menu.Item>
-                <Menu.Item>
-                  <Header as="h4">Total Cashout this year</Header>
-                  <p>
-                    <Label color="red">
-                      {" "}
-                      {Money(Math.abs(state.yearTotalWithdrawals || 0))}
-                    </Label>
-                  </p>
-                </Menu.Item>
-              </Menu>
-            </Popup>
-          </div>
+          {!hasMultiUser ? (
+            <span>{emails}</span>
+          ) : (
+            <span>Multi Users View</span>
+          )}
+          {!hasMultiUser && (
+            <div className="row-wrap between">
+              <Popup
+                on="hover"
+                basic
+                trigger={<Icon name="info circle" />}
+                position="bottom right"
+                mouseLeaveDelay={60000}
+              >
+                <Menu vertical>
+                  <Menu.Item header>
+                    <Header as="h3">
+                      Year {moment().format("YYYY")} Details
+                    </Header>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <Header as="h4">Current Balance</Header>
+                    <p>
+                      <Label color="green">
+                        {Money(
+                          state.userDetails?.[0].data?.userSession?.cash || 0,
+                        )}
+                      </Label>
+                    </p>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <Header as="h4">Available Cashout</Header>
+                    <p>
+                      <Label color="orange">
+                        {Money(
+                          state.userDetails?.[0].data?.userSession?.cashout ||
+                            0,
+                        )}
+                      </Label>
+                    </p>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <Header as="h4">Total Earnings this year</Header>
+                    <p>
+                      <Label color="purple">
+                        {Money(state.yearTotalWinnings)}
+                      </Label>
+                    </p>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <Header as="h4">Total Cashout this year</Header>
+                    <p>
+                      <Label color="red">
+                        {" "}
+                        {Money(Math.abs(state.yearTotalWithdrawals || 0))}
+                      </Label>
+                    </p>
+                  </Menu.Item>
+                </Menu>
+              </Popup>
+            </div>
+          )}
         </div>
         <hr />
         <div className="user-details-content-wrap">
@@ -257,7 +294,7 @@ export const UserDetailsComponent = memo(() => {
                   {mon.data.map((item) => {
                     return (
                       <div key={item._id} className="week">
-                        {!!item.withdrawal && (
+                        {!!item.withdrawal && !hasMultiUser && (
                           <Popup
                             on="click"
                             position="top center"
@@ -312,7 +349,7 @@ export const UserDetailsComponent = memo(() => {
                             <span>{Money(item.bonus)}</span>
                           </div>
 
-                          {(item.winnings === 0 && item.totalStaked > 0 && (
+                          {(item.approxWinnings > 0 && (
                             <div className="row-wrap">
                               <span>Winnings</span>
 

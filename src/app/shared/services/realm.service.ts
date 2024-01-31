@@ -32,8 +32,8 @@ class CRUD {
     return defer(() => this.collection.find({}, { sort: { index: 1 } }));
   }
 
-  getBy(filter: Object): Observable<any> {
-    return defer(() => this.collection.find(filter as Record<string, unknown>));
+  getBy(filter: Record<string, unknown>): Observable<any> {
+    return defer(() => this.collection.find(filter));
   }
 
   upsert(object: any) {
@@ -63,7 +63,7 @@ class CRUD {
     );
   }
 
-  insertMany(array: Array<any>, filter: Object) {
+  insertMany(array: Array<any>, filter: Record<string, unknown>) {
     return this.getBy(filter).pipe(
       mergeMap((resArray) => {
         const ids = resArray.map((item: any) => item._id);

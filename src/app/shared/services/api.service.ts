@@ -6,7 +6,7 @@ import {
   BonusModel,
   MongoCollection,
   SettledBetsModel,
-  UserModel,
+  UserDetailModel,
   WithdrawalModel,
 } from "@models/custom.models";
 import { catchError, map, Observable, of, throwError, timeout } from "rxjs";
@@ -135,7 +135,7 @@ class ApiService {
       );
   }
 
-  getUser(filter: Object): Observable<UserModel[] | null> {
+  getUser(filter: Object): Observable<UserDetailModel[] | null> {
     return this.$RealmDB
       .collection(MongoCollection.User)
       .getBy(filter)
