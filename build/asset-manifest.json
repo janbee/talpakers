@@ -1,10 +1,10 @@
 {
   "files": {
     "main.css": "/talpakers/build/static/css/main.93f89f9d.css",
-    "main.js": "/talpakers/build/static/js/main.b4d84679.js",
+    "main.js": "/talpakers/build/static/js/main.57968f39.js",
     "static/css/978.2dff4464.chunk.css": "/talpakers/build/static/css/978.2dff4464.chunk.css",
     "static/js/978.5c2ecb5a.chunk.js": "/talpakers/build/static/js/978.5c2ecb5a.chunk.js",
-    "static/css/615.988c01cc.chunk.css": "/talpakers/build/static/css/615.988c01cc.chunk.css",
+    "static/css/615.7d49de53.chunk.css": "/talpakers/build/static/css/615.7d49de53.chunk.css",
     "static/js/615.d2ff0d10.chunk.js": "/talpakers/build/static/js/615.d2ff0d10.chunk.js",
     "static/js/226.f9a3d321.chunk.js": "/talpakers/build/static/js/226.f9a3d321.chunk.js",
     "static/js/496.dee1f964.chunk.js": "/talpakers/build/static/js/496.dee1f964.chunk.js",
@@ -13,10 +13,10 @@
     "static/js/737.a3d2607a.chunk.js": "/talpakers/build/static/js/737.a3d2607a.chunk.js",
     "index.html": "/talpakers/build/index.html",
     "main.93f89f9d.css.map": "/talpakers/build/static/css/main.93f89f9d.css.map",
-    "main.b4d84679.js.map": "/talpakers/build/static/js/main.b4d84679.js.map",
+    "main.57968f39.js.map": "/talpakers/build/static/js/main.57968f39.js.map",
     "978.2dff4464.chunk.css.map": "/talpakers/build/static/css/978.2dff4464.chunk.css.map",
     "978.5c2ecb5a.chunk.js.map": "/talpakers/build/static/js/978.5c2ecb5a.chunk.js.map",
-    "615.988c01cc.chunk.css.map": "/talpakers/build/static/css/615.988c01cc.chunk.css.map",
+    "615.7d49de53.chunk.css.map": "/talpakers/build/static/css/615.7d49de53.chunk.css.map",
     "615.d2ff0d10.chunk.js.map": "/talpakers/build/static/js/615.d2ff0d10.chunk.js.map",
     "496.dee1f964.chunk.js.map": "/talpakers/build/static/js/496.dee1f964.chunk.js.map",
     "774.55f3f373.chunk.js.map": "/talpakers/build/static/js/774.55f3f373.chunk.js.map",
@@ -25,6 +25,6 @@
   },
   "entrypoints": [
     "static/css/main.93f89f9d.css",
-    "static/js/main.b4d84679.js"
+    "static/js/main.57968f39.js"
   ]
 }
