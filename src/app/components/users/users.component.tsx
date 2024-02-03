@@ -7,7 +7,7 @@ import {
   Segment,
   Table,
 } from "semantic-ui-react";
-import { Money, useApi, useCallbackMemo } from "@utilities/utils";
+import { GetColor, Money, useApi, useCallbackMemo } from "@utilities/utils";
 import { UserDetailModel } from "@models/custom.models";
 import { API } from "@services/api.service";
 import moment from "moment";
@@ -143,6 +143,11 @@ export const UsersComponent = memo(() => {
                   isIdle = true;
                 }
 
+                const bgColor =
+                  minutesPassed > 30
+                    ? GetColor(29)
+                    : GetColor(Math.floor(minutesPassed));
+
                 const checkedUsed = accounts.find(
                   (item) => item.build === user.build,
                 );
@@ -203,7 +208,9 @@ export const UsersComponent = memo(() => {
                       }
                     </Table.Cell>
                     <Table.Cell textAlign="right">
-                      {lastUpdate.fromNow()}
+                      <span style={{ color: bgColor }}>
+                        {lastUpdate.fromNow()}
+                      </span>
                     </Table.Cell>
                   </Table.Row>
                 );
