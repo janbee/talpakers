@@ -97,6 +97,16 @@
               border-radius: 50%;
               right: 5px;
               cursor: pointer;
+
+              &.yellow{
+                background: var(--yellow-dark);
+              }
+              &.blue{
+                background: var(--blue-light);
+              }
+              &.green{
+                background: var(--green-dark);
+              }
             }
 
 

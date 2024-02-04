@@ -295,38 +295,58 @@ export const UserDetailsComponent = memo(() => {
                     return (
                       <div key={item._id} className="week">
                         {!!item.withdrawal && !hasMultiUser && (
-                          <Popup
-                            on="click"
-                            position="top center"
-                            trigger={<div className="has-withdrawal" />}
-                            flowing
-                          >
-                            <Popup.Header>
-                              Withdrawal (
-                              <span
-                                className={classNames({
-                                  "yellow-light":
-                                    item.withdrawal.TransactionStatus ===
-                                    "Pending",
-                                  "green-light":
-                                    item.withdrawal.TransactionStatus ===
-                                    "Approved",
-                                  "blue-light": [
-                                    "In Process",
-                                    "Sending to Processor",
-                                  ].includes(item.withdrawal.TransactionStatus),
-                                })}
+                          <>
+                            {[
+                              {
+                                Pending:
+                                  item.withdrawal.TransactionStatus ===
+                                  "Pending",
+                                Approved:
+                                  item.withdrawal.TransactionStatus ===
+                                  "Approved",
+                                Processing: [
+                                  "In Process",
+                                  "Sending to Processor",
+                                ].includes(item.withdrawal.TransactionStatus),
+                              },
+                            ].map((status) => (
+                              <Popup
+                                on="click"
+                                position="top center"
+                                trigger={
+                                  <div
+                                    className={classNames({
+                                      "has-withdrawal": true,
+                                      yellow: status.Pending,
+                                      green: status.Approved,
+                                      blue: status.Processing,
+                                    })}
+                                  />
+                                }
+                                flowing
                               >
-                                {item.withdrawal.TransactionStatus}
-                              </span>
-                              )
-                            </Popup.Header>
-                            <Popup.Content>
-                              {`${item.withdrawal.PaymentMethodInfo} ${Money(
-                                item.withdrawal.Amount,
-                              )}`}
-                            </Popup.Content>
-                          </Popup>
+                                <Popup.Header>
+                                  Withdrawal (
+                                  <span
+                                    className={classNames({
+                                      "yellow-light": status.Pending,
+                                      "green-light": status.Approved,
+                                      "blue-light": status.Processing,
+                                    })}
+                                  >
+                                    {item.withdrawal?.TransactionStatus}
+                                  </span>
+                                  )
+                                </Popup.Header>
+                                <Popup.Content>
+                                  {`${item.withdrawal
+                                    ?.PaymentMethodInfo} ${Money(
+                                    item.withdrawal?.Amount || 0,
+                                  )}`}
+                                </Popup.Content>
+                              </Popup>
+                            ))}
+                          </>
                         )}
 
                         <div className="week-date">
