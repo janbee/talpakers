@@ -54,6 +54,7 @@ export interface UserDataModel {
     startDate: string;
     endDate: string;
     winnings?: number;
+    staked?: number;
   };
   version?: string;
 }

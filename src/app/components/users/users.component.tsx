@@ -106,7 +106,10 @@ export const UsersComponent = memo(() => {
                 <Table.HeaderCell>Status</Table.HeaderCell>
                 <Table.HeaderCell>Version</Table.HeaderCell>
                 <Table.HeaderCell textAlign="center" width={1}>
-                  Week Winnings
+                  Staked
+                </Table.HeaderCell>
+                <Table.HeaderCell textAlign="center" width={1}>
+                  Winnings
                 </Table.HeaderCell>
                 <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
               </Table.Row>
@@ -195,6 +198,9 @@ export const UsersComponent = memo(() => {
                       />
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
+                    <Table.Cell textAlign="center">
+                      {<span>{Money(user.data?.weekStatus?.staked || 0)}</span>}
+                    </Table.Cell>
                     <Table.Cell textAlign="center">
                       {
                         <span
