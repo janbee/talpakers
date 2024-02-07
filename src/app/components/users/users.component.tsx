@@ -108,8 +108,10 @@ export const UsersComponent = memo(() => {
                 <Table.HeaderCell textAlign="center" width={1}>
                   Staked
                 </Table.HeaderCell>
-                <Table.HeaderCell textAlign="center" width={1}>
-                  Winnings
+                <Table.HeaderCell textAlign="center" width={4}>
+                  Weekly Summary
+                  <br />
+                  (Bonus + Earnings = Total)
                 </Table.HeaderCell>
                 <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
               </Table.Row>
@@ -199,19 +201,65 @@ export const UsersComponent = memo(() => {
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
                     <Table.Cell textAlign="center">
-                      {<span>{Money(user.data?.weekStatus?.staked || 0)}</span>}
+                      <span>
+                        {
+                          /*staked*/
+                          Money(
+                            user.data?.weekStatus?.betSummary?.betSummary
+                              .totalStaked || 0,
+                          )
+                        }
+                      </span>
                     </Table.Cell>
                     <Table.Cell textAlign="center">
-                      {
-                        <span
-                          className={classNames({
-                            win: (user.data?.weekStatus?.winnings || 0) > 0,
-                            lose: (user.data?.weekStatus?.winnings || 0) < 0,
-                          })}
-                        >
-                          {Money(user.data?.weekStatus?.winnings || 0)}
-                        </span>
-                      }
+                      <span
+                        className={classNames({
+                          win:
+                            (user.data?.weekStatus?.betSummary?.betSummary
+                              .bonus || 0) > 0,
+                          lose:
+                            (user.data?.weekStatus?.betSummary?.betSummary
+                              .bonus || 0) < 0,
+                        })}
+                      >
+                        {Money(
+                          user.data?.weekStatus?.betSummary?.betSummary.bonus ||
+                            0,
+                        )}
+                      </span>
+                      {" + "}
+
+                      <span
+                        className={classNames({
+                          win:
+                            (user.data?.weekStatus?.betSummary?.betSummary
+                              .totalEarnings || 0) > 0,
+                          lose:
+                            (user.data?.weekStatus?.betSummary?.betSummary
+                              .totalEarnings || 0) < 0,
+                        })}
+                      >
+                        {Money(
+                          user.data?.weekStatus?.betSummary?.betSummary
+                            .totalEarnings || 0,
+                        )}
+                      </span>
+                      {" = "}
+                      <span
+                        className={classNames({
+                          win:
+                            (user.data?.weekStatus?.betSummary?.betSummary
+                              .winnings || 0) > 0,
+                          lose:
+                            (user.data?.weekStatus?.betSummary?.betSummary
+                              .winnings || 0) < 0,
+                        })}
+                      >
+                        {Money(
+                          user.data?.weekStatus?.betSummary?.betSummary
+                            .winnings || 0,
+                        )}
+                      </span>
                     </Table.Cell>
                     <Table.Cell textAlign="right">
                       <span style={{ color: bgColor }}>

@@ -53,8 +53,7 @@ export interface UserDataModel {
     done: boolean;
     startDate: string;
     endDate: string;
-    winnings?: number;
-    staked?: number;
+    betSummary: BetSummaryModel;
   };
   version?: string;
 }
