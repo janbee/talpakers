@@ -4,6 +4,7 @@ import {
   Checkbox,
   CheckboxProps,
   Icon,
+  Progress,
   Segment,
   Table,
 } from "semantic-ui-react";
@@ -105,15 +106,24 @@ export const UsersComponent = memo(() => {
                 <Table.HeaderCell>App</Table.HeaderCell>
                 <Table.HeaderCell>Status</Table.HeaderCell>
                 <Table.HeaderCell>Version</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center" width={1}>
-                  Staked
-                </Table.HeaderCell>
-                <Table.HeaderCell textAlign="center" width={4}>
+
+                <Table.HeaderCell
+                  className={"weekly-summary"}
+                  textAlign="center"
+                >
                   Weekly Summary
                   <br />
                   (Bonus + Earnings = Total)
                 </Table.HeaderCell>
-                <Table.HeaderCell textAlign="right">Active</Table.HeaderCell>
+                <Table.HeaderCell
+                  className={"weekly-progress"}
+                  textAlign="center"
+                >
+                  Weekly Progress
+                </Table.HeaderCell>
+                <Table.HeaderCell className={"last-update"} textAlign="right">
+                  Active
+                </Table.HeaderCell>
               </Table.Row>
             </Table.Header>
 
@@ -200,17 +210,7 @@ export const UsersComponent = memo(() => {
                       />
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
-                    <Table.Cell textAlign="center">
-                      <span>
-                        {
-                          /*staked*/
-                          Money(
-                            user.data?.weekStatus?.betSummary?.betSummary
-                              .totalStaked || 0,
-                          )
-                        }
-                      </span>
-                    </Table.Cell>
+
                     <Table.Cell textAlign="center">
                       <span
                         className={classNames({
@@ -260,6 +260,24 @@ export const UsersComponent = memo(() => {
                             .winnings || 0,
                         )}
                       </span>
+                    </Table.Cell>
+                    <Table.Cell textAlign="right">
+                      <Progress
+                        indicating
+                        inverted
+                        success={user.data?.weekStatus?.done === true}
+                        precision={0}
+                        value={Math.floor(
+                          user.data?.weekStatus?.betSummary?.betSummary
+                            .totalStaked || 0,
+                        )}
+                        progress={"percent"}
+                        total={385}
+                        label={Money(
+                          user.data?.weekStatus?.betSummary?.betSummary
+                            .totalStaked || 0,
+                        )}
+                      />
                     </Table.Cell>
                     <Table.Cell textAlign="right">
                       <span style={{ color: bgColor }}>
