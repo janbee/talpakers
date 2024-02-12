@@ -176,13 +176,8 @@
         }
 
         //['#adff2f', '#c4e83e', '#d5d148', '#e3b850', '#ee9e56', '#f8825b', '#ff5f5f']
-        .ui.indicating.progress[data-percent^="0"] .bar, .ui.indicating.progress[data-percent^="1"] .bar, .ui.indicating.progress[data-percent^="2"] .bar {
-          background-color: #ff5f5f;
 
-          & ~ .label {
-            color: #ff5f5f;
-          }
-        }
+
 
         .ui.indicating.progress[data-percent^="3"] .bar {
           background-color: #f8825b;
@@ -218,7 +213,7 @@
 
         }
 
-        .ui.indicating.progress[data-percent^="100"] .bar, .ui.indicating.progress[data-percent^="9"] .bar {
+        .ui.indicating.progress[data-percent^="9"] .bar, .ui.indicating.progress[data-percent^="10"] .bar {
           background-color: #c4e83e;
 
           & ~ .label {
@@ -231,6 +226,25 @@
 
           & ~ .label {
             color: #71ba00 !important;
+          }
+        }
+
+        .ui.indicating.progress[data-percent="0"] .bar,
+        .ui.indicating.progress[data-percent="1"] .bar,
+        .ui.indicating.progress[data-percent="2"] .bar,
+        .ui.indicating.progress[data-percent="3"] .bar,
+        .ui.indicating.progress[data-percent="4"] .bar,
+        .ui.indicating.progress[data-percent="5"] .bar,
+        .ui.indicating.progress[data-percent="6"] .bar,
+        .ui.indicating.progress[data-percent="7"] .bar,
+        .ui.indicating.progress[data-percent="8"] .bar,
+        .ui.indicating.progress[data-percent="9"] .bar,
+        .ui.indicating.progress[data-percent^="1"] .bar,
+        .ui.indicating.progress[data-percent^="2"] .bar {
+          background-color: #ff5f5f;
+
+          & ~ .label {
+            color: #ff5f5f;
           }
         }
       }

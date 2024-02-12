@@ -278,6 +278,7 @@ export const UsersComponent = memo(() => {
                             .totalStaked || 0,
                         )}
                       />
+                      <span>{user.data?.weekStatus?.done + ""}</span>
                     </Table.Cell>
                     <Table.Cell textAlign="right">
                       <span style={{ color: bgColor }}>
