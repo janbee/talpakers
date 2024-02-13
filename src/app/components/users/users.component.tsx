@@ -158,6 +158,25 @@ export const UsersComponent = memo(() => {
                   isIdle = true;
                 }
 
+                const waiting =
+                  weekStart.toISOString() !== user.data?.weekStatus?.startDate;
+                let totalStaked =
+                  user.data?.weekStatus?.betSummary?.betSummary.totalStaked ||
+                  0;
+                let totalEarnings =
+                  user.data?.weekStatus?.betSummary?.betSummary.totalEarnings ||
+                  0;
+                let bonus =
+                  user.data?.weekStatus?.betSummary?.betSummary.bonus || 0;
+                let winnings =
+                  user.data?.weekStatus?.betSummary?.betSummary.winnings || 0;
+                if (waiting) {
+                  totalStaked = 0;
+                  totalEarnings = 0;
+                  bonus = 0;
+                  winnings = 0;
+                }
+
                 const bgColor =
                   minutesPassed > 30
                     ? GetColor(29)
@@ -166,6 +185,7 @@ export const UsersComponent = memo(() => {
                 const checkedUsed = accounts.find(
                   (item) => item.build === user.build,
                 );
+
                 const selectedUsers = accounts
                   .filter((item) => item.checked)
                   .map((item) => item.build);
@@ -203,9 +223,7 @@ export const UsersComponent = memo(() => {
                           done: user.data?.weekStatus?.done === true,
                           "in-progress": inProgress,
                           unknown: user.data?.weekStatus?.done === undefined,
-                          waiting:
-                            weekStart.toISOString() !==
-                              user.data?.weekStatus?.startDate || isIdle,
+                          waiting: waiting || isIdle,
                         })}
                       />
                     </Table.Cell>
@@ -214,69 +232,44 @@ export const UsersComponent = memo(() => {
                     <Table.Cell textAlign="center">
                       <span
                         className={classNames({
-                          win:
-                            (user.data?.weekStatus?.betSummary?.betSummary
-                              .bonus || 0) > 0,
-                          lose:
-                            (user.data?.weekStatus?.betSummary?.betSummary
-                              .bonus || 0) < 0,
+                          win: bonus > 0,
+                          lose: bonus < 0,
                         })}
                       >
-                        {Money(
-                          user.data?.weekStatus?.betSummary?.betSummary.bonus ||
-                            0,
-                        )}
+                        {Money(bonus)}
                       </span>
                       {" + "}
-
                       <span
                         className={classNames({
-                          win:
-                            (user.data?.weekStatus?.betSummary?.betSummary
-                              .totalEarnings || 0) > 0,
-                          lose:
-                            (user.data?.weekStatus?.betSummary?.betSummary
-                              .totalEarnings || 0) < 0,
+                          win: totalEarnings > 0,
+                          lose: totalEarnings < 0,
                         })}
                       >
-                        {Money(
-                          user.data?.weekStatus?.betSummary?.betSummary
-                            .totalEarnings || 0,
-                        )}
+                        {Money(totalEarnings)}
                       </span>
                       {" = "}
                       <span
                         className={classNames({
-                          win:
-                            (user.data?.weekStatus?.betSummary?.betSummary
-                              .winnings || 0) > 0,
-                          lose:
-                            (user.data?.weekStatus?.betSummary?.betSummary
-                              .winnings || 0) < 0,
+                          win: winnings > 0,
+                          lose: winnings < 0,
                         })}
                       >
-                        {Money(
-                          user.data?.weekStatus?.betSummary?.betSummary
-                            .winnings || 0,
-                        )}
+                        {Money(winnings)}
                       </span>
                     </Table.Cell>
                     <Table.Cell textAlign="right">
                       <Progress
                         indicating
                         inverted
-                        success={user.data?.weekStatus?.done === true}
+                        success={
+                          user.data?.weekStatus?.done === true &&
+                          totalStaked !== 0
+                        }
                         precision={0}
-                        value={Math.floor(
-                          user.data?.weekStatus?.betSummary?.betSummary
-                            .totalStaked || 0,
-                        )}
+                        value={Math.floor(totalStaked)}
                         progress={"percent"}
                         total={385}
-                        label={Money(
-                          user.data?.weekStatus?.betSummary?.betSummary
-                            .totalStaked || 0,
-                        )}
+                        label={Money(totalStaked)}
                       />
                     </Table.Cell>
                     <Table.Cell textAlign="right">

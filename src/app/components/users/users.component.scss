@@ -54,12 +54,12 @@
       }
 
       &.unknown:before {
-        color: #ff5f5f;
+        color: var(--red-dark);
         content: "UnKnown";
       }
 
       &.waiting:before {
-        color: #ff5f5f;
+        color: var(--red-dark);
         content: "Wating";
       }
 
@@ -74,17 +74,19 @@
     tr {
       cursor: pointer;
 
-      th{
-        &.weekly-summary{
+      th {
+        &.weekly-summary {
           $WP: 200px;
           min-width: $WP;
           max-width: $WP;
           width: $WP;
         }
-        &.weekly-progress{
+
+        &.weekly-progress {
 
         }
-        &.last-update{
+
+        &.last-update {
           $WP: 150px;
           min-width: $WP;
           max-width: $WP;
@@ -175,49 +177,53 @@
           }
         }
 
-        //['#adff2f', '#c4e83e', '#d5d148', '#e3b850', '#ee9e56', '#f8825b', '#ff5f5f']
-
-
-
+        $md: #adff2f, #bdf039, #cae141, #d5d148, #dfc14d, #e7b052, #ee9e56, #f58c59, #fa775c, #ff5f5f;
         .ui.indicating.progress[data-percent^="3"] .bar {
-          background-color: #f8825b;
-
-          & ~ .label {
-            color: #f8825b
-          }
-        }
-
-        .ui.indicating.progress[data-percent^="4"] .bar, .ui.indicating.progress[data-percent^="5"] .bar {
           background-color: #ee9e56;
 
           & ~ .label {
             color: #ee9e56
           }
-
         }
 
-        .ui.indicating.progress[data-percent^="6"] .bar {
-          background-color: #e3b850;
+        .ui.indicating.progress[data-percent^="4"] .bar {
+          background-color: #e7b052;
 
           & ~ .label {
-            color: #e3b850
+            color: #e7b052
           }
         }
 
-        .ui.indicating.progress[data-percent^="7"] .bar, .ui.indicating.progress[data-percent^="8"] .bar {
+        .ui.indicating.progress[data-percent^="5"] .bar {
+          background-color: #dfc14d;
+
+          & ~ .label {
+            color: #dfc14d
+          }
+        }
+
+        .ui.indicating.progress[data-percent^="6"] .bar {
           background-color: #d5d148;
 
           & ~ .label {
             color: #d5d148
           }
+        }
+
+        .ui.indicating.progress[data-percent^="7"] .bar, .ui.indicating.progress[data-percent^="8"] .bar {
+          background-color: #cae141;
+
+          & ~ .label {
+            color: #cae141
+          }
 
         }
 
         .ui.indicating.progress[data-percent^="9"] .bar, .ui.indicating.progress[data-percent^="10"] .bar {
-          background-color: #c4e83e;
+          background-color: #bdf039;
 
           & ~ .label {
-            color: #c4e83e
+            color: #bdf039
           }
         }
 
@@ -229,7 +235,14 @@
           }
         }
 
-        .ui.indicating.progress[data-percent="0"] .bar,
+        .ui.indicating.progress[data-percent="0"] .bar {
+          background-color: var(--red-dark);
+
+          & ~ .label {
+            color: var(--red-dark);
+          }
+        }
+
         .ui.indicating.progress[data-percent="1"] .bar,
         .ui.indicating.progress[data-percent="2"] .bar,
         .ui.indicating.progress[data-percent="3"] .bar,
@@ -241,10 +254,10 @@
         .ui.indicating.progress[data-percent="9"] .bar,
         .ui.indicating.progress[data-percent^="1"] .bar,
         .ui.indicating.progress[data-percent^="2"] .bar {
-          background-color: #ff5f5f;
+          background-color: #f58c59;
 
           & ~ .label {
-            color: #ff5f5f;
+            color: #f58c59;
           }
         }
       }
