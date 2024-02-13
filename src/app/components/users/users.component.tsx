@@ -1,20 +1,13 @@
-import React, { FormEvent, memo, useCallback, useMemo } from "react";
-import "./users.component.scss";
-import {
-  Checkbox,
-  CheckboxProps,
-  Icon,
-  Progress,
-  Segment,
-  Table,
-} from "semantic-ui-react";
-import { GetColor, Money, useApi, useCallbackMemo } from "@utilities/utils";
-import { UserDetailModel } from "@models/custom.models";
-import { API } from "@services/api.service";
-import moment from "moment";
-import { Outlet, useNavigate } from "react-router-dom";
-import { ElementComponent } from "@app/shared/component/element-loader.component";
-import classNames from "classnames";
+import React, { FormEvent, memo, useCallback, useMemo } from 'react';
+import './users.component.scss';
+import { Checkbox, CheckboxProps, Icon, Progress, Segment, Table } from 'semantic-ui-react';
+import { GetColor, Money, useApi, useCallbackMemo } from '@utilities/utils';
+import { UserDetailModel } from '@models/custom.models';
+import { API } from '@services/api.service';
+import moment from 'moment';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { ElementComponent } from '@app/shared/component/element-loader.component';
+import classNames from 'classnames';
 
 interface CustomUserModel extends UserDetailModel {
   checked?: boolean;
@@ -38,8 +31,8 @@ export const UsersComponent = memo(() => {
       user.checked = true;
       accounts.push(user);
       navigate(`@${user._id}`, {
-        relative: "route",
-        replace: currentLocation.includes("@"),
+        relative: 'route',
+        replace: currentLocation.includes('@'),
       });
     },
     [navigate],
@@ -61,46 +54,54 @@ export const UsersComponent = memo(() => {
       const emails = accounts
         .filter((item) => item.checked === true)
         .map((item) => item._id)
-        .join(",");
+        .join(',');
 
-      navigate(emails?.length === 0 ? "" : `@${emails}`, {
-        relative: "route",
-        replace: currentLocation.includes("@"),
+      navigate(emails?.length === 0 ? '' : `@${emails}`, {
+        relative: 'route',
+        replace: currentLocation.includes('@'),
       });
     },
-    [],
+    [accounts, currentLocation, navigate],
   );
 
   const selected = currentLocation
-    .replaceAll('"', "")
-    .split("/")
+    .replaceAll('"', '')
+    .split('/')
     .pop()
-    ?.replace("@", "");
+    ?.replace('@', '');
 
   return (
     <div
       className={classNames({
-        "users-wrap": true,
+        'users-wrap': true,
       })}
     >
       <Segment inverted>
-        <div className="row-wrap between ttl-wrap">
+        <div className='row-wrap between ttl-wrap'>
           <div>
-            <span className="ttl">Users</span>
+            <span className='ttl'>Users</span>
             {!!accounts.length && (
-              <span className="ttl">
+              <span className='ttl'>
                 ({accounts.filter((item) => item.checked).length})
               </span>
             )}
           </div>
-          <Icon onClick={state.reload} name="refresh" />
+          <Icon
+            onClick={state.reload}
+            name='refresh' />
         </div>
         <hr />
-        <div className="tbl-wrap">
-          <Table celled striped selectable inverted>
+        <div className='tbl-wrap'>
+          <Table
+            celled
+            striped
+            selectable
+            inverted>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell className={"multi-select"} textAlign="center">
+                <Table.HeaderCell
+                  className={'multi-select'}
+                  textAlign='center'>
                   #
                 </Table.HeaderCell>
                 <Table.HeaderCell>App</Table.HeaderCell>
@@ -108,20 +109,22 @@ export const UsersComponent = memo(() => {
                 <Table.HeaderCell>Version</Table.HeaderCell>
 
                 <Table.HeaderCell
-                  className={"weekly-summary"}
-                  textAlign="center"
+                  className={'weekly-summary'}
+                  textAlign='center'
                 >
                   Weekly Summary
                   <br />
                   (Bonus + Earnings = Total)
                 </Table.HeaderCell>
                 <Table.HeaderCell
-                  className={"weekly-progress"}
-                  textAlign="center"
+                  className={'weekly-progress'}
+                  textAlign='center'
                 >
                   Weekly Progress
                 </Table.HeaderCell>
-                <Table.HeaderCell className={"last-update"} textAlign="right">
+                <Table.HeaderCell
+                  className={'last-update'}
+                  textAlign='right'>
                   Active
                 </Table.HeaderCell>
               </Table.Row>
@@ -190,7 +193,7 @@ export const UsersComponent = memo(() => {
                   .filter((item) => item.checked)
                   .map((item) => item.build);
 
-                const emailArr = selected?.split(",") || [];
+                const emailArr = selected?.split(',') || [];
 
                 return (
                   <Table.Row
@@ -204,8 +207,8 @@ export const UsersComponent = memo(() => {
                   >
                     <Table.Cell
                       selectable
-                      className={"multi-select"}
-                      textAlign="center"
+                      className={'multi-select'}
+                      textAlign='center'
                     >
                       <Checkbox
                         value={JSON.stringify(user)}
@@ -214,14 +217,16 @@ export const UsersComponent = memo(() => {
                       />
                     </Table.Cell>
                     <Table.Cell collapsing>
-                      <span onClick={(a) => {}}>{user.build}</span>
+                      <span
+                        onClick={(a) => {
+                        }}>{user.build}</span>
                     </Table.Cell>
                     <Table.Cell collapsing>
                       <span
                         className={classNames({
                           status: true,
                           done: user.data?.weekStatus?.done === true,
-                          "in-progress": inProgress,
+                          'in-progress': inProgress,
                           unknown: user.data?.weekStatus?.done === undefined,
                           waiting: waiting || isIdle,
                         })}
@@ -229,7 +234,7 @@ export const UsersComponent = memo(() => {
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
 
-                    <Table.Cell textAlign="center">
+                    <Table.Cell textAlign='center'>
                       <span
                         className={classNames({
                           win: bonus > 0,
@@ -238,7 +243,7 @@ export const UsersComponent = memo(() => {
                       >
                         {Money(bonus)}
                       </span>
-                      {" + "}
+                      {' + '}
                       <span
                         className={classNames({
                           win: totalEarnings > 0,
@@ -247,7 +252,7 @@ export const UsersComponent = memo(() => {
                       >
                         {Money(totalEarnings)}
                       </span>
-                      {" = "}
+                      {' = '}
                       <span
                         className={classNames({
                           win: winnings > 0,
@@ -257,7 +262,7 @@ export const UsersComponent = memo(() => {
                         {Money(winnings)}
                       </span>
                     </Table.Cell>
-                    <Table.Cell textAlign="right">
+                    <Table.Cell textAlign='right'>
                       <Progress
                         indicating
                         inverted
@@ -267,12 +272,12 @@ export const UsersComponent = memo(() => {
                         }
                         precision={0}
                         value={Math.floor(totalStaked)}
-                        progress={"percent"}
+                        progress={'percent'}
                         total={385}
                         label={Money(totalStaked)}
                       />
                     </Table.Cell>
-                    <Table.Cell textAlign="right">
+                    <Table.Cell textAlign='right'>
                       <span style={{ color: bgColor }}>
                         {lastUpdate.fromNow()}
                       </span>
@@ -284,7 +289,7 @@ export const UsersComponent = memo(() => {
 
             <Table.Footer>
               <Table.Row>
-                <Table.HeaderCell colSpan="100">
+                <Table.HeaderCell colSpan='100'>
                   Total Users {state.data?.length}
                 </Table.HeaderCell>
               </Table.Row>
