@@ -140,6 +140,34 @@ export const Money = (money: string | number, currency: string = "USD") => {
   return formatter.format(parseFloat(money.toString()));
 };
 
+export const GetDates = () => {
+  const tz = new Date().getTimezoneOffset() * 60000;
+  const today = new Date(new Date().getTime() - tz);
+  today.setUTCHours(0, 0, 0, 0);
+
+  const currentWeekDay = today.getDay();
+
+  const forWeekStart = new Date(today);
+  forWeekStart.setUTCHours(0, 0, 0, 0);
+  forWeekStart.setDate(today.getDate() - currentWeekDay);
+
+  const weekStart = new Date(forWeekStart);
+  weekStart.setUTCHours(0, 0, 0, 0);
+
+  const forWeekEnd = new Date(weekStart);
+  forWeekEnd.setUTCHours(0, 0, 0, 0);
+  forWeekEnd.setDate(weekStart.getDate() + 6);
+
+  const weekEnd = new Date(forWeekEnd);
+  weekEnd.setUTCHours(23, 59, 59, 999);
+
+  return {
+    today,
+    weekStart,
+    weekEnd,
+  };
+};
+
 export const GetColor = (value: number) => {
   const colorArr = [
     "#adff2f",

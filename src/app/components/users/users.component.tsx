@@ -8,7 +8,13 @@ import {
   Segment,
   Table,
 } from "semantic-ui-react";
-import { GetColor, Money, useApi, useCallbackMemo } from "@utilities/utils";
+import {
+  GetColor,
+  GetDates,
+  Money,
+  useApi,
+  useCallbackMemo,
+} from "@utilities/utils";
 import { UserDetailModel } from "@models/custom.models";
 import { API } from "@services/api.service";
 import moment from "moment";
@@ -77,6 +83,18 @@ export const UsersComponent = memo(() => {
     .pop()
     ?.replace("@", "");
 
+  const getInProgressUsersCount = useMemo(() => {
+    return (
+      state.data?.filter((user) => {
+        const inProgress = user.data?.weekStatus?.done === false;
+        const lastUpdate = moment(user.updatedAt || user.createdAt);
+        const duration = moment.duration(lastUpdate.diff(Date.now()));
+        const minutesPassed = Math.abs(duration.asMinutes());
+        return inProgress && minutesPassed < 30;
+      })?.length || 0
+    );
+  }, [state.data]);
+
   return (
     <div
       className={classNames({
@@ -104,7 +122,10 @@ export const UsersComponent = memo(() => {
                   #
                 </Table.HeaderCell>
                 <Table.HeaderCell>App</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
+                <Table.HeaderCell>
+                  Status{" "}
+                  {!!getInProgressUsersCount && `#${getInProgressUsersCount}`}
+                </Table.HeaderCell>
                 <Table.HeaderCell>Version</Table.HeaderCell>
 
                 <Table.HeaderCell
@@ -129,25 +150,7 @@ export const UsersComponent = memo(() => {
 
             <Table.Body>
               {state.data?.map((user, index) => {
-                const tz = new Date().getTimezoneOffset() * 60000;
-                const today = new Date(new Date().getTime() - tz);
-                today.setUTCHours(0, 0, 0, 0);
-
-                const currentWeekDay = today.getDay();
-
-                const forWeekStart = new Date(today);
-                forWeekStart.setUTCHours(0, 0, 0, 0);
-                forWeekStart.setDate(today.getDate() - currentWeekDay);
-
-                const weekStart = new Date(forWeekStart);
-                weekStart.setUTCHours(0, 0, 0, 0);
-
-                const forWeekEnd = new Date(weekStart);
-                forWeekEnd.setUTCHours(0, 0, 0, 0);
-                forWeekEnd.setDate(weekStart.getDate() + 6);
-
-                const weekEnd = new Date(forWeekEnd);
-                weekEnd.setUTCHours(23, 59, 59, 999);
+                const { weekStart } = GetDates();
 
                 const inProgress = user.data?.weekStatus?.done === false;
                 const lastUpdate = moment(user.updatedAt || user.createdAt);
@@ -214,7 +217,7 @@ export const UsersComponent = memo(() => {
                       />
                     </Table.Cell>
                     <Table.Cell collapsing>
-                      <span onClick={(a) => {}}>{user.build}</span>
+                      <span>{user.build}</span>
                     </Table.Cell>
                     <Table.Cell collapsing>
                       <span
