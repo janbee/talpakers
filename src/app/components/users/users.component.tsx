@@ -233,32 +233,34 @@ export const UsersComponent = memo(() => {
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
 
                     <Table.Cell textAlign="center">
-                      <span
-                        className={classNames({
-                          win: bonus > 0,
-                          lose: bonus < 0,
-                        })}
-                      >
-                        {Money(bonus)}
-                      </span>
-                      {" + "}
-                      <span
-                        className={classNames({
-                          win: totalEarnings > 0,
-                          lose: totalEarnings < 0,
-                        })}
-                      >
-                        {Money(totalEarnings)}
-                      </span>
-                      {" = "}
-                      <span
-                        className={classNames({
-                          win: winnings > 0,
-                          lose: winnings < 0,
-                        })}
-                      >
-                        {Money(winnings)}
-                      </span>
+                      <div className={"week-summary-wrap"}>
+                        <span
+                          className={classNames({
+                            win: bonus > 0,
+                            lose: bonus < 0,
+                          })}
+                        >
+                          {Money(bonus)}
+                        </span>
+                        {" + "}
+                        <span
+                          className={classNames({
+                            win: totalEarnings > 0,
+                            lose: totalEarnings < 0,
+                          })}
+                        >
+                          {Money(totalEarnings)}
+                        </span>
+                        {" = "}
+                        <span
+                          className={classNames({
+                            win: winnings > 0,
+                            lose: winnings < 0,
+                          })}
+                        >
+                          {Money(winnings)}
+                        </span>
+                      </div>
                     </Table.Cell>
                     <Table.Cell textAlign="right">
                       <Progress

@@ -178,6 +178,7 @@
         }
 
         $md: #adff2f, #bdf039, #cae141, #d5d148, #dfc14d, #e7b052, #ee9e56, #f58c59, #fa775c, #ff5f5f;
+
         .ui.indicating.progress[data-percent^="3"] .bar {
           background-color: #ee9e56;
 
@@ -219,7 +220,7 @@
 
         }
 
-        .ui.indicating.progress[data-percent^="9"] .bar, .ui.indicating.progress[data-percent^="10"] .bar {
+        .ui.indicating.progress[data-percent^="9"] .bar {
           background-color: #bdf039;
 
           & ~ .label {
@@ -227,13 +228,8 @@
           }
         }
 
-        .ui.progress.success .bar {
-          background-color: #71ba00 !important;
 
-          & ~ .label {
-            color: #71ba00 !important;
-          }
-        }
+
 
         .ui.indicating.progress[data-percent="0"] .bar {
           background-color: var(--red-dark);
@@ -259,6 +255,32 @@
           & ~ .label {
             color: #f58c59;
           }
+        }
+
+
+        .ui.indicating.progress[data-percent="100"] .bar {
+          background-color: #bdf039;
+
+          & ~ .label {
+            color: #bdf039
+          }
+        }
+
+        .ui.progress.success .bar {
+          background-color: #71ba00 !important;
+
+          & ~ .label {
+            color: #71ba00 !important;
+          }
+        }
+      }
+
+      .week-summary-wrap {
+        display: flex;
+        justify-content: space-evenly;
+        span{
+          display: inline-block;
+          width: 60px;
         }
       }
 
