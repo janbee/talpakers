@@ -24,7 +24,6 @@ export const UsersComponent = memo(() => {
   const state = useApi<CustomUserModel[]>(() => API.getUsers(), {
     withLoading: false,
   });
-  //
 
   const accounts = useMemo<CustomUserModel[]>(() => {
     return [];
