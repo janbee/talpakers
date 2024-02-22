@@ -71,6 +71,25 @@ class ApiService {
       );
   }
 
+  upsertUserData(data: UserDetailModel): Observable<UserDetailModel | null> {
+    return this.$RealmDB
+      .collection(MongoCollection.User)
+      .upsert(data)
+      .pipe(
+        timeout({
+          each: 10000,
+          with: () =>
+            throwError(
+              () => "Server is taking too long to respond! UpsertUserData",
+            ),
+        }),
+        catchError((err) => {
+          ApiService.catchErrorAlert(err);
+          return of(null);
+        }),
+      );
+  }
+
   getBonuses(filter: Object): Observable<BonusModel[] | null> {
     return this.$RealmDB
       .collection(MongoCollection.Bonuses)

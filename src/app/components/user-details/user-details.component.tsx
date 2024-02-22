@@ -1,6 +1,16 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import "./user-details.component.scss";
-import { Header, Icon, Label, Menu, Popup, Segment } from "semantic-ui-react";
+import {
+  Header,
+  Icon,
+  Label,
+  Menu,
+  Popup,
+  Segment,
+  Sidebar,
+  SidebarPushable,
+  SidebarPusher,
+} from "semantic-ui-react";
 import { EarningsModel, UserDetailModel } from "@models/custom.models";
 import { API } from "@services/api.service";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
@@ -10,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import { Money } from "@utilities/utils";
 import classNames from "classnames";
 import { forkJoin } from "rxjs";
+import { UserSettingsComponent } from "@components/user-details/user-settings.component";
 
 class State {
   loading = true;
@@ -17,6 +28,7 @@ class State {
   yearTotalWinnings: number = 0;
   yearTotalWithdrawals: number = 0;
   userDetails?: UserDetailModel[] | null;
+  settingsOpen = false;
 }
 
 export const UserDetailsComponent = memo(() => {
@@ -195,6 +207,14 @@ export const UserDetailsComponent = memo(() => {
     });
   }, [emails]);
 
+  const handleSettingsClick = useCallback(() => {
+    console.log("gaga-------------------------------------", 123123);
+    setState((prevState) => ({
+      ...prevState,
+      settingsOpen: !state.settingsOpen,
+    }));
+  }, [state.settingsOpen]);
+
   const hasMultiUser = (emails?.split(",") || []).length > 1;
   return (
     <div
@@ -203,214 +223,245 @@ export const UserDetailsComponent = memo(() => {
         "multi-users": hasMultiUser,
       })}
     >
-      <Segment inverted>
-        <div className="ttl">
-          {!hasMultiUser ? (
-            <span>{emails}</span>
-          ) : (
-            <span>Multi Users View</span>
-          )}
-          {!hasMultiUser && (
-            <div className="row-wrap between">
-              <Popup
-                on="hover"
-                basic
-                trigger={<Icon name="info circle" />}
-                position="bottom right"
-                mouseLeaveDelay={60000}
-              >
-                <Menu vertical>
-                  <Menu.Item header>
-                    <Header as="h3">
-                      Year {moment().format("YYYY")} Details
-                    </Header>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Header as="h4">Current Balance</Header>
-                    <p>
-                      <Label color="green">
-                        {Money(
-                          state.userDetails?.[0].data?.userSession?.cash || 0,
-                        )}
-                      </Label>
-                    </p>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Header as="h4">Available Cashout</Header>
-                    <p>
-                      <Label color="orange">
-                        {Money(
-                          state.userDetails?.[0].data?.userSession?.cashout ||
-                            0,
-                        )}
-                      </Label>
-                    </p>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Header as="h4">Total Earnings this year</Header>
-                    <p>
-                      <Label color="purple">
-                        {Money(state.yearTotalWinnings)}
-                      </Label>
-                    </p>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Header as="h4">Total Cashout this year</Header>
-                    <p>
-                      <Label color="red">
-                        {" "}
-                        {Money(Math.abs(state.yearTotalWithdrawals || 0))}
-                      </Label>
-                    </p>
-                  </Menu.Item>
-                </Menu>
-              </Popup>
-            </div>
-          )}
-        </div>
-        <hr />
-        <div className="user-details-content-wrap">
-          {state.list.map((mon) => {
-            const total = sumBy(mon.data, "winnings");
-            return (
-              <div key={mon.title} className="mon-wrap">
-                <div className="ttl-wrap">
-                  <Header as="h3" inverted>
-                    {mon.title}
-                  </Header>
-                  <Header
-                    className={classNames({
-                      winnings: total > 0,
-                      losses: total < 0,
-                    })}
-                    as="h4"
-                    inverted
-                  >
-                    {Money(total)}
-                  </Header>
+      <SidebarPushable>
+        <Sidebar
+          animation="overlay"
+          onHide={handleSettingsClick}
+          visible={state.settingsOpen}
+          width={"wide"}
+        >
+          <UserSettingsComponent config={{ email: emails as string }} />
+        </Sidebar>
+
+        <SidebarPusher>
+          <Segment inverted>
+            <div className="ttl">
+              {!hasMultiUser ? (
+                <div>
+                  <Icon
+                    onClick={handleSettingsClick}
+                    className={"pointer"}
+                    name={"bars"}
+                    size={"small"}
+                  />
+                  <span>{emails}</span>
                 </div>
-                <hr />
-                <div className="week-wrap">
-                  {mon.data.map((item) => {
-                    return (
-                      <div key={item._id} className="week">
-                        {!!item.withdrawal && !hasMultiUser && (
-                          <>
-                            {[
-                              {
-                                Pending:
-                                  item.withdrawal.TransactionStatus ===
-                                  "Pending",
-                                Approved:
-                                  item.withdrawal.TransactionStatus ===
-                                  "Approved",
-                                Processing: [
-                                  "In Process",
-                                  "Sending to Processor",
-                                ].includes(item.withdrawal.TransactionStatus),
-                              },
-                            ].map((status) => (
-                              <Popup
-                                on="click"
-                                position="top center"
-                                trigger={
-                                  <div
-                                    className={classNames({
-                                      "has-withdrawal": true,
-                                      yellow: status.Pending,
-                                      green: status.Approved,
-                                      blue: status.Processing,
-                                    })}
-                                  />
-                                }
-                                flowing
-                              >
-                                <Popup.Header>
-                                  Withdrawal (
-                                  <span
-                                    className={classNames({
-                                      "yellow-light": status.Pending,
-                                      "green-light": status.Approved,
-                                      "blue-light": status.Processing,
-                                    })}
+              ) : (
+                <span>Multi Users View</span>
+              )}
+              {!hasMultiUser && (
+                <div className="row-wrap between">
+                  <Popup
+                    on="hover"
+                    basic
+                    trigger={
+                      <Icon
+                        name="info circle"
+                        size={"small"}
+                        className={"pointer"}
+                      />
+                    }
+                    position="bottom right"
+                    mouseLeaveDelay={60000}
+                  >
+                    <Menu vertical>
+                      <Menu.Item header>
+                        <Header as="h3">
+                          Year {moment().format("YYYY")} Details
+                        </Header>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Header as="h4">Current Balance</Header>
+                        <p>
+                          <Label color="green">
+                            {Money(
+                              state.userDetails?.[0].data?.userSession?.cash ||
+                                0,
+                            )}
+                          </Label>
+                        </p>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Header as="h4">Available Cashout</Header>
+                        <p>
+                          <Label color="orange">
+                            {Money(
+                              state.userDetails?.[0].data?.userSession
+                                ?.cashout || 0,
+                            )}
+                          </Label>
+                        </p>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Header as="h4">Total Earnings this year</Header>
+                        <p>
+                          <Label color="purple">
+                            {Money(state.yearTotalWinnings)}
+                          </Label>
+                        </p>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Header as="h4">Total Cashout this year</Header>
+                        <p>
+                          <Label color="red">
+                            {" "}
+                            {Money(Math.abs(state.yearTotalWithdrawals || 0))}
+                          </Label>
+                        </p>
+                      </Menu.Item>
+                    </Menu>
+                  </Popup>
+                </div>
+              )}
+            </div>
+            <hr />
+            <div className="user-details-content-wrap">
+              {state.list.map((mon) => {
+                const total = sumBy(mon.data, "winnings");
+                return (
+                  <div key={mon.title} className="mon-wrap">
+                    <div className="ttl-wrap">
+                      <Header as="h3" inverted>
+                        {mon.title}
+                      </Header>
+                      <Header
+                        className={classNames({
+                          winnings: total > 0,
+                          losses: total < 0,
+                        })}
+                        as="h4"
+                        inverted
+                      >
+                        {Money(total)}
+                      </Header>
+                    </div>
+                    <hr />
+                    <div className="week-wrap">
+                      {mon.data.map((item) => {
+                        return (
+                          <div key={item._id} className="week">
+                            {!!item.withdrawal && !hasMultiUser && (
+                              <>
+                                {[
+                                  {
+                                    Pending:
+                                      item.withdrawal.TransactionStatus ===
+                                      "Pending",
+                                    Approved:
+                                      item.withdrawal.TransactionStatus ===
+                                      "Approved",
+                                    Processing: [
+                                      "In Process",
+                                      "Sending to Processor",
+                                    ].includes(
+                                      item.withdrawal.TransactionStatus,
+                                    ),
+                                  },
+                                ].map((status, index) => (
+                                  <Popup
+                                    key={index}
+                                    on="click"
+                                    position="top center"
+                                    trigger={
+                                      <div
+                                        className={classNames({
+                                          "has-withdrawal": true,
+                                          yellow: status.Pending,
+                                          green: status.Approved,
+                                          blue: status.Processing,
+                                        })}
+                                      />
+                                    }
+                                    flowing
                                   >
-                                    {item.withdrawal?.TransactionStatus}
-                                  </span>
-                                  )
-                                </Popup.Header>
-                                <Popup.Content>
-                                  {`${item.withdrawal
-                                    ?.PaymentMethodInfo} ${Money(
-                                    item.withdrawal?.Amount || 0,
-                                  )}`}
-                                </Popup.Content>
-                              </Popup>
-                            ))}
-                          </>
-                        )}
+                                    <Popup.Header>
+                                      Withdrawal (
+                                      <span
+                                        className={classNames({
+                                          "yellow-light": status.Pending,
+                                          "green-light": status.Approved,
+                                          "blue-light": status.Processing,
+                                        })}
+                                      >
+                                        {item.withdrawal?.TransactionStatus}
+                                      </span>
+                                      )
+                                    </Popup.Header>
+                                    <Popup.Content>
+                                      {`${item.withdrawal
+                                        ?.PaymentMethodInfo} ${Money(
+                                        item.withdrawal?.Amount || 0,
+                                      )}`}
+                                    </Popup.Content>
+                                  </Popup>
+                                ))}
+                              </>
+                            )}
 
-                        <div className="week-date">
-                          <span>
-                            {moment(item.startDate).utc().format("ddd DD")} -{" "}
-                            {moment(item.endDate).utc().format("ddd DD")}
-                          </span>
-                        </div>
-                        <div className="week-content">
-                          <div className="row-wrap">
-                            <span>Staked</span>
-                            <span>{Money(item.totalStaked)}</span>
-                          </div>
-                          <div className="row-wrap">
-                            <span>Earnings</span>
-                            <span>{Money(item.totalEarnings)}</span>
-                          </div>
-                          <div className="row-wrap">
-                            <span>Bonus</span>
-                            <span>{Money(item.bonus)}</span>
-                          </div>
-
-                          {(item.approxWinnings > 0 && (
-                            <div className="row-wrap">
-                              <span>Winnings</span>
-
-                              <Popup
-                                content="Approximate Earnings."
-                                position="top center"
-                                trigger={
-                                  <span
-                                    className={classNames({
-                                      approx: true,
-                                    })}
-                                  >
-                                    {Money(item.approxWinnings)}
-                                  </span>
-                                }
-                              />
-                            </div>
-                          )) || (
-                            <div className="row-wrap">
-                              <span>Winnings</span>
-                              <span
-                                className={classNames({
-                                  winnings: item.winnings > 0,
-                                  losses: item.winnings < 0,
-                                })}
-                              >
-                                {Money(item.winnings)}
+                            <div className="week-date">
+                              <span>
+                                {moment(item.startDate).utc().format("ddd DD")}{" "}
+                                - {moment(item.endDate).utc().format("ddd DD")}
                               </span>
                             </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <ElementComponent loading={state.loading} />
-      </Segment>
+                            <div className="week-content">
+                              <div className="row-wrap">
+                                <span>Staked</span>
+                                <span>{Money(item.totalStaked)}</span>
+                              </div>
+                              <div className="row-wrap">
+                                <span>Earnings</span>
+                                <span>{Money(item.totalEarnings)}</span>
+                              </div>
+                              <div className="row-wrap">
+                                <span>Bonus</span>
+                                <span>{Money(item.bonus)}</span>
+                              </div>
+
+                              {(item.approxWinnings > 0 && (
+                                <div className="row-wrap">
+                                  <span>Winnings</span>
+
+                                  <Popup
+                                    content="Approximate Earnings."
+                                    position="top center"
+                                    trigger={
+                                      <span
+                                        className={classNames({
+                                          approx: true,
+                                        })}
+                                      >
+                                        {Money(item.approxWinnings)}
+                                      </span>
+                                    }
+                                  />
+                                </div>
+                              )) || (
+                                <div className="row-wrap">
+                                  <span>Winnings</span>
+                                  <span
+                                    className={classNames({
+                                      winnings: item.winnings > 0,
+                                      losses: item.winnings < 0,
+                                    })}
+                                  >
+                                    {Money(item.winnings)}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <ElementComponent loading={state.loading} />
+          </Segment>
+        </SidebarPusher>
+      </SidebarPushable>
     </div>
   );
 });

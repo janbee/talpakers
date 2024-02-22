@@ -102,16 +102,19 @@ export const UsersComponent = memo(() => {
       })}
     >
       <Segment inverted>
-        <div className="row-wrap between ttl-wrap">
+        <div className="ttl">
           <div>
-            <span className="ttl">Users</span>
+            <span>Users</span>
             {!!accounts.length && (
-              <span className="ttl">
-                ({accounts.filter((item) => item.checked).length})
-              </span>
+              <span>({accounts.filter((item) => item.checked).length})</span>
             )}
           </div>
-          <Icon onClick={state.reload} name="refresh" />
+          <Icon
+            size={"small"}
+            className={"pointer"}
+            onClick={state.reload}
+            name="refresh"
+          />
         </div>
         <hr />
         <div className="tbl-wrap">
@@ -122,7 +125,7 @@ export const UsersComponent = memo(() => {
                   #
                 </Table.HeaderCell>
                 <Table.HeaderCell>App</Table.HeaderCell>
-                <Table.HeaderCell>
+                <Table.HeaderCell name={"status"}>
                   Status{" "}
                   {!!getInProgressUsersCount && `#${getInProgressUsersCount}`}
                 </Table.HeaderCell>
@@ -163,6 +166,7 @@ export const UsersComponent = memo(() => {
 
                 const waiting =
                   weekStart.toISOString() !== user.data?.weekStatus?.startDate;
+
                 let totalStaked =
                   user.data?.weekStatus?.betSummary?.betSummary.totalStaked ||
                   0;
@@ -277,7 +281,15 @@ export const UsersComponent = memo(() => {
                         label={Money(totalStaked)}
                       />
                     </Table.Cell>
-                    <Table.Cell textAlign="right">
+                    <Table.Cell
+                      textAlign="right"
+                      onDoubleClick={() =>
+                        console.log(
+                          "gaga-------------------------------------",
+                          12312312,
+                        )
+                      }
+                    >
                       <span style={{ color: bgColor }}>
                         {lastUpdate.fromNow()}
                       </span>

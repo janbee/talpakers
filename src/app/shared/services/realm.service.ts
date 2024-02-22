@@ -1,28 +1,27 @@
 import * as Realm from "realm-web";
-import {
-  catchError,
-  defer,
-  map,
-  merge,
-  mergeMap,
-  Observable,
-  of,
-  tap,
-} from "rxjs";
+import { catchError, defer, map, mergeMap, Observable, of, tap } from "rxjs";
 import { MongoCollection } from "@models/custom.models";
+import { GetDates } from "@utilities/utils";
+
+import moment from "moment";
+import { merge } from "lodash";
 
 class CRUD {
   private collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any> =
     null as unknown as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>;
 
   private currentUserId: any;
+  private currentUserEmail: any;
 
   setCollection(
     collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
-    currentUserId: any,
   ) {
     this.collection = collection;
+  }
+
+  setCurrentUser(currentUserId: any, currentUserEmail: string) {
     this.currentUserId = currentUserId;
+    this.currentUserEmail = currentUserEmail;
   }
 
   get(_id?: string | number): Observable<any> {
@@ -37,14 +36,38 @@ class CRUD {
   }
 
   upsert(object: any) {
-    return this.get(object._id).pipe(
+    return this.get(object._id.toLowerCase()).pipe(
       mergeMap((foundItem) => {
         if (foundItem.length) {
-          object = merge(foundItem[0], { ...object, updatedAt: new Date() });
+          const { weekStart, weekEnd } = GetDates();
+          const originalFoundItem = JSON.parse(JSON.stringify(foundItem?.[0]));
+          if (object.updatedAt) {
+            object = merge(foundItem[0], object);
+          } else {
+            object = merge(foundItem[0], { ...object, updatedAt: new Date() });
+          }
+
+          /*
+           * just custom for this
+           * if this has been saved as true, it'll always be true for the week
+           * */
+          if (
+            originalFoundItem.data?.weekStatus?.done === true &&
+            object.data?.weekStatus?.startDate === weekStart.toISOString() &&
+            object.data?.weekStatus?.endDate === weekEnd.toISOString()
+          ) {
+            object.data.weekStatus.done = true;
+          }
         } else {
           object.createdAt = new Date();
           object.updatedAt = undefined;
         }
+
+        const year = parseInt(moment().format("YYYY"), 10);
+
+        object.owner_id = this.currentUserId;
+        object.email = this.currentUserEmail;
+        object.year = year;
 
         return defer(() =>
           this.collection.updateOne(
@@ -131,23 +154,46 @@ export class RealmService {
     );
   }
 
+  login(email: string, password: string) {
+    const credentials = Realm.Credentials.emailPassword(
+      email.toLowerCase(),
+      password,
+    );
+
+    return defer(() => this.app?.logIn(credentials)).pipe(
+      tap(() => {
+        this.client = this.app?.currentUser?.mongoClient(
+          this.mongoConfig.AppClient,
+        );
+      }),
+      map(() => this.app?.currentUser?.profile?.email),
+      catchError((err): any => {
+        console.error("Failed to log in", err);
+        return of(err);
+      }),
+    );
+  }
+
+  isLogin() {
+    return of(!!this.app?.currentUser?.profile?.email);
+  }
+
   collection(name: MongoCollection) {
-    if (!this.collections[name]) {
-      const crud = new CRUD();
-      const collection = this.client
-        ?.db(this.mongoConfig.AppDB)
-        .collection(name as unknown as string);
-      crud.setCollection(
-        collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
-        this.app.currentUser?.id,
-      );
-      this.collections[name] = {
-        CRUD: crud,
-      };
+    const crud = new CRUD();
+    const collection = this.client
+      ?.db(this.mongoConfig.AppDB)
+      .collection(name as unknown as string);
+    crud.setCollection(
+      collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
+    );
+    this.collections[name] = {
+      CRUD: crud,
+    };
 
-      return this.collections[name].CRUD;
-    }
-
+    this.collections[name].CRUD.setCurrentUser(
+      this.app.currentUser?.id,
+      this.app.currentUser?.profile?.email || "",
+    );
     return this.collections[name].CRUD;
   }
 }

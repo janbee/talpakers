@@ -5,6 +5,8 @@ html, body {
 }
 
 body {
+  --primary-color: #8d4ffc;
+
   --green-light: #568e00;
   --red-light: #c30000;
   --yellow-light: #f2b400;
@@ -74,7 +76,11 @@ code {
     .ttl {
       font-size: 23px;
       font-weight: bold;
-      margin-bottom: 8px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
     }
 
     .content-wrap {
@@ -102,5 +108,8 @@ code {
     }
   }
 
+  .pointer {
+    cursor: pointer;
+  }
 
 }
