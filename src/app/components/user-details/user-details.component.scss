@@ -19,7 +19,9 @@
 
     .pusher {
       height: 100%;
-
+      > .segment{
+        min-width: 100px;
+      }
     }
   }
 
@@ -93,7 +95,7 @@
   .segment {
     flex: 1;
     max-width: 100%;
-    min-width: 380px;
+    min-width: auto;
     display: flex;
     flex-direction: column;
     height: 100%;

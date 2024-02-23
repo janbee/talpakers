@@ -4,7 +4,7 @@
   justify-content: center;
   flex: 1;
 
-  .segment {
+  > .segment {
     flex: 1;
     min-width: 525px;
     margin: 0;
@@ -15,7 +15,7 @@
 
 
     @media only screen and (max-width: 767px) {
-      min-width: 280px;
+      min-width: 255px;
       thead {
         display: none !important;
       }
