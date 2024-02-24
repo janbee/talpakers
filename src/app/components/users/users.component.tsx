@@ -266,7 +266,6 @@ export const UsersComponent = memo(() => {
                           animation = alertCircle;
                           color = "#ff5f5f";
                         }
-
                         return (
                           <UseAnimations
                             key={statusInd}
