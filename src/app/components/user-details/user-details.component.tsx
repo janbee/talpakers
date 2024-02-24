@@ -237,7 +237,7 @@ export const UserDetailsComponent = memo(() => {
           <Segment inverted>
             <div className="ttl">
               {!hasMultiUser ? (
-                <div>
+                <div className={"icon-wrap"}>
                   <Icon
                     onClick={handleSettingsClick}
                     className={"pointer"}

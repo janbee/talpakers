@@ -145,6 +145,10 @@ export const UsersComponent = memo(() => {
                 >
                   Weekly Progress
                 </Table.HeaderCell>
+                <Table.HeaderCell textAlign="center">OpenBets</Table.HeaderCell>
+                <Table.HeaderCell textAlign="center">
+                  SettledBets
+                </Table.HeaderCell>
                 <Table.HeaderCell className={"last-update"} textAlign="right">
                   Active
                 </Table.HeaderCell>
@@ -281,15 +285,13 @@ export const UsersComponent = memo(() => {
                         label={Money(totalStaked)}
                       />
                     </Table.Cell>
-                    <Table.Cell
-                      textAlign="right"
-                      onDoubleClick={() =>
-                        console.log(
-                          "gaga-------------------------------------",
-                          12312312,
-                        )
-                      }
-                    >
+                    <Table.Cell textAlign="center">
+                      {user.data.weekStatus?.betSummary?.betSummary.openBets}
+                    </Table.Cell>
+                    <Table.Cell textAlign="center">
+                      {user.data.weekStatus?.betSummary?.betSummary.settledBets}
+                    </Table.Cell>
+                    <Table.Cell textAlign="right">
                       <span style={{ color: bgColor }}>
                         {lastUpdate.fromNow()}
                       </span>

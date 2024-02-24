@@ -30,6 +30,7 @@ export interface TalpakSettingModel {
   bet: string;
   lowerBet: string;
   loopLimit: string;
+  electronAutoLogin?: boolean;
 }
 
 export interface UserSessionModel {
@@ -189,6 +190,8 @@ export interface BetSummaryModel {
     bonus: number;
     totalEarnings: number;
     winnings: number;
+    openBets: number;
+    settledBets: number;
   };
 }
 

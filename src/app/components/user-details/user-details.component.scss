@@ -29,6 +29,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    border: 1px solid #2c2c2c;
+    border-radius: 5px;
 
     .segment{
       min-width: 100%;
@@ -99,15 +101,22 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    margin: 0;
 
 
     .ttl {
       display: flex;
       justify-content: space-between;
 
+      .icon-wrap{
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .row-wrap {
         align-items: center;
-
         .winnings-withdrawal-wrap {
 
           display: flex;

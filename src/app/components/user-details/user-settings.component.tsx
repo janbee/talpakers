@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import classNames from "classnames";
-import { Button, Icon, Input, Segment } from "semantic-ui-react";
+import { Button, Form, Icon, Input, Segment } from "semantic-ui-react";
 import { API } from "@services/api.service";
 import { UserDetailModel } from "@models/custom.models";
 import { mergeMap } from "rxjs";
@@ -62,6 +62,17 @@ export const UserSettingsComponent = memo((props: Props) => {
       .login(state.config.email, state.config.password)
       .pipe(
         mergeMap(() => {
+          console.log(
+            "gaga------------------------------------to update",
+            JSON.stringify(
+              {
+                ...state.userDetails,
+                _id: state.config.email,
+              },
+              null,
+              2,
+            ),
+          );
           return API.upsertUserData({
             ...state.userDetails,
             _id: state.config.email,
@@ -97,11 +108,6 @@ export const UserSettingsComponent = memo((props: Props) => {
           Object.assign(state.userDetails, omit(state.userDetails, key));
         }
       });
-
-      console.log(
-        "gaga------------------------------------",
-        JSON.stringify(state.userDetails, null, 2),
-      );
 
       setState((prevState) => ({
         ...prevState,
@@ -194,9 +200,75 @@ export const UserSettingsComponent = memo((props: Props) => {
               </Button>
             </div>
           </div>
+          <div className={"content-item"}>
+            <span>Set Done</span>
+            <div className={"btn-wrap"}>
+              <Button
+                tabIndex={-1}
+                inverted
+                color="red"
+                size={"small"}
+                circular
+                data-value={{ "data.weekStatus.done": false }}
+                active={state.userDetails.data?.weekStatus?.done === false}
+                onClick={handleUserDetailModelUpdate}
+                onMouseOut={handleRemoveFocus}
+              >
+                false
+              </Button>
+              <Button
+                tabIndex={-1}
+                inverted
+                color="green"
+                size={"small"}
+                circular
+                data-value={{ "data.weekStatus.done": true }}
+                active={state.userDetails.data?.weekStatus?.done === true}
+                onClick={handleUserDetailModelUpdate}
+                onMouseOut={handleRemoveFocus}
+              >
+                true
+              </Button>
+            </div>
+          </div>
+          <div className={"content-item"}>
+            <span>Set Auto Login</span>
+            <div className={"btn-wrap"}>
+              <Button
+                tabIndex={-1}
+                inverted
+                color="red"
+                size={"small"}
+                circular
+                data-value={{ "data.settings.electronAutoLogin": false }}
+                active={
+                  state.userDetails.data?.settings?.electronAutoLogin === false
+                }
+                onClick={handleUserDetailModelUpdate}
+                onMouseOut={handleRemoveFocus}
+              >
+                false
+              </Button>
+              <Button
+                tabIndex={-1}
+                inverted
+                color="green"
+                size={"small"}
+                circular
+                data-value={{ "data.settings.electronAutoLogin": true }}
+                active={
+                  state.userDetails.data?.settings?.electronAutoLogin === true
+                }
+                onClick={handleUserDetailModelUpdate}
+                onMouseOut={handleRemoveFocus}
+              >
+                true
+              </Button>
+            </div>
+          </div>
         </div>
         <hr />
-        <div className={"footer"}>
+        <Form onSubmit={handleUpdateClick} className={"footer"}>
           <Input iconPosition="left" placeholder="Password">
             <Icon name="lock" />
 
@@ -206,8 +278,8 @@ export const UserSettingsComponent = memo((props: Props) => {
               onInput={handleOnInput}
             />
           </Input>
-          <Button onClick={handleUpdateClick}>Update</Button>
-        </div>
+          <Button type={"submit"}>Update</Button>
+        </Form>
       </Segment>
       <ElementComponent loading={state.loading} />
     </div>

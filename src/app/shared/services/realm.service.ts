@@ -39,24 +39,10 @@ class CRUD {
     return this.get(object._id.toLowerCase()).pipe(
       mergeMap((foundItem) => {
         if (foundItem.length) {
-          const { weekStart, weekEnd } = GetDates();
-          const originalFoundItem = JSON.parse(JSON.stringify(foundItem?.[0]));
           if (object.updatedAt) {
             object = merge(foundItem[0], object);
           } else {
             object = merge(foundItem[0], { ...object, updatedAt: new Date() });
-          }
-
-          /*
-           * just custom for this
-           * if this has been saved as true, it'll always be true for the week
-           * */
-          if (
-            originalFoundItem.data?.weekStatus?.done === true &&
-            object.data?.weekStatus?.startDate === weekStart.toISOString() &&
-            object.data?.weekStatus?.endDate === weekEnd.toISOString()
-          ) {
-            object.data.weekStatus.done = true;
           }
         } else {
           object.createdAt = new Date();
@@ -69,6 +55,10 @@ class CRUD {
         object.email = this.currentUserEmail;
         object.year = year;
 
+        console.log(
+          "gaga----------------------------------1--final data to update",
+          JSON.stringify(object, null, 2),
+        );
         return defer(() =>
           this.collection.updateOne(
             { _id: object._id },
