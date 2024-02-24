@@ -15,7 +15,9 @@
 
 
     @media only screen and (max-width: 767px) {
-      min-width: 100px;
+      $W: 255px;
+      min-width: $W;
+      max-width: $W;
       thead {
         display: none !important;
       }
@@ -28,6 +30,7 @@
             text-align: left !important;
 
             .week-summary-wrap {
+              justify-content: flex-start;
 
               span {
                 width: auto;
