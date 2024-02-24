@@ -21,6 +21,16 @@ import moment from "moment";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
 import classNames from "classnames";
+import UseAnimations from "react-useanimations";
+import activity from "react-useanimations/lib/activity";
+import alertCircle from "react-useanimations/lib/alertCircle";
+import star from "react-useanimations/lib/star";
+
+enum Status {
+  IsDone,
+  InProgress,
+  IsWaiting,
+}
 
 interface CustomUserModel extends UserDetailModel {
   checked?: boolean;
@@ -118,14 +128,14 @@ export const UsersComponent = memo(() => {
         </div>
         <hr />
         <div className="tbl-wrap">
-          <Table celled striped selectable inverted>
+          <Table celled striped selectable inverted compact>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell className={"multi-select"} textAlign="center">
                   #
                 </Table.HeaderCell>
                 <Table.HeaderCell>App</Table.HeaderCell>
-                <Table.HeaderCell name={"status"}>
+                <Table.HeaderCell textAlign="center" name={"status"}>
                   Status{" "}
                   {!!getInProgressUsersCount && `#${getInProgressUsersCount}`}
                 </Table.HeaderCell>
@@ -159,7 +169,9 @@ export const UsersComponent = memo(() => {
               {state.data?.map((user, index) => {
                 const { weekStart } = GetDates();
 
+                const isDone = user.data?.weekStatus?.done === true;
                 const inProgress = user.data?.weekStatus?.done === false;
+
                 const lastUpdate = moment(user.updatedAt || user.createdAt);
                 const duration = moment.duration(lastUpdate.diff(Date.now()));
                 const minutesPassed = Math.abs(duration.asMinutes());
@@ -181,12 +193,18 @@ export const UsersComponent = memo(() => {
                   user.data?.weekStatus?.betSummary?.betSummary.bonus || 0;
                 let winnings =
                   user.data?.weekStatus?.betSummary?.betSummary.winnings || 0;
+
                 if (waiting) {
                   totalStaked = 0;
                   totalEarnings = 0;
                   bonus = 0;
                   winnings = 0;
                 }
+
+                const isWaiting =
+                  waiting ||
+                  isIdle ||
+                  user.data?.weekStatus?.done === undefined;
 
                 const bgColor =
                   minutesPassed > 30
@@ -202,6 +220,12 @@ export const UsersComponent = memo(() => {
                   .map((item) => item.build);
 
                 const emailArr = selected?.split(",") || [];
+
+                const status = isDone
+                  ? Status.IsDone
+                  : isWaiting
+                  ? Status.IsWaiting
+                  : Status.InProgress;
 
                 return (
                   <Table.Row
@@ -227,20 +251,37 @@ export const UsersComponent = memo(() => {
                     <Table.Cell collapsing>
                       <span>{user.build}</span>
                     </Table.Cell>
-                    <Table.Cell collapsing>
-                      <span
-                        className={classNames({
-                          status: true,
-                          done: user.data?.weekStatus?.done === true,
-                          "in-progress": inProgress,
-                          unknown: user.data?.weekStatus?.done === undefined,
-                          waiting: waiting || isIdle,
-                        })}
-                      />
+                    <Table.Cell
+                      collapsing
+                      textAlign="center"
+                      className={"status"}
+                    >
+                      {[status].map((s, statusInd) => {
+                        let animation = star;
+                        let color = "greenyellow";
+                        if (s === Status.InProgress) {
+                          animation = activity;
+                          color = "#fbbd08";
+                        } else if (s === Status.IsWaiting) {
+                          animation = alertCircle;
+                          color = "#ff5f5f";
+                        }
+
+                        return (
+                          <UseAnimations
+                            key={statusInd}
+                            animation={animation}
+                            size={25}
+                            autoplay={true}
+                            strokeColor={color}
+                            loop={true}
+                          />
+                        );
+                      })}
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
 
-                    <Table.Cell textAlign="center">
+                    <Table.Cell textAlign="center" className={"week-summary"}>
                       <div className={"week-summary-wrap"}>
                         <span
                           className={classNames({
@@ -270,7 +311,7 @@ export const UsersComponent = memo(() => {
                         </span>
                       </div>
                     </Table.Cell>
-                    <Table.Cell textAlign="right">
+                    <Table.Cell textAlign="right" className={"progress"}>
                       <Progress
                         indicating
                         inverted
@@ -285,13 +326,13 @@ export const UsersComponent = memo(() => {
                         label={Money(totalStaked)}
                       />
                     </Table.Cell>
-                    <Table.Cell textAlign="center">
+                    <Table.Cell textAlign="center" className={"open-bets"}>
                       {user.data.weekStatus?.betSummary?.betSummary.openBets}
                     </Table.Cell>
-                    <Table.Cell textAlign="center">
+                    <Table.Cell textAlign="center" className={"settled-bets"}>
                       {user.data.weekStatus?.betSummary?.betSummary.settledBets}
                     </Table.Cell>
-                    <Table.Cell textAlign="right">
+                    <Table.Cell textAlign="right" className={"last-login"}>
                       <span style={{ color: bgColor }}>
                         {lastUpdate.fromNow()}
                       </span>
