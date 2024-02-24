@@ -256,27 +256,28 @@ export const UsersComponent = memo(() => {
                       textAlign="center"
                       className={"status"}
                     >
-                      {[status].map((s, statusInd) => {
-                        let animation = star;
-                        let color = "greenyellow";
-                        if (s === Status.InProgress) {
-                          animation = activity;
-                          color = "#fbbd08";
-                        } else if (s === Status.IsWaiting) {
-                          animation = alertCircle;
-                          color = "#ff5f5f";
-                        }
-                        return (
-                          <UseAnimations
-                            key={statusInd}
-                            animation={animation}
-                            size={25}
-                            autoplay={true}
-                            strokeColor={color}
-                            loop={true}
-                          />
-                        );
-                      })}
+                      {!state.loading &&
+                        [status].map((s, statusInd) => {
+                          let animation = star;
+                          let color = "greenyellow";
+                          if (s === Status.InProgress) {
+                            animation = activity;
+                            color = "#fbbd08";
+                          } else if (s === Status.IsWaiting) {
+                            animation = alertCircle;
+                            color = "#ff5f5f";
+                          }
+                          return (
+                            <UseAnimations
+                              key={statusInd}
+                              animation={animation}
+                              size={25}
+                              autoplay={true}
+                              strokeColor={color}
+                              loop={true}
+                            />
+                          );
+                        })}
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
 
