@@ -49,6 +49,9 @@ export const UsersComponent = memo(() => {
     return [];
   }, []);
 
+  /*
+   * commit
+   * */
   const currentLocation = JSON.stringify(window.location.href);
   const navigate = useNavigate();
 
