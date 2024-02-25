@@ -1,5 +1,7 @@
 import {
   DependencyList,
+  Dispatch,
+  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -14,6 +16,8 @@ import {
   tap,
 } from "rxjs";
 import { Store } from "@services/store.service";
+import { UserDetailModel } from "@models/custom.models";
+import moment from "moment/moment";
 
 export const useSubject = <T>(
   func: (objs: Subject<T>) => Observable<T>,
@@ -60,7 +64,7 @@ export const useApi = <T>(
   options?: {
     withLoading: boolean;
   },
-): UseApiModel<T> => {
+): [UseApiModel<T>, Dispatch<SetStateAction<UseApiModel<T>>>] => {
   const [state, setState] = useState<UseApiModel<T>>({
     loading: true,
     sub$: new BehaviorSubject(true),
@@ -93,7 +97,7 @@ export const useApi = <T>(
     };
   }, []);
 
-  return state;
+  return [state, setState];
 };
 
 export const useObservable = <T>(obs$: Observable<T>): T => {
@@ -202,4 +206,37 @@ export const GetColor = (value: number) => {
     "#ff5f5f",
   ];
   return colorArr[value];
+};
+
+export enum UserStatus {
+  IsDone,
+  InProgress,
+  IsWaiting,
+}
+
+export const GetUserStatus = (user: UserDetailModel) => {
+  const { weekStart } = GetDates();
+  const isDone = user.data?.weekStatus?.done === true;
+  const inProgress = user.data?.weekStatus?.done === false;
+
+  const lastUpdate = moment(user.updatedAt || user.createdAt);
+  const duration = moment.duration(lastUpdate.diff(Date.now()));
+  const minutesPassed = Math.abs(duration.asMinutes());
+  let isIdle = false;
+
+  if (inProgress && minutesPassed >= 30) {
+    isIdle = true;
+  }
+
+  const waiting = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
+  const isWaiting =
+    waiting || isIdle || user.data?.weekStatus?.done === undefined;
+
+  if (isDone) {
+    return UserStatus.IsDone;
+  } else if (isWaiting) {
+    return UserStatus.IsWaiting;
+  } else {
+    return UserStatus.InProgress;
+  }
 };

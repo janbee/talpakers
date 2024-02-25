@@ -19,7 +19,7 @@
       min-width: $W;
       max-width: $W;
 
-      .tbl-wrap{
+      .tbl-wrap {
         thead {
           display: none !important;
         }
@@ -34,27 +34,30 @@
             td {
               height: auto;
               text-align: center !important;
-              display: flex!important;
+              display: flex !important;
               align-items: center;
 
 
-              &.week-summary{
+              &.week-summary {
                 flex: 0 0 100%;
                 justify-content: center;
+
                 .week-summary-wrap {
                   width: 100%;
                   justify-content: space-evenly;
+
                   span {
                     width: auto;
 
                   }
                 }
               }
-              &.progress{
+
+              &.progress {
                 flex: 0 0 100%;
                 justify-content: center;
 
-                > div{
+                > div {
                   width: 100%;
                 }
               }
@@ -76,73 +79,59 @@
       table tfoot {
         position: sticky;
         background: #2b2b2b;
-        z-index: 10;
       }
+
       table thead {
         inset-block-start: 0; /* "top" */
+        z-index: 11;
+        th {
+          &.status {
+            min-width: 100px;
+          }
+
+          &.bets {
+            min-width: 70px;
+          }
+
+          &.weekly-summary {
+            $WP: 200px;
+            min-width: $WP;
+            max-width: $WP;
+            width: $WP;
+          }
+
+          &.last-update {
+            $WP: 150px;
+            min-width: $WP;
+            max-width: $WP;
+            width: $WP;
+          }
+        }
       }
+
+      table tbody {
+        td {
+          &.bets {
+            div {
+              display: flex;
+              justify-content: space-between;
+              flex-direction: row;
+            }
+          }
+        }
+      }
+
       table tfoot {
+        z-index: 10;
         inset-block-end: 0; /* "bottom" */
       }
-    }
-
-    .status {
-      font-weight: bold;
-
-      &.done:before {
-        color: greenyellow;
-        content: "Done ";
-      }
-
-      &.in-progress:before {
-        color: #fbbd08;
-        content: "InProgress";
-      }
-
-      &.unknown:before {
-        color: var(--red-dark);
-        content: "UnKnown";
-      }
-
-      &.waiting:before {
-        color: var(--red-dark);
-        content: "Wating";
-      }
-
-      &.idle:before {
-        color: #629dff;
-        content: "Idle";
-      }
-
-
     }
 
     tr {
       cursor: pointer;
 
-
-      th {
-        &.weekly-summary {
-          $WP: 200px;
-          min-width: $WP;
-          max-width: $WP;
-          width: $WP;
-        }
-
-        &.weekly-progress {
-
-        }
-
-        &.last-update {
-          $WP: 150px;
-          min-width: $WP;
-          max-width: $WP;
-          width: $WP;
-        }
-      }
-
-      td{
-        > div{
+      td {
+        > div {
           margin: auto;
         }
       }

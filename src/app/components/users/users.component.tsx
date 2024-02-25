@@ -1,8 +1,16 @@
-import React, { FormEvent, memo, useCallback, useMemo } from "react";
+import React, {
+  FormEvent,
+  memo,
+  SyntheticEvent,
+  useCallback,
+  useMemo,
+} from "react";
 import "./users.component.scss";
 import {
   Checkbox,
   CheckboxProps,
+  Dropdown,
+  DropdownProps,
   Icon,
   Progress,
   Segment,
@@ -10,10 +18,11 @@ import {
 } from "semantic-ui-react";
 import {
   GetColor,
-  GetDates,
+  GetUserStatus,
   Money,
   useApi,
   useCallbackMemo,
+  UserStatus,
 } from "@utilities/utils";
 import { UserDetailModel } from "@models/custom.models";
 import { API } from "@services/api.service";
@@ -26,22 +35,16 @@ import activity from "react-useanimations/lib/activity";
 import alertCircle from "react-useanimations/lib/alertCircle";
 import star from "react-useanimations/lib/star";
 
-enum Status {
-  IsDone,
-  InProgress,
-  IsWaiting,
-}
-
 interface CustomUserModel extends UserDetailModel {
   checked?: boolean;
+  visible?: boolean;
 }
 
 export const UsersComponent = memo(() => {
-  const state = useApi<CustomUserModel[]>(() => API.getUsers(), {
+  const [state, setState] = useApi<CustomUserModel[]>(() => API.getUsers(), {
     withLoading: false,
   });
 
-  //test
   const accounts = useMemo<CustomUserModel[]>(() => {
     return [];
   }, []);
@@ -106,6 +109,17 @@ export const UsersComponent = memo(() => {
     );
   }, [state.data]);
 
+  const handleStatusFilter = useCallback(
+    (event: SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+      state.data?.forEach((user) => {
+        const userStatus = GetUserStatus(user);
+        user.visible = userStatus === data.value;
+      });
+      setState((prevState) => ({ ...prevState, data: state.data }));
+    },
+    [state.data],
+  );
+
   return (
     <div
       className={classNames({
@@ -136,8 +150,30 @@ export const UsersComponent = memo(() => {
                   #
                 </Table.HeaderCell>
                 <Table.HeaderCell>App</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center" name={"status"}>
-                  Status{" "}
+                <Table.HeaderCell textAlign="center" className={"status"}>
+                  <Dropdown
+                    text="Status"
+                    closeOnChange={false}
+                    onChange={handleStatusFilter}
+                    options={[
+                      {
+                        key: UserStatus.IsDone,
+                        value: UserStatus.IsDone,
+                        text: "Done",
+                      },
+                      {
+                        key: UserStatus.InProgress,
+                        value: UserStatus.InProgress,
+                        text: "InProgress",
+                      },
+                      {
+                        key: UserStatus.IsWaiting,
+                        value: UserStatus.IsWaiting,
+                        text: "Waiting",
+                      },
+                    ]}
+                  />
+                  <br />
                   {!!getInProgressUsersCount && `#${getInProgressUsersCount}`}
                 </Table.HeaderCell>
                 <Table.HeaderCell>Version</Table.HeaderCell>
@@ -156,9 +192,8 @@ export const UsersComponent = memo(() => {
                 >
                   Weekly Progress
                 </Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">OpenBets</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">
-                  SettledBets
+                <Table.HeaderCell textAlign="center" className={"bets"}>
+                  Bets
                 </Table.HeaderCell>
                 <Table.HeaderCell className={"last-update"} textAlign="right">
                   Active
@@ -168,21 +203,13 @@ export const UsersComponent = memo(() => {
 
             <Table.Body>
               {state.data?.map((user, index) => {
-                const { weekStart } = GetDates();
+                if (user.visible === false) return null;
 
-                const isDone = user.data?.weekStatus?.done === true;
-                const inProgress = user.data?.weekStatus?.done === false;
-
+                const userStatus = GetUserStatus(user);
+                const isWaiting = userStatus === UserStatus.IsWaiting;
                 const lastUpdate = moment(user.updatedAt || user.createdAt);
                 const duration = moment.duration(lastUpdate.diff(Date.now()));
                 const minutesPassed = Math.abs(duration.asMinutes());
-                let isIdle = false;
-                if (inProgress && minutesPassed >= 30) {
-                  isIdle = true;
-                }
-
-                const waiting =
-                  weekStart.toISOString() !== user.data?.weekStatus?.startDate;
 
                 let totalStaked =
                   user.data?.weekStatus?.betSummary?.betSummary.totalStaked ||
@@ -195,17 +222,12 @@ export const UsersComponent = memo(() => {
                 let winnings =
                   user.data?.weekStatus?.betSummary?.betSummary.winnings || 0;
 
-                if (waiting) {
+                if (isWaiting) {
                   totalStaked = 0;
                   totalEarnings = 0;
                   bonus = 0;
                   winnings = 0;
                 }
-
-                const isWaiting =
-                  waiting ||
-                  isIdle ||
-                  user.data?.weekStatus?.done === undefined;
 
                 const bgColor =
                   minutesPassed > 30
@@ -221,12 +243,6 @@ export const UsersComponent = memo(() => {
                   .map((item) => item.build);
 
                 const emailArr = selected?.split(",") || [];
-
-                const status = isDone
-                  ? Status.IsDone
-                  : isWaiting
-                  ? Status.IsWaiting
-                  : Status.InProgress;
 
                 return (
                   <Table.Row
@@ -258,13 +274,13 @@ export const UsersComponent = memo(() => {
                       className={"status"}
                     >
                       {!state.loading &&
-                        [status].map((s, statusInd) => {
+                        [userStatus].map((s, statusInd) => {
                           let animation = star;
                           let color = "greenyellow";
-                          if (s === Status.InProgress) {
+                          if (s === UserStatus.InProgress) {
                             animation = activity;
                             color = "#fbbd08";
-                          } else if (s === Status.IsWaiting) {
+                          } else if (s === UserStatus.IsWaiting) {
                             animation = alertCircle;
                             color = "#ff5f5f";
                           }
@@ -323,15 +339,28 @@ export const UsersComponent = memo(() => {
                         precision={0}
                         value={Math.floor(totalStaked)}
                         progress={"percent"}
-                        total={385}
+                        total={380}
                         label={Money(totalStaked)}
                       />
                     </Table.Cell>
-                    <Table.Cell textAlign="center" className={"open-bets"}>
-                      {user.data.weekStatus?.betSummary?.betSummary.openBets}
-                    </Table.Cell>
-                    <Table.Cell textAlign="center" className={"settled-bets"}>
-                      {user.data.weekStatus?.betSummary?.betSummary.settledBets}
+                    <Table.Cell textAlign="center" className={"bets"}>
+                      {[
+                        {
+                          open:
+                            user.data.weekStatus?.betSummary?.betSummary
+                              .openBets || 0,
+                          settled:
+                            user.data.weekStatus?.betSummary?.betSummary
+                              .settledBets || 0,
+                        },
+                      ].map(({ open, settled }, betsIndex) => {
+                        return (
+                          <div key={betsIndex}>
+                            <span>{open}</span>
+                            <span>{settled}</span>
+                          </div>
+                        );
+                      })}
                     </Table.Cell>
                     <Table.Cell textAlign="right" className={"last-login"}>
                       <span style={{ color: bgColor }}>

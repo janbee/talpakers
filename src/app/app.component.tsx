@@ -10,7 +10,7 @@ import { LoaderComponent } from "@app/shared/component/loader.component";
 
 export const AppComponent = () => {
   const webFontsLoaded = useFontFaceObserver([{ family: `quicksand` }]);
-  const realm = useApi(() => API.$RealmDB.init());
+  const [realm] = useApi(() => API.$RealmDB.init());
   return (
     <div className="container">
       <HeaderComponent />
