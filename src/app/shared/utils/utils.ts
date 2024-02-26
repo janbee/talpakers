@@ -232,10 +232,10 @@ export const GetUserStatus = (user: UserDetailModel) => {
   const isWaiting =
     waiting || isIdle || user.data?.weekStatus?.done === undefined;
 
-  if (isDone) {
-    return UserStatus.IsDone;
-  } else if (isWaiting) {
+  if (isWaiting) {
     return UserStatus.IsWaiting;
+  } else if (isDone) {
+    return UserStatus.IsDone;
   } else {
     return UserStatus.InProgress;
   }
