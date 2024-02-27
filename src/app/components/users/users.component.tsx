@@ -295,7 +295,7 @@ export const UsersComponent = memo(() => {
                               autoplay={true}
                               strokeColor={color}
                               loop={true}
-                              speed={3}
+                              speed={0.3}
                             />
                           );
                         })}
