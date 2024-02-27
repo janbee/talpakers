@@ -34,10 +34,10 @@ import UseAnimations from "react-useanimations";
 import activity from "react-useanimations/lib/activity";
 import alertCircle from "react-useanimations/lib/alertCircle";
 import star from "react-useanimations/lib/star";
+import { orderBy } from "lodash";
 
 interface CustomUserModel extends UserDetailModel {
   checked?: boolean;
-  visible?: boolean;
 }
 
 export const UsersComponent = memo(() => {
@@ -114,11 +114,18 @@ export const UsersComponent = memo(() => {
 
   const handleStatusFilter = useCallback(
     (event: SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-      state.data?.forEach((user) => {
-        const userStatus = GetUserStatus(user);
-        user.visible = userStatus === data.value;
-      });
-      setState((prevState) => ({ ...prevState, data: state.data }));
+      const sorted = orderBy(
+        state.data,
+        [
+          (user) => {
+            const userStatus = GetUserStatus(user);
+            return userStatus === data.value;
+          },
+          "data.weekStatus.betSummary.betSummary.totalStaked",
+        ],
+        ["desc", "desc"],
+      );
+      setState((prevState) => ({ ...prevState, data: sorted }));
     },
     [state.data],
   );
@@ -206,8 +213,6 @@ export const UsersComponent = memo(() => {
 
             <Table.Body>
               {state.data?.map((user, index) => {
-                if (user.visible === false) return null;
-
                 const userStatus = GetUserStatus(user);
                 const isWaiting = userStatus === UserStatus.IsWaiting;
                 const lastUpdate = moment(user.updatedAt || user.createdAt);
@@ -295,7 +300,7 @@ export const UsersComponent = memo(() => {
                               autoplay={true}
                               strokeColor={color}
                               loop={true}
-                              speed={0.3}
+                              speed={0.4}
                             />
                           );
                         })}
