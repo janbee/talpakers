@@ -18,6 +18,7 @@ import {
 } from "semantic-ui-react";
 import {
   GetColor,
+  GetDates,
   GetUserStatus,
   Money,
   useApi,
@@ -213,8 +214,11 @@ export const UsersComponent = memo(() => {
 
             <Table.Body>
               {state.data?.map((user, index) => {
+                const { weekStart } = GetDates();
                 const userStatus = GetUserStatus(user);
                 const isWaiting = userStatus === UserStatus.IsWaiting;
+                const isNewWeek =
+                  weekStart.toISOString() !== user.data?.weekStatus?.startDate;
                 const lastUpdate = moment(user.updatedAt || user.createdAt);
                 const duration = moment.duration(lastUpdate.diff(Date.now()));
                 const minutesPassed = Math.abs(duration.asMinutes());
@@ -230,7 +234,7 @@ export const UsersComponent = memo(() => {
                 let winnings =
                   user.data?.weekStatus?.betSummary?.betSummary.winnings || 0;
 
-                if (isWaiting) {
+                if (isNewWeek) {
                   totalStaked = 0;
                   totalEarnings = 0;
                   bonus = 0;
