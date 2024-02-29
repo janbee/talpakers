@@ -55,6 +55,7 @@ export interface UserDataModel {
     startDate: string;
     endDate: string;
     betSummary: BetSummaryModel;
+    withdrawal?: WithdrawalModel;
   };
   version?: string;
 }

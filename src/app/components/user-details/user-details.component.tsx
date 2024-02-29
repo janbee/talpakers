@@ -17,7 +17,7 @@ import { ElementComponent } from "@app/shared/component/element-loader.component
 import { groupBy, sumBy } from "lodash";
 import moment from "moment";
 import { useLocation } from "react-router-dom";
-import { Money } from "@utilities/utils";
+import { GetDates, Money } from "@utilities/utils";
 import classNames from "classnames";
 import { forkJoin } from "rxjs";
 import { UserSettingsComponent } from "@components/user-details/user-settings.component";

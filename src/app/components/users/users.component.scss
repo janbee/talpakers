@@ -111,11 +111,35 @@
 
       table tbody {
         td {
+          position: relative;
           &.bets {
             div {
               display: flex;
               justify-content: space-between;
               flex-direction: row;
+            }
+          }
+
+          .has-withdrawal {
+            background: red;
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            right: 3px;
+            cursor: pointer;
+            top: 3px;
+
+            &.yellow {
+              background: var(--yellow-dark);
+            }
+
+            &.blue {
+              background: var(--blue-light);
+            }
+
+            &.green {
+              background: var(--green-dark);
             }
           }
         }

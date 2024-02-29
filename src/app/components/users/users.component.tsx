@@ -12,6 +12,7 @@ import {
   Dropdown,
   DropdownProps,
   Icon,
+  Popup,
   Progress,
   Segment,
   Table,
@@ -216,7 +217,7 @@ export const UsersComponent = memo(() => {
               {state.data?.map((user, index) => {
                 const { weekStart } = GetDates();
                 const userStatus = GetUserStatus(user);
-                const isWaiting = userStatus === UserStatus.IsWaiting;
+
                 const isNewWeek =
                   weekStart.toISOString() !== user.data?.weekStatus?.startDate;
                 const lastUpdate = moment(user.updatedAt || user.createdAt);
@@ -278,6 +279,66 @@ export const UsersComponent = memo(() => {
                       />
                     </Table.Cell>
                     <Table.Cell collapsing>
+                      {!!user.data.weekStatus?.withdrawal && (
+                        <>
+                          {[
+                            {
+                              Pending:
+                                user.data.weekStatus?.withdrawal
+                                  .TransactionStatus === "Pending",
+                              Approved:
+                                user.data.weekStatus?.withdrawal
+                                  .TransactionStatus === "Approved",
+                              Processing: [
+                                "In Process",
+                                "Sending to Processor",
+                              ].includes(
+                                user.data.weekStatus?.withdrawal
+                                  .TransactionStatus,
+                              ),
+                            },
+                          ].map((status, index) => (
+                            <Popup
+                              key={index}
+                              position="right center"
+                              trigger={
+                                <div
+                                  className={classNames({
+                                    "has-withdrawal": true,
+                                    yellow: status.Pending,
+                                    green: status.Approved,
+                                    blue: status.Processing,
+                                  })}
+                                />
+                              }
+                              flowing
+                            >
+                              <Popup.Header>
+                                Withdrawal (
+                                <span
+                                  className={classNames({
+                                    "yellow-light": status.Pending,
+                                    "green-light": status.Approved,
+                                    "blue-light": status.Processing,
+                                  })}
+                                >
+                                  {
+                                    user.data.weekStatus?.withdrawal
+                                      ?.TransactionStatus
+                                  }
+                                </span>
+                                )
+                              </Popup.Header>
+                              <Popup.Content>
+                                {`${user.data.weekStatus?.withdrawal
+                                  ?.PaymentMethodInfo} ${Money(
+                                  user.data.weekStatus?.withdrawal?.Amount || 0,
+                                )}`}
+                              </Popup.Content>
+                            </Popup>
+                          ))}
+                        </>
+                      )}
                       <span>{user.build}</span>
                     </Table.Cell>
                     <Table.Cell
