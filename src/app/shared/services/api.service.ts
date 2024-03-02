@@ -5,7 +5,7 @@ import {
   BetSummaryModel,
   BonusModel,
   MongoCollection,
-  SettledBetsModel,
+  SettledBetModel,
   UserDetailModel,
   WithdrawalModel,
 } from "@models/custom.models";
@@ -27,7 +27,7 @@ class ApiService {
     });
   }
 
-  getSettledBets(filter: Object): Observable<SettledBetsModel[] | null> {
+  getSettledBets(filter: Object): Observable<SettledBetModel[] | null> {
     return this.$RealmDB
       .collection(MongoCollection.SettledBets)
       .getBy(filter)
