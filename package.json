@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.101",
+  "version": "0.1.102",
   "homepage": "https://janbee.github.io/talpakers/build",
   "private": true,
   "scripts": {
@@ -19,7 +19,6 @@
     "git:push": "git push",
     "git:run": "yarn run git:add && yarn run git:commit && yarn run git:push"
   },
-
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "@realm/babel-plugin": "^0.1.1",
