@@ -9,7 +9,7 @@ export interface AlertModel {
   type: AlertTypeModel;
   duration?: number;
 }
-
+// test
 export const NavigationScreens = {
   Main: "main",
 };

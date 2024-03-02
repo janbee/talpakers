@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.99",
+  "version": "0.1.100",
   "homepage": "https://janbee.github.io/talpakers/build",
   "private": true,
   "scripts": {
@@ -52,6 +52,7 @@
     "web-vitals": "^3.5.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "core-js-pure": "^3.23.3",
