@@ -209,9 +209,9 @@ export const GetColor = (value: number) => {
 };
 
 export enum UserStatus {
-  IsDone,
-  InProgress,
-  IsWaiting,
+  IsDone = "Done",
+  InProgress = "InProgress",
+  IsWaiting = "Idle",
 }
 
 export const GetUserStatus = (user: UserDetailModel) => {

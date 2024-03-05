@@ -344,46 +344,60 @@ export const UsersComponent = memo(() => {
                     >
                       {!state.loading &&
                         [userStatus].map((s, statusInd) => {
+                          let className = "green-light";
                           let FIcon = (
                             <i
                               key={statusInd}
                               className="fa-solid fa-circle-check fa-beat"
                               style={
                                 {
-                                  color: "greenyellow",
+                                  color: "var(--green-dark)",
                                   "--fa-animation-duration": "10s",
                                 } as any
                               }
                             />
                           );
                           if (s === UserStatus.InProgress) {
+                            className = "yellow-light";
                             FIcon = (
                               <i
                                 key={statusInd}
                                 className="fa-solid fa-basketball fa-beat"
                                 style={
                                   {
-                                    color: "#fbbd08",
+                                    color: "var(--yellow-dark)",
                                     "--fa-animation-duration": "2s",
                                   } as any
                                 }
                               />
                             );
                           } else if (s === UserStatus.IsWaiting) {
+                            className = "red-light";
                             FIcon = (
                               <i
                                 key={statusInd}
                                 className="fa-solid fa-circle-stop fa-beat"
                                 style={
                                   {
-                                    color: "#ff5f5f",
+                                    color: "var(--red-dark)",
                                     "--fa-animation-duration": "5s",
                                   } as any
                                 }
                               />
                             );
                           }
-                          return FIcon;
+                          return (
+                            <Popup
+                              key={index}
+                              position="top center"
+                              trigger={FIcon}
+                              content={() => (
+                                <span className={className}>{s}</span>
+                              )}
+                              mouseEnterDelay={1500}
+                              mouseLeaveDelay={500}
+                            />
+                          );
                         })}
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>
@@ -447,6 +461,7 @@ export const UsersComponent = memo(() => {
                         return (
                           <div key={betsIndex}>
                             <span>{open}</span>
+                            <span>-</span>
                             <span>{settled}</span>
                           </div>
                         );
