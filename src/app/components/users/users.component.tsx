@@ -32,10 +32,6 @@ import moment from "moment";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ElementComponent } from "@app/shared/component/element-loader.component";
 import classNames from "classnames";
-import UseAnimations from "react-useanimations";
-import activity from "react-useanimations/lib/activity";
-import alertCircle from "react-useanimations/lib/alertCircle";
-import star from "react-useanimations/lib/star";
 import { orderBy } from "lodash";
 
 interface CustomUserModel extends UserDetailModel {
@@ -348,26 +344,46 @@ export const UsersComponent = memo(() => {
                     >
                       {!state.loading &&
                         [userStatus].map((s, statusInd) => {
-                          let animation = star;
-                          let color = "greenyellow";
-                          if (s === UserStatus.InProgress) {
-                            animation = activity;
-                            color = "#fbbd08";
-                          } else if (s === UserStatus.IsWaiting) {
-                            animation = alertCircle;
-                            color = "#ff5f5f";
-                          }
-                          return (
-                            <UseAnimations
+                          let FIcon = (
+                            <i
                               key={statusInd}
-                              animation={animation}
-                              size={25}
-                              autoplay={true}
-                              strokeColor={color}
-                              loop={true}
-                              speed={0.4}
+                              className="fa-solid fa-circle-check fa-beat"
+                              style={
+                                {
+                                  color: "greenyellow",
+                                  "--fa-animation-duration": "10s",
+                                } as any
+                              }
                             />
                           );
+                          if (s === UserStatus.InProgress) {
+                            FIcon = (
+                              <i
+                                key={statusInd}
+                                className="fa-solid fa-basketball fa-beat"
+                                style={
+                                  {
+                                    color: "#fbbd08",
+                                    "--fa-animation-duration": "2s",
+                                  } as any
+                                }
+                              />
+                            );
+                          } else if (s === UserStatus.IsWaiting) {
+                            FIcon = (
+                              <i
+                                key={statusInd}
+                                className="fa-solid fa-circle-stop fa-beat"
+                                style={
+                                  {
+                                    color: "#ff5f5f",
+                                    "--fa-animation-duration": "5s",
+                                  } as any
+                                }
+                              />
+                            );
+                          }
+                          return FIcon;
                         })}
                     </Table.Cell>
                     <Table.Cell collapsing>{user.data?.version}</Table.Cell>

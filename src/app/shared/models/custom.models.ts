@@ -9,7 +9,7 @@ export interface AlertModel {
   type: AlertTypeModel;
   duration?: number;
 }
-// test
+
 export const NavigationScreens = {
   Main: "main",
 };
@@ -433,7 +433,7 @@ export interface UserDataModel {
     startDate: string;
     endDate: string;
     betSummary: BetSummaryModel;
-    withdrawal?: WithdrawalModel;
+    withdrawal: WithdrawalModel | null;
   };
   version?: string;
 }
