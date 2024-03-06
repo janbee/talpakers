@@ -1,27 +1,11 @@
-import {
-  DependencyList,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  BehaviorSubject,
-  Observable,
-  Subject,
-  Subscription,
-  switchMap,
-  tap,
-} from "rxjs";
-import { Store } from "@services/store.service";
-import { UserDetailModel } from "@models/custom.models";
-import moment from "moment/moment";
+import { DependencyList, Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { BehaviorSubject, map, Observable, Subject, Subscription, switchMap, tap } from 'rxjs';
+import { Store } from '@services/store.service';
+import { UserDetailModel } from '@models/custom.models';
+import moment from 'moment/moment';
+import { isFunction } from 'lodash';
 
-export const useSubject = <T>(
-  func: (objs: Subject<T>) => Observable<T>,
-): Subject<T> => {
+export const useSubject = <T>(func: (objs: Subject<T>) => Observable<T>): Subject<T> => {
   const [subject, setSubject] = useState<Subject<T>>(new Subject<T>());
   useEffect(() => {
     const newSub = new Subject<T>();
@@ -55,7 +39,7 @@ export const useCallback$ = <T>(func: (obs$: Subject<T>) => Subscription) => {
 interface UseApiModel<T> {
   loading: boolean;
   data?: T;
-  reload?: () => void;
+  reload?: (filter: any) => void;
   sub$: BehaviorSubject<boolean>;
 }
 
@@ -63,13 +47,13 @@ export const useApi = <T>(
   func: () => Observable<T>,
   options?: {
     withLoading: boolean;
-  },
+  }
 ): [UseApiModel<T>, Dispatch<SetStateAction<UseApiModel<T>>>] => {
   const [state, setState] = useState<UseApiModel<T>>({
     loading: true,
     sub$: new BehaviorSubject(true),
-    reload: () => {
-      state.sub$.next(true);
+    reload: (filter?: any) => {
+      state.sub$.next(filter);
     },
   });
 
@@ -77,15 +61,27 @@ export const useApi = <T>(
     const unsub = state.sub$
       .pipe(
         tap(() => {
-          console.log("gaga-------------------------------useApi------");
+          console.log('gaga-------------------------------useApi------');
           if (options?.withLoading !== false) {
             Store.Loading$.next(true);
           }
           setState((prevState) => ({ ...prevState, loading: true }));
         }),
-        switchMap(() => {
-          return func();
-        }),
+        switchMap((filter?: any) => {
+          return func().pipe(
+            map((res) => {
+              console.log('gaga---------------------------------res----', res, filter);
+
+              if (isFunction(filter?.filter)) {
+                return (res as any).filter(filter);
+              } else if (isFunction(filter?.orderBy)) {
+                return filter.orderBy(res);
+              }
+
+              return res;
+            })
+          );
+        })
       )
       .subscribe((res) => {
         Store.Loading$.next(false);
@@ -120,10 +116,7 @@ export const useObservable = <T>(obs$: Observable<T>): T => {
   return state;
 };
 
-export const useCallbackMemo = <T>(
-  func: (args: T) => void,
-  deps: DependencyList,
-) => {
+export const useCallbackMemo = <T>(func: (args: T) => void, deps: DependencyList) => {
   const fn = useMemo(() => {
     return (args: T) => () => func(args);
   }, deps);
@@ -131,9 +124,9 @@ export const useCallbackMemo = <T>(
   return useCallback(fn, [fn]);
 };
 
-export const Money = (money: string | number, currency: string = "USD") => {
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
+export const Money = (money: string | number, currency: string = 'USD') => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
     currency: currency,
 
     // These options are needed to round to whole numbers if that's what you want.
@@ -174,44 +167,44 @@ export const GetDates = () => {
 
 export const GetColor = (value: number) => {
   const colorArr = [
-    "#adff2f",
-    "#b2fa33",
-    "#b7f636",
-    "#bcf139",
-    "#c0ec3b",
-    "#c4e73e",
-    "#c8e340",
-    "#ccde42",
-    "#d0d945",
-    "#d3d447",
-    "#d6cf48",
-    "#d9ca4a",
-    "#dcc54c",
-    "#dfc04d",
-    "#e2bb4f",
-    "#e4b650",
-    "#e7b152",
-    "#e9ab53",
-    "#eca654",
-    "#eea056",
-    "#f09b57",
-    "#f29558",
-    "#f48f59",
-    "#f6895a",
-    "#f7835b",
-    "#f97c5c",
-    "#fb755d",
-    "#fc6e5d",
-    "#fe675e",
-    "#ff5f5f",
+    '#adff2f',
+    '#b2fa33',
+    '#b7f636',
+    '#bcf139',
+    '#c0ec3b',
+    '#c4e73e',
+    '#c8e340',
+    '#ccde42',
+    '#d0d945',
+    '#d3d447',
+    '#d6cf48',
+    '#d9ca4a',
+    '#dcc54c',
+    '#dfc04d',
+    '#e2bb4f',
+    '#e4b650',
+    '#e7b152',
+    '#e9ab53',
+    '#eca654',
+    '#eea056',
+    '#f09b57',
+    '#f29558',
+    '#f48f59',
+    '#f6895a',
+    '#f7835b',
+    '#f97c5c',
+    '#fb755d',
+    '#fc6e5d',
+    '#fe675e',
+    '#ff5f5f',
   ];
   return colorArr[value];
 };
 
 export enum UserStatus {
-  IsDone = "Done",
-  InProgress = "InProgress",
-  IsWaiting = "Idle",
+  IsDone = 'Done',
+  InProgress = 'InProgress',
+  IsWaiting = 'Waiting',
 }
 
 export const GetUserStatus = (user: UserDetailModel) => {
@@ -229,8 +222,7 @@ export const GetUserStatus = (user: UserDetailModel) => {
   }
 
   const waiting = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
-  const isWaiting =
-    waiting || isIdle || user.data?.weekStatus?.done === undefined;
+  const isWaiting = waiting || isIdle || user.data?.weekStatus?.done === undefined;
 
   if (isWaiting) {
     return UserStatus.IsWaiting;

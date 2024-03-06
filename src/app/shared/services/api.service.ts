@@ -1,5 +1,5 @@
-import { RealmService } from "@services/realm.service";
-import { Store } from "@services/store.service";
+import { RealmService } from '@services/realm.service';
+import { Store } from '@services/store.service';
 import {
   AlertTypeModel,
   BetSummaryModel,
@@ -8,15 +8,15 @@ import {
   SettledBetModel,
   UserDetailModel,
   WithdrawalModel,
-} from "@models/custom.models";
-import { catchError, map, Observable, of, throwError, timeout } from "rxjs";
-import { EJSON } from "bson";
+} from '@models/custom.models';
+import { catchError, map, Observable, of, throwError, timeout } from 'rxjs';
+import { EJSON } from 'bson';
 
 class ApiService {
   $RealmDB = new RealmService({
-    AppId: "pocketsportsapp-umuum",
-    AppClient: "mongodb-atlas",
-    AppDB: "DB",
+    AppId: 'pocketsportsapp-umuum',
+    AppClient: 'mongodb-atlas',
+    AppDB: 'DB',
   });
 
   private static catchErrorAlert(err: any) {
@@ -34,10 +34,7 @@ class ApiService {
       .pipe(
         timeout({
           each: 10000,
-          with: () =>
-            throwError(
-              () => "Server is taking too long to respond! getSettledBets",
-            ),
+          with: () => throwError(() => 'Server is taking too long to respond! getSettledBets'),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
@@ -45,7 +42,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        }),
+        })
       );
   }
 
@@ -56,10 +53,7 @@ class ApiService {
       .pipe(
         timeout({
           each: 10000,
-          with: () =>
-            throwError(
-              () => "Server is taking too long to respond! getBetSummary",
-            ),
+          with: () => throwError(() => 'Server is taking too long to respond! getBetSummary'),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
@@ -67,7 +61,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        }),
+        })
       );
   }
 
@@ -78,15 +72,12 @@ class ApiService {
       .pipe(
         timeout({
           each: 10000,
-          with: () =>
-            throwError(
-              () => "Server is taking too long to respond! UpsertUserData",
-            ),
+          with: () => throwError(() => 'Server is taking too long to respond! UpsertUserData'),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
           return of(null);
-        }),
+        })
       );
   }
 
@@ -97,10 +88,7 @@ class ApiService {
       .pipe(
         timeout({
           each: 10000,
-          with: () =>
-            throwError(
-              () => "Server is taking too long to respond! getBonuses",
-            ),
+          with: () => throwError(() => 'Server is taking too long to respond! getBonuses'),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
@@ -108,7 +96,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        }),
+        })
       );
   }
 
@@ -119,10 +107,7 @@ class ApiService {
       .pipe(
         timeout({
           each: 10000,
-          with: () =>
-            throwError(
-              () => "Server is taking too long to respond! getWithdrawals",
-            ),
+          with: () => throwError(() => 'Server is taking too long to respond! getWithdrawals'),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
@@ -130,7 +115,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        }),
+        })
       );
   }
 
@@ -141,8 +126,7 @@ class ApiService {
       .pipe(
         timeout({
           each: 10000,
-          with: () =>
-            throwError(() => "Server is taking too long to respond! getUsers"),
+          with: () => throwError(() => 'Server is taking too long to respond! getUsers'),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
@@ -150,7 +134,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        }),
+        })
       );
   }
 
@@ -161,8 +145,7 @@ class ApiService {
       .pipe(
         timeout({
           each: 10000,
-          with: () =>
-            throwError(() => "Server is taking too long to respond! getUser"),
+          with: () => throwError(() => 'Server is taking too long to respond! getUser'),
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
@@ -170,7 +153,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        }),
+        })
       );
   }
 }

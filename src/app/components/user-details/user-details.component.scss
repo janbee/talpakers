@@ -14,12 +14,11 @@
 
     .sidebar {
       z-index: 3;
-
     }
 
     .pusher {
       height: 100%;
-      > .segment{
+      > .segment {
         min-width: 100px;
       }
     }
@@ -32,11 +31,11 @@
     border: 1px solid #2c2c2c;
     border-radius: 5px;
 
-    .segment{
+    .segment {
       min-width: 100%;
 
       .ttl {
-        color: #FFF;
+        color: #fff;
 
         div {
           display: flex;
@@ -47,16 +46,15 @@
       .content {
         flex: 1;
 
-
         .content-item {
           margin-bottom: 10px;
 
-          button{
+          button {
             width: 70px;
           }
 
           span {
-            color: #FFF;
+            color: #fff;
           }
 
           display: flex;
@@ -72,26 +70,22 @@
           margin: 0;
 
           i {
-            margin: 0
+            margin: 0;
           }
         }
 
         button {
           margin: 5px 0 0 0;
-          color: #FFF;
+          color: #fff;
           background: var(--primary-color);
 
           &:hover {
-            color: #FFF;
+            color: #fff;
             background: var(--primary-color);
           }
         }
       }
-
     }
-
-
-
   }
 
   .segment {
@@ -103,12 +97,11 @@
     height: 100%;
     margin: 0;
 
-
     .ttl {
       display: flex;
       justify-content: space-between;
 
-      .icon-wrap{
+      .icon-wrap {
         flex: 1;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -118,7 +111,6 @@
       .row-wrap {
         align-items: center;
         .winnings-withdrawal-wrap {
-
           display: flex;
           flex-direction: column;
           align-items: flex-end;
@@ -126,7 +118,6 @@
           div {
             line-height: 5px;
             height: 13px;
-
 
             span {
               font-size: 12px;
@@ -139,13 +130,9 @@
                 min-width: 59px;
               }
             }
-
-
           }
-
         }
       }
-
     }
 
     .user-details-content-wrap {
@@ -160,10 +147,10 @@
           align-items: center;
           flex-wrap: wrap;
 
-          h3, h4 {
+          h3,
+          h4 {
             margin: 0;
           }
-
         }
 
         .week-wrap {
@@ -182,7 +169,6 @@
             display: flex;
             flex-direction: column;
             position: relative;
-
 
             .has-withdrawal {
               background: red;
@@ -206,19 +192,16 @@
               }
             }
 
-
             .week-date {
               align-items: center;
               display: flex;
               height: 30px;
-
             }
 
             .week-content {
               flex: 1;
               display: flex;
               flex-direction: column;
-
 
               .row-wrap {
                 display: flex;

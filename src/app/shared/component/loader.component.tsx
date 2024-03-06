@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Dimmer, Loader } from "semantic-ui-react";
-import { Store } from "@services/store.service";
-import { AlertTypeModel } from "@models/custom.models";
-import { useCallback$ } from "@utilities/utils";
-import { delay, filter, of, switchMap } from "rxjs";
+import React, { useEffect, useState } from 'react';
+import { Dimmer, Loader } from 'semantic-ui-react';
+import { Store } from '@services/store.service';
+import { AlertTypeModel } from '@models/custom.models';
+import { useCallback$ } from '@utilities/utils';
+import { delay, filter, of, switchMap } from 'rxjs';
 
 interface Props {
   content?: string;
@@ -11,7 +11,7 @@ interface Props {
 
 class State {
   loading = false;
-  content? = "";
+  content? = '';
 
   constructor(props: Props) {
     this.content = props.content;
@@ -26,9 +26,9 @@ export const LoaderComponent = (props: Props) => {
       .pipe(
         switchMap(() => {
           return of(true).pipe(delay(2300));
-        }),
+        })
       )
-      .subscribe((connection) => {
+      .subscribe(() => {
         setState((prevState) => ({ ...prevState, loading: false }));
         Store.Loading$.next(false);
       });
@@ -38,9 +38,7 @@ export const LoaderComponent = (props: Props) => {
     /*
      * this will remove loader on api ERROR
      * */
-    const alert = Store.Alert$.pipe(
-      filter((res) => res.type === AlertTypeModel.Failed),
-    ).subscribe((res) => {
+    const alert = Store.Alert$.pipe(filter((res) => res.type === AlertTypeModel.Failed)).subscribe(() => {
       handleUnload();
     });
 
@@ -62,7 +60,7 @@ export const LoaderComponent = (props: Props) => {
   return (
     <Dimmer
       style={{
-        position: "fixed",
+        position: 'fixed',
         top: 0,
         left: 0,
         right: 0,

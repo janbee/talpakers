@@ -1,8 +1,8 @@
-import { AlertModel, UserDetailModel } from "@app/shared/models/custom.models";
-import { BehaviorSubject, Subject } from "rxjs";
+import { AlertModel, UserDetailModel } from '@app/shared/models/custom.models';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 class StoreService {
-  Hash = "";
+  Hash = '';
   Alert$ = new Subject<AlertModel>();
   Loading$ = new BehaviorSubject<boolean>(false);
   User$ = new Subject<UserDetailModel>();

@@ -1,7 +1,7 @@
 export enum AlertTypeModel {
-  Success = "Success",
-  Failed = "Failed",
-  Warning = "Warning",
+  Success = 'Success',
+  Failed = 'Failed',
+  Warning = 'Warning',
 }
 
 export interface AlertModel {
@@ -11,19 +11,19 @@ export interface AlertModel {
 }
 
 export const NavigationScreens = {
-  Main: "main",
+  Main: 'main',
 };
 
 export const CodePush = {
   get DeploymentKey(): string {
     /* PROD */
-    return "2QxeG9FmkCsEfAZ5OoGz5csOqsvWjcnbf_V_9";
+    return '2QxeG9FmkCsEfAZ5OoGz5csOqsvWjcnbf_V_9';
   },
 };
 
 export enum Collection {
-  LocalStorage = "LocalStorage",
-  Earnings = "Earnings",
+  LocalStorage = 'LocalStorage',
+  Earnings = 'Earnings',
 }
 
 export interface EventPath {
@@ -187,8 +187,8 @@ export interface SofaData {
 }
 
 export interface MyOpenBetData {
-  myTeam1Status: "isWinning" | "isLosing";
-  myTeam2Status: "isWinning" | "isLosing";
+  myTeam1Status: 'isWinning' | 'isLosing';
+  myTeam2Status: 'isWinning' | 'isLosing';
   myOpenBetTeam1?: OpenBetModel;
   myOpenBetTeam2?: OpenBetModel;
 }
@@ -298,11 +298,11 @@ export enum ModalComponent {
    * value should be folder name
    * for later lazy dynamic loading
    * */
-  UserInfo = "user-info",
-  Store = "store",
-  Earnings = "earnings",
-  Bonuses = "bonuses",
-  Withdrawals = "withdrawals",
+  UserInfo = 'user-info',
+  Store = 'store',
+  Earnings = 'earnings',
+  Bonuses = 'bonuses',
+  Withdrawals = 'withdrawals',
 }
 
 export interface WithdrawalModel {
@@ -329,40 +329,37 @@ export interface BonusModel {
 }
 
 export const WorkerInfo: { [key: string]: WorkerInfoModel } = {
-  "com.playabapp.bets.001": {
-    name: "Matthew Maunders",
-    details:
-      "Matthew Maunders loves building stuff. When not working, he is spending time with his family and kids.",
-    hire: "Hire Matt for price",
+  'com.playabapp.bets.001': {
+    name: 'Matthew Maunders',
+    details: 'Matthew Maunders loves building stuff. When not working, he is spending time with his family and kids.',
+    hire: 'Hire Matt for price',
     workWeeks: 4,
-    pronoun1: "His",
-    pronoun2: "He",
-    pronoun3: "Him",
+    pronoun1: 'His',
+    pronoun2: 'He',
+    pronoun3: 'Him',
   },
 
-  "com.playabapp.bets.002": {
-    name: "Bob Baker",
-    details:
-      "Bob Baker is a sound engineer who enjoys playing piano and hanging with his parrot.",
-    hire: "Hire Bob for price",
+  'com.playabapp.bets.002': {
+    name: 'Bob Baker',
+    details: 'Bob Baker is a sound engineer who enjoys playing piano and hanging with his parrot.',
+    hire: 'Hire Bob for price',
     workWeeks: 2,
-    pronoun1: "His",
-    pronoun2: "He",
-    pronoun3: "Him",
+    pronoun1: 'His',
+    pronoun2: 'He',
+    pronoun3: 'Him',
   },
   /*'com.playabapp.bets.003': {},
   'com.playabapp.bets.004': {},
   'com.playabapp.bets.005': {},*/
   /*subs*/
-  "com.playabapp.bets.101": {
-    name: "Lenny Lawrence",
-    details:
-      "Lenny Lawrence is a star employee. She loves solving problems, likes music and exercise.",
-    hire: "Hire Lenny for price",
+  'com.playabapp.bets.101': {
+    name: 'Lenny Lawrence',
+    details: 'Lenny Lawrence is a star employee. She loves solving problems, likes music and exercise.',
+    hire: 'Hire Lenny for price',
     workWeeks: 8,
-    pronoun1: "Her",
-    pronoun2: "She",
-    pronoun3: "Her",
+    pronoun1: 'Her',
+    pronoun2: 'She',
+    pronoun3: 'Her',
   },
   /* 'com.playabapp.bets.102': {},
   'com.playabapp.bets.103': {},
@@ -371,17 +368,17 @@ export const WorkerInfo: { [key: string]: WorkerInfoModel } = {
 };
 
 export enum MongoConfig {
-  AppId = "pocketsportsapp-umuum",
-  AppClient = "mongodb-atlas",
-  AppDB = "DB",
+  AppId = 'pocketsportsapp-umuum',
+  AppClient = 'mongodb-atlas',
+  AppDB = 'DB',
 }
 
 export enum MongoCollection {
-  User = "user",
-  SettledBets = "settledBets",
-  BetSummary = "betSummary",
-  Bonuses = "bonuses",
-  Withdrawals = "withdrawals",
+  User = 'user',
+  SettledBets = 'settledBets',
+  BetSummary = 'betSummary',
+  Bonuses = 'bonuses',
+  Withdrawals = 'withdrawals',
 }
 
 export interface UserSessionModel {
@@ -439,9 +436,9 @@ export interface UserDataModel {
 }
 
 export const TalpakSettings: TalpakSettingModel = {
-  bet: "25",
-  lowerBet: "4",
-  loopLimit: "500",
+  bet: '25',
+  lowerBet: '4',
+  loopLimit: '500',
 };
 
 export interface EarningsModel {

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Dimmer, Loader } from "semantic-ui-react";
+import React, { useEffect, useState } from 'react';
+import { Dimmer, Loader } from 'semantic-ui-react';
 
 interface Props {
   loading: boolean;
@@ -8,7 +8,7 @@ interface Props {
 
 class State {
   loading = false;
-  content? = "";
+  content? = '';
 
   constructor(props: Props) {
     this.loading = props.loading;
@@ -26,7 +26,7 @@ export const ElementComponent = (props: Props) => {
   return (
     <Dimmer
       style={{
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,

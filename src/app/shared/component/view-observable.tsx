@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Observable } from "rxjs";
+import React, { useCallback, useEffect, useState } from 'react';
+import { Observable } from 'rxjs';
 
 interface Props<T> {
   observable: Observable<T>;

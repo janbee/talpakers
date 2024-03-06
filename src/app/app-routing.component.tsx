@@ -1,21 +1,21 @@
-import React from "react";
-import { useRoutes } from "react-router-dom";
-import { NotFound } from "@app/shared/component/not-found";
-import { MainComponent } from "@components/main/main.component";
-import { UserDetailsComponent, UsersComponent } from "@app/app-lazy.component";
+import React from 'react';
+import { useRoutes } from 'react-router-dom';
+import { NotFound } from '@app/shared/component/not-found';
+import { MainComponent } from '@components/main/main.component';
+import { UserDetailsComponent, UsersComponent } from '@app/app-lazy.component';
 
 export const AppRoutingComponent = (): React.ReactElement | null => {
   return useRoutes([
     {
-      path: "",
+      path: '',
       element: <MainComponent />,
     },
     {
-      path: "users",
+      path: 'users',
       element: <UsersComponent />,
       children: [
         {
-          path: ":email",
+          path: ':email',
           element: <UserDetailsComponent />,
         },
       ],
@@ -24,7 +24,7 @@ export const AppRoutingComponent = (): React.ReactElement | null => {
      * default component
      * */
     {
-      path: "*",
+      path: '*',
       element: <NotFound />,
     },
   ]);

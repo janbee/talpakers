@@ -1,12 +1,12 @@
-import React, { Suspense } from "react";
-import { AppRoutingComponent } from "@app/app-routing.component";
-import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "@app/shared/component/error-fallback";
-import useFontFaceObserver from "use-font-face-observer";
-import { useApi } from "@utilities/utils";
-import { API } from "@services/api.service";
-import { HeaderComponent } from "@components/header/header.component";
-import { LoaderComponent } from "@app/shared/component/loader.component";
+import React, { Suspense } from 'react';
+import { AppRoutingComponent } from '@app/app-routing.component';
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorFallback } from '@app/shared/component/error-fallback';
+import useFontFaceObserver from 'use-font-face-observer';
+import { useApi } from '@utilities/utils';
+import { API } from '@services/api.service';
+import { HeaderComponent } from '@components/header/header.component';
+import { LoaderComponent } from '@app/shared/component/loader.component';
 
 export const AppComponent = () => {
   const webFontsLoaded = useFontFaceObserver([{ family: `quicksand` }]);

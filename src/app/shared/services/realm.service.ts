@@ -1,10 +1,9 @@
-import * as Realm from "realm-web";
-import { catchError, defer, map, mergeMap, Observable, of, tap } from "rxjs";
-import { MongoCollection } from "@models/custom.models";
-import { GetDates } from "@utilities/utils";
+import * as Realm from 'realm-web';
+import { catchError, defer, map, mergeMap, Observable, of, tap } from 'rxjs';
+import { MongoCollection } from '@models/custom.models';
 
-import moment from "moment";
-import { merge } from "lodash";
+import moment from 'moment';
+import { merge } from 'lodash';
 
 class CRUD {
   private collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any> =
@@ -13,9 +12,7 @@ class CRUD {
   private currentUserId: any;
   private currentUserEmail: any;
 
-  setCollection(
-    collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
-  ) {
+  setCollection(collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any>) {
     this.collection = collection;
   }
 
@@ -49,30 +46,27 @@ class CRUD {
           object.updatedAt = undefined;
         }
 
-        const year = parseInt(moment().format("YYYY"), 10);
+        const year = parseInt(moment().format('YYYY'), 10);
 
         object.owner_id = this.currentUserId;
         object.email = this.currentUserEmail;
         object.year = year;
 
-        console.log(
-          "gaga----------------------------------1--final data to update",
-          JSON.stringify(object, null, 2),
-        );
+        console.log('gaga----------------------------------1--final data to update', JSON.stringify(object, null, 2));
         return defer(() =>
           this.collection.updateOne(
             { _id: object._id },
             object as unknown as globalThis.Realm.Services.MongoDB.Update,
             {
               upsert: true,
-            },
-          ),
+            }
+          )
         ).pipe(
           map(() => {
             return object;
-          }),
+          })
         );
-      }),
+      })
     );
   }
 
@@ -89,19 +83,17 @@ class CRUD {
         return defer(() => this.collection.insertMany(filteredArray)).pipe(
           map(() => {
             return [...filteredArray, ...resArray];
-          }),
+          })
         );
-      }),
+      })
     );
   }
 
   delete(filter: Object = {}) {
-    return defer(() =>
-      this.collection.deleteMany(filter as Record<string, unknown>),
-    ).pipe(
+    return defer(() => this.collection.deleteMany(filter as Record<string, unknown>)).pipe(
       map(() => {
         return null;
-      }),
+      })
     );
   }
 }
@@ -109,15 +101,10 @@ class CRUD {
 export class RealmService {
   public app: Realm.App<globalThis.Realm.DefaultFunctionsFactory, any>;
   private client?: globalThis.Realm.Services.MongoDB;
-  private mongoConfig: { AppId: string; AppClient: string; AppDB: string } =
-    {} as any;
+  private mongoConfig: { AppId: string; AppClient: string; AppDB: string } = {} as any;
   private collections: any = {};
 
-  constructor(mongoConfig: {
-    AppId: string;
-    AppClient: string;
-    AppDB: string;
-  }) {
+  constructor(mongoConfig: { AppId: string; AppClient: string; AppDB: string }) {
     this.mongoConfig.AppId = mongoConfig.AppId;
     this.mongoConfig.AppClient = mongoConfig.AppClient;
     this.mongoConfig.AppDB = mongoConfig.AppDB;
@@ -127,40 +114,30 @@ export class RealmService {
   }
 
   init() {
-    const credentials = Realm.Credentials.emailPassword(
-      "admin@talpak.com",
-      "--------",
-    );
+    const credentials = Realm.Credentials.emailPassword('admin@talpak.com', '--------');
     return defer(() => this.app?.logIn(credentials)).pipe(
       catchError((err): any => {
-        console.error("Failed to log in", err);
+        console.error('Failed to log in', err);
         return of(err);
       }),
       tap(() => {
-        this.client = this.app?.currentUser?.mongoClient(
-          this.mongoConfig.AppClient,
-        );
-      }),
+        this.client = this.app?.currentUser?.mongoClient(this.mongoConfig.AppClient);
+      })
     );
   }
 
   login(email: string, password: string) {
-    const credentials = Realm.Credentials.emailPassword(
-      email.toLowerCase(),
-      password,
-    );
+    const credentials = Realm.Credentials.emailPassword(email.toLowerCase(), password);
 
     return defer(() => this.app?.logIn(credentials)).pipe(
       tap(() => {
-        this.client = this.app?.currentUser?.mongoClient(
-          this.mongoConfig.AppClient,
-        );
+        this.client = this.app?.currentUser?.mongoClient(this.mongoConfig.AppClient);
       }),
       map(() => this.app?.currentUser?.profile?.email),
       catchError((err): any => {
-        console.error("Failed to log in", err);
+        console.error('Failed to log in', err);
         return of(err);
-      }),
+      })
     );
   }
 
@@ -170,20 +147,13 @@ export class RealmService {
 
   collection(name: MongoCollection) {
     const crud = new CRUD();
-    const collection = this.client
-      ?.db(this.mongoConfig.AppDB)
-      .collection(name as unknown as string);
-    crud.setCollection(
-      collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>,
-    );
+    const collection = this.client?.db(this.mongoConfig.AppDB).collection(name as unknown as string);
+    crud.setCollection(collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<any>);
     this.collections[name] = {
       CRUD: crud,
     };
 
-    this.collections[name].CRUD.setCurrentUser(
-      this.app.currentUser?.id,
-      this.app.currentUser?.profile?.email || "",
-    );
+    this.collections[name].CRUD.setCurrentUser(this.app.currentUser?.id, this.app.currentUser?.profile?.email || '');
     return this.collections[name].CRUD;
   }
 }

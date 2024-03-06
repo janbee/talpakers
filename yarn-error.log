@@ -1,8 +1,8 @@
 Arguments: 
-  /usr/local/bin/node /Users/janbetlogs/.yarn/bin/yarn.js add @awesome.me/kit-6aedbf3156
+  /usr/local/bin/node /Users/janbetlogs/.yarn/bin/yarn.js install
 
 PATH: 
-  /Users/janbetlogs/.yarn/bin:/Users/janbetlogs/.config/yarn/global/node_modules/.bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/opt/icu4c/sbin:/usr/local/opt/icu4c/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:/usr/local/mysql/bin:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/janbetlogs/.cargo/bin:/Users/janbetlogs/Library/Android/sdk/emulator:/Users/janbetlogs/Library/Android/sdk/tools:/Users/janbetlogs/Library/Android/sdk/tools/bin:/Users/janbetlogs/Library/Android/sdk/platform-tools:/usr/local/bin
+  /Users/janbetlogs/Documents/Dev/PlayAB/PlayAbWeb/node_modules/.bin:/Users/janbetlogs/Documents/Dev/PlayAB/node_modules/.bin:/Users/janbetlogs/Documents/Dev/node_modules/.bin:/Users/janbetlogs/Documents/node_modules/.bin:/Users/janbetlogs/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/janbetlogs/.yarn/bin:/Users/janbetlogs/.config/yarn/global/node_modules/.bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libxml2/bin:/usr/local/opt/libimobiledevice/bin:/usr/local/opt/libxml2/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/opt/icu4c/sbin:/usr/local/opt/icu4c/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:/usr/local/mysql/bin:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/janbetlogs/.cargo/bin:/Users/janbetlogs/Library/Android/sdk/emulator:/Users/janbetlogs/Library/Android/sdk/tools:/Users/janbetlogs/Library/Android/sdk/tools/bin:/Users/janbetlogs/Library/Android/sdk/platform-tools:/usr/local/bin
 
 Yarn version: 
   1.22.19
@@ -14,22 +14,15 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@awesome.me%2fkit-6aedbf3156: Not found
-      at params.callback [as _callback] (/Users/janbetlogs/.yarn/lib/cli.js:66145:18)
-      at self.callback (/Users/janbetlogs/.yarn/lib/cli.js:140890:22)
-      at Request.emit (node:events:513:28)
-      at Request.<anonymous> (/Users/janbetlogs/.yarn/lib/cli.js:141862:10)
-      at Request.emit (node:events:513:28)
-      at IncomingMessage.<anonymous> (/Users/janbetlogs/.yarn/lib/cli.js:141784:12)
-      at Object.onceWrapper (node:events:627:28)
-      at IncomingMessage.emit (node:events:525:35)
-      at endReadableNT (node:internal/streams/readable:1359:12)
-      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+  Error: https://registry.yarnpkg.com/typescript: ETIMEDOUT
+      at Timeout._onTimeout (/Users/janbetlogs/.yarn/lib/cli.js:141550:19)
+      at listOnTimeout (node:internal/timers:569:17)
+      at process.processTimers (node:internal/timers:512:7)
 
 npm manifest: 
   {
     "name": "play-ab-web",
-    "version": "0.1.102",
+    "version": "0.1.105",
     "homepage": "https://janbee.github.io/talpakers/build",
     "private": true,
     "scripts": {
@@ -96,7 +89,7 @@ npm manifest:
       "pre-commit": "^1.2.2",
       "prettier": "^3.0.3",
       "semantic-ui-react": "^2.1.5",
-      "typescript": "^5.3.3"
+      "typescript": "5.1.9"
     },
     "lint-staged": {
       "*.{jsx,ts,tsx,css,md,json}": [
@@ -1484,46 +1477,6 @@ Lockfile:
     dependencies:
       "@babel/runtime" "^7.10.4"
       react-is "^16.6.3"
-  
-  "@fortawesome/fontawesome-common-types@6.5.1":
-    version "6.5.1"
-    resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.5.1.tgz#fdb1ec4952b689f5f7aa0bffe46180bb35490032"
-    integrity sha512-GkWzv+L6d2bI5f/Vk6ikJ9xtl7dfXtoRu3YGE6nq0p/FFqA1ebMOAWg3XgRyb0I6LYyYkiAo+3/KrwuBp8xG7A==
-  
-  "@fortawesome/fontawesome-svg-core@^6.5.1":
-    version "6.5.1"
-    resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.5.1.tgz#9d56d46bddad78a7ebb2043a97957039fcebcf0a"
-    integrity sha512-MfRCYlQPXoLlpem+egxjfkEuP9UQswTrlCOsknus/NcMoblTH2g0jPrapbcIb04KGA7E2GZxbAccGZfWoYgsrQ==
-    dependencies:
-      "@fortawesome/fontawesome-common-types" "6.5.1"
-  
-  "@fortawesome/free-brands-svg-icons@^6.5.1":
-    version "6.5.1"
-    resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-6.5.1.tgz#e948cc02404277cb8ad40fe3573ca75f2830e876"
-    integrity sha512-093l7DAkx0aEtBq66Sf19MgoZewv1zeY9/4C7vSKPO4qMwEsW/2VYTUTpBtLwfb9T2R73tXaRDPmE4UqLCYHfg==
-    dependencies:
-      "@fortawesome/fontawesome-common-types" "6.5.1"
-  
-  "@fortawesome/free-regular-svg-icons@^6.5.1":
-    version "6.5.1"
-    resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-6.5.1.tgz#c98a91d2c9137ed54a7aa2362a916f46503e0627"
-    integrity sha512-m6ShXn+wvqEU69wSP84coxLbNl7sGVZb+Ca+XZq6k30SzuP3X4TfPqtycgUh9ASwlNh5OfQCd8pDIWxl+O+LlQ==
-    dependencies:
-      "@fortawesome/fontawesome-common-types" "6.5.1"
-  
-  "@fortawesome/free-solid-svg-icons@^6.5.1":
-    version "6.5.1"
-    resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.5.1.tgz#737b8d787debe88b400ab7528f47be333031274a"
-    integrity sha512-S1PPfU3mIJa59biTtXJz1oI0+KAXW6bkAb31XKhxdxtuXDiUIFsih4JR1v5BbxY7hVHsD1RKq+jRkVRaf773NQ==
-    dependencies:
-      "@fortawesome/fontawesome-common-types" "6.5.1"
-  
-  "@fortawesome/react-fontawesome@^0.2.0":
-    version "0.2.0"
-    resolved "https://registry.yarnpkg.com/@fortawesome/react-fontawesome/-/react-fontawesome-0.2.0.tgz#d90dd8a9211830b4e3c08e94b63a0ba7291ddcf4"
-    integrity sha512-uHg75Rb/XORTtVt7OS9WoK8uM276Ufi7gCzshVWkUJbHhh3svsUUeqXerrM96Wm7fRiDzfKRwSoahhMIkGAYHw==
-    dependencies:
-      prop-types "^15.8.1"
   
   "@humanwhocodes/config-array@^0.11.11":
     version "0.11.11"

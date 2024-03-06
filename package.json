@@ -1,13 +1,13 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.104",
+  "version": "0.1.115",
   "homepage": "https://janbee.github.io/talpakers/build",
   "private": true,
   "scripts": {
     "rm": "rm -rf node_modules && rm yarn.lock || rd /s /q node_modules",
     "yrn:update": "yarn upgrade-interactive --latest",
     "i": "yarn install",
-    "prettier:format": "prettier --write './**/*.{jsx,ts,tsx,css,md,json}'",
+    "prettier:format": "prettier --write './**/*.{jsx,ts,tsx,css,md,json}'  --config ./.prettierrc.js",
     "prepare:husky": "rm -rf .husky & npx husky install && npx husky add .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && yarn build && npx --no-install lint-staged\"",
     "------------------ ----------------------- ------------------": "",
     "start": "craco start",
@@ -67,7 +67,7 @@
     "pre-commit": "^1.2.2",
     "prettier": "^3.0.3",
     "semantic-ui-react": "^2.1.5",
-    "typescript": "^5.3.3"
+    "typescript": "5.1.9"
   },
   "lint-staged": {
     "*.{jsx,ts,tsx,css,md,json}": [
