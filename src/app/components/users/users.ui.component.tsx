@@ -251,7 +251,7 @@ export const UserStatusCount = ({
               const userStatus = GetUserStatus(user);
               return userStatus === UserStatus.IsDone;
             },
-            'data.weekStatus.betSummary.betSummary.totalStaked',
+            'updatedAt',
           ],
           ['desc', 'desc']
         );
