@@ -391,11 +391,7 @@ export interface UserSessionModel {
   ServerTime: string;
   cash: number;
   cashout: number;
-  autoCashout?: {
-    cashoutEmail: string;
-    maintainCash: number;
-    withdrawAllIfCashGTE: number;
-  };
+  autoCashout?: { cashoutEmail: string; maintainCash: number; withdrawAllIfCashGTE: number };
 }
 
 export interface UserDetailModel {
