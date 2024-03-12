@@ -7,9 +7,12 @@ import moment from 'moment/moment';
 import { orderBy } from 'lodash';
 
 export const BuildCol = ({ user }: { user: UserDetailModel }) => {
+  const { weekStart } = GetDates();
+  const isNewWeek = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
+
   return (
     <>
-      {!!user.data.weekStatus?.withdrawal && (
+      {!!user.data.weekStatus?.withdrawal && !isNewWeek && (
         <>
           {[
             {

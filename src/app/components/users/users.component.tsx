@@ -105,29 +105,6 @@ export const UsersComponent = memo(() => {
                 </Table.HeaderCell>
                 <Table.HeaderCell>App</Table.HeaderCell>
                 <Table.HeaderCell textAlign="center" className={'status'}>
-                  {/*<Dropdown
-                    text="Status"
-                    closeOnChange={false}
-                    onChange={handleStatusFilter}
-                    options={[
-                      {
-                        key: UserStatus.IsDone,
-                        value: UserStatus.IsDone,
-                        text: 'Done',
-                      },
-                      {
-                        key: UserStatus.InProgress,
-                        value: UserStatus.InProgress,
-                        text: 'InProgress',
-                      },
-                      {
-                        key: UserStatus.IsWaiting,
-                        value: UserStatus.IsWaiting,
-                        text: 'Waiting',
-                      },
-                    ]}
-                  />
-                  <br />*/}
                   Status
                 </Table.HeaderCell>
                 <Table.HeaderCell>Version</Table.HeaderCell>
