@@ -280,7 +280,7 @@ export const UserStatusCount = ({
               const userStatus = GetUserStatus(user);
               return userStatus === UserStatus.IsWaiting;
             },
-            'data.weekStatus.betSummary.betSummary.totalStaked',
+            'updatedAt',
           ],
           ['desc', 'desc']
         );
