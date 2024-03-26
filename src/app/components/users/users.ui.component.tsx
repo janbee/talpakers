@@ -7,8 +7,7 @@ import moment from 'moment/moment';
 import { orderBy } from 'lodash';
 
 export const BuildCol = ({ user }: { user: UserDetailModel }) => {
-  const { weekStart } = GetDates();
-  const isNewWeek = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
+  const { isNewWeek } = GetDates(user);
 
   return (
     <>
@@ -197,10 +196,16 @@ export const ProgressCol = ({ user }: { user: UserDetailModel }) => {
 };
 
 export const BetsCol = ({ user }: { user: UserDetailModel }) => {
+  const { isNewWeek } = GetDates(user);
   const bets = {
     open: user.data.weekStatus?.betSummary?.betSummary.openBets || 0,
     settled: user.data.weekStatus?.betSummary?.betSummary.settledBets || 0,
   };
+
+  if (isNewWeek) {
+    bets.open = 0;
+    bets.settled = 0;
+  }
   return (
     <>
       {[bets].map(({ open, settled }, betsIndex) => {
