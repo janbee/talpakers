@@ -129,8 +129,7 @@ export const StatusCol = ({ loading, user }: { loading: boolean; user: UserDetai
 };
 
 export const WeekSummaryCol = ({ user }: { user: UserDetailModel }) => {
-  const { weekStart } = GetDates();
-  const isNewWeek = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
+  const { isNewWeek } = GetDates(user);
   let totalEarnings = user.data?.weekStatus?.betSummary?.betSummary.totalEarnings || 0;
   let bonus = user.data?.weekStatus?.betSummary?.betSummary.bonus || 0;
   let winnings = user.data?.weekStatus?.betSummary?.betSummary.winnings || 0;
@@ -346,8 +345,8 @@ export const UserStatusCount = ({
 };
 
 export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
-  const { weekStart } = GetDates();
-  const isNewWeek = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
+  const { isNewWeek } = GetDates(user);
+
   const lastUpdate = moment(user.updatedAt || user.createdAt);
   const duration = moment.duration(lastUpdate.diff(Date.now()));
   const minutesPassed = Math.abs(duration.asMinutes());

@@ -137,7 +137,7 @@ export const Money = (money: string | number, currency: string = 'USD') => {
   return formatter.format(parseFloat(money.toString()));
 };
 
-export const GetDates = () => {
+export const GetDates = (user?: UserDetailModel) => {
   const tz = new Date().getTimezoneOffset() * 60000;
   const today = new Date(new Date().getTime() - tz);
   today.setUTCHours(0, 0, 0, 0);
@@ -158,10 +158,13 @@ export const GetDates = () => {
   const weekEnd = new Date(forWeekEnd);
   weekEnd.setUTCHours(23, 59, 59, 999);
 
+  const isNewWeek = weekStart.toISOString() !== user?.data?.weekStatus?.startDate;
+
   return {
     today,
     weekStart,
     weekEnd,
+    isNewWeek,
   };
 };
 
