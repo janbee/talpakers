@@ -346,11 +346,13 @@ export const UserStatusCount = ({
 };
 
 export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
+  const { weekStart } = GetDates();
+  const isNewWeek = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
   const lastUpdate = moment(user.updatedAt || user.createdAt);
   const duration = moment.duration(lastUpdate.diff(Date.now()));
   const minutesPassed = Math.abs(duration.asMinutes());
   const bgColor = minutesPassed > 30 ? GetColor(29) : GetColor(Math.floor(minutesPassed));
-  const hasBetRestriction = user.data.weekStatus?.hasBetRestriction === true;
+  const hasBetRestriction = isNewWeek ? null : user.data.weekStatus?.hasBetRestriction === true;
 
   console.log('gaga------------------------hasBetRestriction-------------', hasBetRestriction);
   return (
