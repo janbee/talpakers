@@ -1,6 +1,6 @@
 import { Button, Popup, Progress } from 'semantic-ui-react';
 import classNames from 'classnames';
-import { GetDates, GetUserStatus, Money, UserStatus } from '@utilities/utils';
+import { GetColor, GetDates, GetUserStatus, Money, UserStatus } from '@utilities/utils';
 import React, { useMemo } from 'react';
 import { UserDetailModel } from '@models/custom.models';
 import moment from 'moment/moment';
@@ -342,5 +342,41 @@ export const UserStatusCount = ({
         Waiting {!!getUserStatusCount.waiting && `#${getUserStatusCount.waiting}`}
       </Button>
     </div>
+  );
+};
+
+export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
+  const lastUpdate = moment(user.updatedAt || user.createdAt);
+  const duration = moment.duration(lastUpdate.diff(Date.now()));
+  const minutesPassed = Math.abs(duration.asMinutes());
+  const bgColor = minutesPassed > 30 ? GetColor(29) : GetColor(Math.floor(minutesPassed));
+  const hasBetRestriction = user.data.weekStatus?.hasBetRestriction === true;
+
+  console.log('gaga------------------------hasBetRestriction-------------', hasBetRestriction);
+  return (
+    <>
+      <Popup
+        position="left center"
+        trigger={
+          <div
+            className={classNames({
+              'has-bet-restriction': hasBetRestriction,
+            })}
+          />
+        }
+        flowing
+      >
+        <Popup.Header>
+          <span
+            className={classNames({
+              'red-light': true,
+            })}
+          >
+            Bet Restricted (T_T) !!!
+          </span>
+        </Popup.Header>
+      </Popup>
+      <span style={{ color: bgColor }}>{lastUpdate.fromNow()}</span>
+    </>
   );
 };

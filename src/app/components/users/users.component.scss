@@ -116,6 +116,17 @@
             }
           }
 
+          .has-bet-restriction{
+            background: red;
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            right: 3px;
+            cursor: pointer;
+            top: 3px;
+          }
+
           .has-withdrawal {
             background: red;
             position: absolute;

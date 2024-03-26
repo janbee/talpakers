@@ -382,8 +382,10 @@ export enum MongoCollection {
 }
 
 export interface UserSessionModel {
-  ISID: string;
   EXTERNAL_PLAYER_ID: string;
+  ISID: string;
+  TWO_FACTOR_AUTH: string;
+  GRE_CAPTCHA: string;
   Email: string;
   NET_SessionId: string;
   id: string;
@@ -410,24 +412,20 @@ export interface TalpakSettingModel {
   electronAutoLogin?: boolean;
 }
 
-export interface UserSessionModel {
-  EXTERNAL_PLAYER_ID: string;
-  ISID: string;
-  TWO_FACTOR_AUTH: string;
+export interface WeeklyStatusModel {
+  done: boolean;
+  startDate: string;
+  endDate: string;
+  betSummary: BetSummaryModel;
+  withdrawal: WithdrawalModel | null;
+  hasBetRestriction?: boolean;
 }
-
 export interface UserDataModel {
   isFreeAvailable?: boolean;
   serverTime?: string;
   userSession?: UserSessionModel;
   settings?: TalpakSettingModel;
-  weekStatus?: {
-    done: boolean;
-    startDate: string;
-    endDate: string;
-    betSummary: BetSummaryModel;
-    withdrawal: WithdrawalModel | null;
-  };
+  weekStatus?: WeeklyStatusModel;
   version?: string;
 }
 

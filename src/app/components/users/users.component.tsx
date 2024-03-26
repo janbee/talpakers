@@ -1,16 +1,16 @@
 import React, { FormEvent, memo, useCallback, useMemo } from 'react';
 import './users.component.scss';
 import { Checkbox, CheckboxProps, Icon, Segment, Table } from 'semantic-ui-react';
-import { GetColor, useApi, useCallbackMemo } from '@utilities/utils';
+import { useApi, useCallbackMemo } from '@utilities/utils';
 import { UserDetailModel } from '@models/custom.models';
 import { API } from '@services/api.service';
-import moment from 'moment';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { ElementComponent } from '@app/shared/component/element-loader.component';
 import classNames from 'classnames';
 import {
   BetsCol,
   BuildCol,
+  LastUpdateCol,
   ProgressCol,
   StatusCol,
   UserStatusCount,
@@ -128,11 +128,6 @@ export const UsersComponent = memo(() => {
 
             <Table.Body>
               {state.data?.map((user) => {
-                const lastUpdate = moment(user.updatedAt || user.createdAt);
-                const duration = moment.duration(lastUpdate.diff(Date.now()));
-                const minutesPassed = Math.abs(duration.asMinutes());
-
-                const bgColor = minutesPassed > 30 ? GetColor(29) : GetColor(Math.floor(minutesPassed));
                 const checkedUsed = accounts.find((item) => item.build === user.build);
                 const selectedUsers = accounts.filter((item) => item.checked).map((item) => item.build);
                 const emailArr = selected?.split(',') || [];
@@ -170,7 +165,7 @@ export const UsersComponent = memo(() => {
                       <BetsCol user={user} />
                     </Table.Cell>
                     <Table.Cell textAlign="right" className={'last-login'}>
-                      <span style={{ color: bgColor }}>{lastUpdate.fromNow()}</span>
+                      <LastUpdateCol user={user} />
                     </Table.Cell>
                   </Table.Row>
                 );
