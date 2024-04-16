@@ -419,6 +419,9 @@ export interface WeeklyStatusModel {
   betSummary: BetSummaryModel;
   withdrawal: WithdrawalModel | null;
   hasBetRestriction?: boolean;
+  hasWagerLimit?: string;
+  betRejectedTryLower?: string;
+  lastBet: number;
 }
 export interface UserDataModel {
   isFreeAvailable?: boolean;

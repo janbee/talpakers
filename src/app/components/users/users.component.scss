@@ -116,8 +116,7 @@
             }
           }
 
-          .has-bet-restriction{
-            background: red;
+          .has-dot{
             position: absolute;
             width: 6px;
             height: 6px;
@@ -125,6 +124,22 @@
             right: 3px;
             cursor: pointer;
             top: 3px;
+
+            &.red{
+              background: red;
+            }
+
+            &.yellow {
+              background: var(--yellow-dark);
+            }
+
+            &.blue {
+              background: var(--blue-light);
+            }
+
+            &.green {
+              background: var(--green-dark);
+            }
           }
 
           .has-withdrawal {

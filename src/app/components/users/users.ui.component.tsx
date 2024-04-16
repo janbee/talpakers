@@ -202,6 +202,7 @@ export const BetsCol = ({ user }: { user: UserDetailModel }) => {
     settled: user.data.weekStatus?.betSummary?.betSummary.settledBets || 0,
   };
 
+  const lastBet = user.data.weekStatus?.lastBet || 0;
   if (isNewWeek) {
     bets.open = 0;
     bets.settled = 0;
@@ -211,7 +212,11 @@ export const BetsCol = ({ user }: { user: UserDetailModel }) => {
       {[bets].map(({ open, settled }, betsIndex) => {
         return (
           <div key={betsIndex}>
-            <span>{open}</span>
+            <Popup position="left center" trigger={<span>{open}</span>} flowing>
+              <Popup.Header>
+                <span className={'green-light'}>Last Bet - {Money(lastBet)}</span>
+              </Popup.Header>
+            </Popup>
             <span>-</span>
             <span>{settled}</span>
           </div>
@@ -358,7 +363,6 @@ export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
   const bgColor = minutesPassed > 30 ? GetColor(29) : GetColor(Math.floor(minutesPassed));
   const hasBetRestriction = isNewWeek ? null : user.data.weekStatus?.hasBetRestriction === true;
 
-  console.log('gaga------------------------hasBetRestriction-------------', hasBetRestriction);
   return (
     <>
       <Popup
@@ -366,7 +370,8 @@ export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
         trigger={
           <div
             className={classNames({
-              'has-bet-restriction': hasBetRestriction,
+              red: true,
+              'has-dot': hasBetRestriction,
             })}
           />
         }
