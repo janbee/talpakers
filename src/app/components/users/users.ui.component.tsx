@@ -240,6 +240,7 @@ export const UserStatusCount = ({
         const isThisWeek = weekStart.toISOString() === user.data?.weekStatus?.startDate;
         return user.data?.weekStatus?.done === true && isThisWeek;
       },
+
       isInProgress: (user: UserDetailModel) => {
         const inProgress = user.data?.weekStatus?.done === false;
         const lastUpdate = moment(user.updatedAt || user.createdAt);
@@ -248,6 +249,7 @@ export const UserStatusCount = ({
 
         return inProgress && minutesPassed < 30;
       },
+
       isWaiting: (user: UserDetailModel) => {
         const lastUpdate = moment(user.updatedAt || user.createdAt);
         const duration = moment.duration(lastUpdate.diff(Date.now()));

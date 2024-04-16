@@ -421,7 +421,7 @@ export interface WeeklyStatusModel {
   hasBetRestriction?: boolean;
   hasWagerLimit?: string;
   betRejectedTryLower?: string;
-  lastBet: number;
+  lastBet?: number;
 }
 export interface UserDataModel {
   isFreeAvailable?: boolean;
