@@ -116,7 +116,7 @@
             }
           }
 
-          .has-dot{
+          .has-dot {
             position: absolute;
             width: 6px;
             height: 6px;
@@ -125,7 +125,7 @@
             cursor: pointer;
             top: 3px;
 
-            &.red{
+            &.red {
               background: red;
             }
 
@@ -386,6 +386,20 @@
         color: var(--red-dark) !important;
         font-weight: bold;
       }
+    }
+  }
+
+}
+
+.popup {
+  .withdrawal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+
+    .transaction-wrap{
+      font-size: 14px;
+      font-weight: normal;
     }
   }
 }

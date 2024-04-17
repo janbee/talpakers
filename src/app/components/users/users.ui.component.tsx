@@ -9,6 +9,10 @@ import { orderBy } from 'lodash';
 export const BuildCol = ({ user }: { user: UserDetailModel }) => {
   const { isNewWeek } = GetDates(user);
 
+  console.log(
+    'gaga----------------------user.data.weekStatus?.withdrawal---------------',
+    user.data.weekStatus?.withdrawal
+  );
   return (
     <>
       {!!user.data.weekStatus?.withdrawal && !isNewWeek && (
@@ -38,22 +42,31 @@ export const BuildCol = ({ user }: { user: UserDetailModel }) => {
               flowing
             >
               <Popup.Header>
-                Withdrawal (
-                <span
-                  className={classNames({
-                    'yellow-light': status.Pending,
-                    'green-light': status.Approved,
-                    'blue-light': status.Processing,
-                  })}
-                >
-                  {user.data.weekStatus?.withdrawal?.TransactionStatus}
-                </span>
-                )
+                <div className={'withdrawal-header'}>
+                  <span>
+                    Withdrawal (
+                    <span
+                      className={classNames({
+                        'yellow-light': status.Pending,
+                        'green-light': status.Approved,
+                        'blue-light': status.Processing,
+                      })}
+                    >
+                      {user.data.weekStatus?.withdrawal?.TransactionStatus}
+                    </span>
+                    )
+                  </span>
+                  <span className={`transaction-wrap`}>
+                    {`${moment(user.data.weekStatus?.withdrawal?.TransactionDateTime).fromNow()}`}
+                  </span>
+                </div>
               </Popup.Header>
               <Popup.Content>
-                {`${user.data.weekStatus?.withdrawal?.PaymentMethodInfo} ${Money(
-                  user.data.weekStatus?.withdrawal?.Amount || 0
-                )}`}
+                <div>
+                  {`${user.data.weekStatus?.withdrawal?.PaymentMethodInfo} ${Money(
+                    user.data.weekStatus?.withdrawal?.Amount || 0
+                  )}`}
+                </div>
               </Popup.Content>
             </Popup>
           ))}
