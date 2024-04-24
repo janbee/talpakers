@@ -3,7 +3,7 @@ import { catchError, defer, map, mergeMap, Observable, of, tap } from 'rxjs';
 import { MongoCollection } from '@models/custom.models';
 
 import moment from 'moment';
-import { merge } from 'lodash';
+import { mergeWith } from 'lodash';
 
 class CRUD {
   private collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<any> =
@@ -37,9 +37,9 @@ class CRUD {
       mergeMap((foundItem) => {
         if (foundItem.length) {
           if (object.updatedAt) {
-            object = merge(foundItem[0], object);
+            object = mergeWith(foundItem[0], object, (a, b) => (!b ? a : undefined));
           } else {
-            object = merge(foundItem[0], { ...object, updatedAt: new Date() });
+            object = mergeWith(foundItem[0], { ...object, updatedAt: new Date() }, (a, b) => (!b ? a : undefined));
           }
         } else {
           object.createdAt = new Date();

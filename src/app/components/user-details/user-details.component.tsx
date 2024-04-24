@@ -176,7 +176,7 @@ export const UserDetailsComponent = memo(() => {
     >
       <SidebarPushable>
         <Sidebar animation="overlay" onHide={handleSettingsClick} visible={state.settingsOpen} width={'wide'}>
-          <UserSettingsComponent config={{ email: emails as string }} />
+          <UserSettingsComponent config={{ email: emails as string }} userDetails={state.userDetails?.[0]} />
         </Sidebar>
 
         <SidebarPusher>

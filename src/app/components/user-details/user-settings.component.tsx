@@ -4,7 +4,7 @@ import { Button, Form, Icon, Input, Segment } from 'semantic-ui-react';
 import { API } from '@services/api.service';
 import { UserDetailModel } from '@models/custom.models';
 import { mergeMap } from 'rxjs';
-import { get, omit, set } from 'lodash';
+import { get, merge, omit, set } from 'lodash';
 import moment from 'moment';
 import { ElementComponent } from '@app/shared/component/element-loader.component';
 
@@ -18,6 +18,7 @@ interface Props {
   config: {
     email: string;
   };
+  userDetails?: UserDetailModel;
 }
 
 class State {
@@ -28,21 +29,35 @@ class State {
   };
   loading = false;
 
-  userDetails: UserDetailModel = {} as UserDetailModel;
+  userDetails: UserDetailModel = {
+    data: {
+      userSession: {
+        TWO_FACTOR_AUTH: '',
+      },
+    },
+  } as UserDetailModel;
 
   constructor(props: Props) {
-    Object.assign(this.config, props.config);
+    console.log('gaga-------------------------asdadasd------------', props);
+    if (props.userDetails) {
+      Object.assign(this.userDetails, props.userDetails);
+      console.log('gaga-----------------asdasdasdasd--------------------', this.userDetails);
+    }
   }
 }
 
 export const UserSettingsComponent = memo((props: Props) => {
   const [state, setState] = useState<State>(new State(props));
 
+  console.log('gaga---------state---------------------statestatestate-------', state);
   useEffect(() => {
-    setState((prevState) => ({
-      ...prevState,
-      config: { ...prevState.config, ...props.config },
-    }));
+    setState((prevState) => {
+      const newState = merge(prevState, props);
+      return {
+        ...prevState,
+        ...newState,
+      };
+    });
   }, [props]);
 
   const handleUpdateClick = useCallback(() => {
@@ -75,10 +90,19 @@ export const UserSettingsComponent = memo((props: Props) => {
   }, [state.config]);
 
   const handleOnInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setState((prevState) => ({
-      ...prevState,
-      config: { ...prevState.config, password: e.target.value },
-    }));
+    console.log('gaga-------------------------------------');
+    setState((prevState) => {
+      const newValue = {};
+      const path = e.target.getAttribute('data-value') as string;
+      set(newValue, path, e.target.value);
+
+      const newState = merge(prevState, newValue);
+      console.log('gaga-------------------------------------', newState);
+      return {
+        ...prevState,
+        ...newState,
+      };
+    });
   }, []);
 
   const handleUserDetailModelUpdate = useCallback(
@@ -249,13 +273,30 @@ export const UserSettingsComponent = memo((props: Props) => {
               </Button>
             </div>
           </div>
+          <div className={'content-item'}>
+            <span>Set Two Factor Auth</span>
+            <div className={'btn-wrap'}>
+              <Input placeholder="Two factor auth">
+                <input
+                  data-value={'userDetails.data.userSession.TWO_FACTOR_AUTH'}
+                  value={state.userDetails.data.userSession!.TWO_FACTOR_AUTH}
+                  onInput={handleOnInput}
+                />
+              </Input>
+            </div>
+          </div>
         </div>
         <hr />
         <Form onSubmit={handleUpdateClick} className={'footer'}>
           <Input iconPosition="left" placeholder="Password">
             <Icon name="lock" />
 
-            <input placeholder={'Password'} value={state.config.password} onInput={handleOnInput} />
+            <input
+              placeholder={'Password'}
+              data-value={'config.password'}
+              value={state.config.password}
+              onInput={handleOnInput}
+            />
           </Input>
           <Button type={'submit'}>Update</Button>
         </Form>

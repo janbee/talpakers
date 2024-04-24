@@ -9,10 +9,6 @@ import { orderBy } from 'lodash';
 export const BuildCol = ({ user }: { user: UserDetailModel }) => {
   const { isNewWeek } = GetDates(user);
 
-  console.log(
-    'gaga----------------------user.data.weekStatus?.withdrawal---------------',
-    user.data.weekStatus?.withdrawal
-  );
   return (
     <>
       {!!user.data.weekStatus?.withdrawal && !isNewWeek && (
@@ -376,7 +372,14 @@ export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
   const duration = moment.duration(lastUpdate.diff(Date.now()));
   const minutesPassed = Math.abs(duration.asMinutes());
   const bgColor = minutesPassed > 30 ? GetColor(29) : GetColor(Math.floor(minutesPassed));
-  const hasBetRestriction = isNewWeek ? null : user.data.weekStatus?.hasBetRestriction === true;
+  let hasBetRestriction = isNewWeek ? null : user.data.weekStatus?.hasBetRestriction === true;
+
+  let txt = 'Bet Restricted (T_T) !!!';
+
+  if (!user.data.userSession?.TWO_FACTOR_AUTH) {
+    hasBetRestriction = true;
+    txt = 'Missing TWO_FACTOR_AUTH';
+  }
 
   return (
     <>
@@ -398,7 +401,7 @@ export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
               'red-light': true,
             })}
           >
-            Bet Restricted (T_T) !!!
+            {txt}
           </span>
         </Popup.Header>
       </Popup>

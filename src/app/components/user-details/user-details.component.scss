@@ -48,6 +48,8 @@
 
         .content-item {
           margin-bottom: 10px;
+          display: flex;
+          flex-direction: column;
 
           button {
             width: 70px;
@@ -57,8 +59,10 @@
             color: #fff;
           }
 
-          display: flex;
-          flex-direction: column;
+          .input{
+            width: 100%;
+          }
+
         }
       }
 
