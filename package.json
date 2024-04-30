@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.137",
+  "version": "0.1.138",
   "homepage": "https://janbee.github.io/talpakers/build",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "prettier:format": "prettier --write './**/*.{jsx,ts,tsx,css,md,json}'  --config ./.prettierrc.js",
     "prepare:husky": "rm -rf .husky & npx husky install && npx husky add .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && yarn build && npx --no-install lint-staged\"",
     "------------------ ----------------------- ------------------": "",
-    "start": "craco start",
+    "start": "craco start --open",
     "build": "craco build && cp ./build/index.html ./",
     "test": "craco test",
     "------------------ git ------------------": "",

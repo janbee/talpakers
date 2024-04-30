@@ -38,11 +38,7 @@ class State {
   } as UserDetailModel;
 
   constructor(props: Props) {
-    console.log('gaga-------------------------asdadasd------------', props);
-    if (props.userDetails) {
-      Object.assign(this.userDetails, props.userDetails);
-      console.log('gaga-----------------asdasdasdasd--------------------', this.userDetails);
-    }
+    this.userDetails.data.userSession!.TWO_FACTOR_AUTH = props.userDetails?.data.userSession?.TWO_FACTOR_AUTH || '';
   }
 }
 
@@ -52,10 +48,11 @@ export const UserSettingsComponent = memo((props: Props) => {
   console.log('gaga---------state---------------------statestatestate-------', state);
   useEffect(() => {
     setState((prevState) => {
-      const newState = merge(prevState, props);
+      prevState.userDetails.data.userSession!.TWO_FACTOR_AUTH =
+        props.userDetails?.data.userSession?.TWO_FACTOR_AUTH || '';
+      prevState.config.email = props.config.email;
       return {
         ...prevState,
-        ...newState,
       };
     });
   }, [props]);
@@ -123,6 +120,11 @@ export const UserSettingsComponent = memo((props: Props) => {
         }
       });
 
+      console.log(
+        'gaga-----------------------------state.userDetails--------',
+        moment(state.userDetails.updatedAt).fromNow(),
+        state.userDetails.updatedAt
+      );
       setState((prevState) => ({
         ...prevState,
         userDetails: state.userDetails,

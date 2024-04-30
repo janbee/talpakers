@@ -36,6 +36,8 @@ class CRUD {
     return this.get(object._id.toLowerCase()).pipe(
       mergeMap((foundItem) => {
         if (foundItem.length) {
+          console.log('gaga-------------------------------------', object.updatedAt);
+
           if (object.updatedAt) {
             object = mergeWith(foundItem[0], object, (a, b) => (isUndefined(b) ? a : undefined));
           } else {
