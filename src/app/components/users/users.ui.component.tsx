@@ -147,6 +147,7 @@ export const WeekSummaryCol = ({ user }: { user: UserDetailModel }) => {
     bonus = 0;
     winnings = 0;
   }
+
   return (
     <>
       <div className={'week-summary-wrap'}>
