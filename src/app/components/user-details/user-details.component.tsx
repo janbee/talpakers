@@ -167,6 +167,8 @@ export const UserDetailsComponent = memo(() => {
   }, [state.settingsOpen]);
 
   const hasMultiUser = (emails?.split(',') || []).length > 1;
+
+  console.log('gaga--------------------------state.userDetails-----------', state.userDetails);
   return (
     <div
       className={classNames({
@@ -206,13 +208,13 @@ export const UserDetailsComponent = memo(() => {
                       <Menu.Item>
                         <Header as="h4">Current Balance</Header>
                         <p>
-                          <Label color="green">{Money(state.userDetails?.[0].data?.userSession?.cash || 0)}</Label>
+                          <Label color="green">{Money(state.userDetails?.[0]?.data?.userSession?.cash || 0)}</Label>
                         </p>
                       </Menu.Item>
                       <Menu.Item>
                         <Header as="h4">Available Cashout</Header>
                         <p>
-                          <Label color="orange">{Money(state.userDetails?.[0].data?.userSession?.cashout || 0)}</Label>
+                          <Label color="orange">{Money(state.userDetails?.[0]?.data?.userSession?.cashout || 0)}</Label>
                         </p>
                       </Menu.Item>
                       <Menu.Item>
