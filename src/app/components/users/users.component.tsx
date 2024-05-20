@@ -11,6 +11,7 @@ import {
   BetsCol,
   BuildCol,
   LastUpdateCol,
+  NextWithdrawalCol,
   ProgressCol,
   StatusCol,
   UserStatusCount,
@@ -120,6 +121,9 @@ export const UsersComponent = memo(() => {
                 <Table.HeaderCell textAlign="center" className={'bets'}>
                   Bets
                 </Table.HeaderCell>
+                <Table.HeaderCell textAlign="center" className={'bets'}>
+                  Next Withdrawal
+                </Table.HeaderCell>
                 <Table.HeaderCell className={'last-update'} textAlign="right">
                   Active
                 </Table.HeaderCell>
@@ -163,6 +167,9 @@ export const UsersComponent = memo(() => {
                     </Table.Cell>
                     <Table.Cell textAlign="center" className={'bets'}>
                       <BetsCol user={user} />
+                    </Table.Cell>
+                    <Table.Cell textAlign="center" className={'bets'}>
+                      <NextWithdrawalCol user={user} />
                     </Table.Cell>
                     <Table.Cell textAlign="right" className={'last-login'}>
                       <LastUpdateCol user={user} />

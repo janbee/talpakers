@@ -366,6 +366,24 @@ export const UserStatusCount = ({
   );
 };
 
+export const NextWithdrawalCol = ({ user }: { user: UserDetailModel }) => {
+  const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount || 100000) + 80;
+  const cashout = user.data.userSession?.cashout || 0;
+  return (
+    <>
+      <Progress
+        indicating
+        inverted
+        precision={0}
+        value={Math.floor(cashout)}
+        progress={'percent'}
+        total={fixedAmount}
+        label={Money(cashout)}
+      />
+    </>
+  );
+};
+
 export const LastUpdateCol = ({ user }: { user: UserDetailModel }) => {
   const { isNewWeek } = GetDates(user);
 
