@@ -367,19 +367,15 @@ export const UserStatusCount = ({
 };
 
 export const NextWithdrawalCol = ({ user }: { user: UserDetailModel }) => {
-  const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount || 100000) + 80;
+  const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount || 900) + 80;
   const cashout = user.data.userSession?.cashout || 0;
   return (
     <>
-      <Progress
-        indicating
-        inverted
-        precision={0}
-        value={Math.floor(cashout)}
-        progress={'percent'}
-        total={fixedAmount}
-        label={Money(cashout)}
-      />
+      <div>
+        <span>{Money(cashout.toFixed(0))}</span>
+        <span>/</span>
+        <span>{Money(fixedAmount)}</span>
+      </div>
     </>
   );
 };

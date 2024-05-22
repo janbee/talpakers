@@ -95,6 +95,20 @@
             width: $WP;
           }
 
+          &.bets {
+            $WP: 80px;
+            min-width: $WP;
+            max-width: $WP;
+            width: $WP;
+          }
+
+          &.next-withdrawal {
+            $WP: 150px;
+            min-width: $WP;
+            max-width: $WP;
+            width: $WP;
+          }
+
           &.last-update {
             $WP: 150px;
             min-width: $WP;

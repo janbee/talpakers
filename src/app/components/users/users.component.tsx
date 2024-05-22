@@ -121,7 +121,7 @@ export const UsersComponent = memo(() => {
                 <Table.HeaderCell textAlign="center" className={'bets'}>
                   Bets
                 </Table.HeaderCell>
-                <Table.HeaderCell textAlign="center" className={'bets'}>
+                <Table.HeaderCell textAlign="center" className={'next-withdrawal'}>
                   Next Withdrawal
                 </Table.HeaderCell>
                 <Table.HeaderCell className={'last-update'} textAlign="right">
