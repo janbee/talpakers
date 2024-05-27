@@ -372,9 +372,9 @@ export const NextWithdrawalCol = ({ user }: { user: UserDetailModel }) => {
   return (
     <>
       <div>
-        <span>{Money(cashout.toFixed(0))}</span>
+        <span>{Money(cashout.toFixed(0), { minimumFractionDigits: 0 })}</span>
         <span>/</span>
-        <span>{Money(fixedAmount)}</span>
+        <span>{Money(fixedAmount, { minimumFractionDigits: 0 })}</span>
       </div>
     </>
   );

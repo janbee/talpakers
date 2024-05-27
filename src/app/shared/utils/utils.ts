@@ -1,9 +1,9 @@
 import { DependencyList, Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { BehaviorSubject, map, Observable, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { Store } from '@services/store.service';
-import { UserDetailModel } from '@models/custom.models';
+import { MoneyModel, UserDetailModel } from '@models/custom.models';
 import moment from 'moment/moment';
-import { isFunction } from 'lodash';
+import { isFunction, merge } from 'lodash';
 
 export const useSubject = <T>(func: (objs: Subject<T>) => Observable<T>): Subject<T> => {
   const [subject, setSubject] = useState<Subject<T>>(new Subject<T>());
@@ -124,11 +124,18 @@ export const useCallbackMemo = <T>(func: (args: T) => void, deps: DependencyList
   return useCallback(fn, [fn]);
 };
 
-export const Money = (money: string | number, currency: string = 'USD') => {
+export const Money = (money: string | number, config?: MoneyModel) => {
+  const _config = merge(
+    {
+      currency: 'USD',
+      minimumFractionDigits: 2,
+    } as MoneyModel,
+    config
+  );
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 0,
+    currency: _config.currency,
+    minimumFractionDigits: _config.minimumFractionDigits,
 
     // These options are needed to round to whole numbers if that's what you want.
     //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)

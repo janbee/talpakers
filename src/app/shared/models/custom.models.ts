@@ -423,6 +423,7 @@ export interface WeeklyStatusModel {
   betRejectedTryLower?: string;
   lastBet?: number;
 }
+
 export interface UserDataModel {
   isFreeAvailable?: boolean;
   serverTime?: string;
@@ -469,4 +470,9 @@ export interface BetSummaryModel {
     openBets: number;
     settledBets: number;
   };
+}
+
+export interface MoneyModel {
+  currency?: 'USD' | 'CAD';
+  minimumFractionDigits?: number;
 }
