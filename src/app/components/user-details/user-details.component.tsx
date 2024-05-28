@@ -11,6 +11,7 @@ import { Money } from '@utilities/utils';
 import classNames from 'classnames';
 import { forkJoin } from 'rxjs';
 import { UserSettingsComponent } from '@components/user-details/user-settings.component';
+import { ApproxWinnings, Winnings } from '@components/user-details/user-details.ui.component';
 
 class State {
   loading = true;
@@ -114,6 +115,7 @@ export const UserDetailsComponent = memo(() => {
           winnings = playAbBonus + sumBy(filteredBetSum, (betSummary) => betSummary?.betSummary.totalEarnings || 0);
         }
 
+        console.log('gaga-------------------------------filteredBonus------', filteredBonus);
         return {
           _id: `${mon}-${weekNumber}`,
           mon: monNumber + '-' + mon,
@@ -121,6 +123,7 @@ export const UserDetailsComponent = memo(() => {
           startDate: weekStart.toISOString(),
           endDate: weekEnd.toISOString(),
           bonus: playAbBonus || bonus || 0,
+          bonusDateTime: filteredBonus?.[0]?.TransactionDateTime,
           totalStaked,
           totalEarnings,
           winnings,
@@ -159,7 +162,6 @@ export const UserDetailsComponent = memo(() => {
   }, [emails]);
 
   const handleSettingsClick = useCallback(() => {
-    console.log('gaga-------------------------------------', 123123);
     setState((prevState) => ({
       ...prevState,
       settingsOpen: !state.settingsOpen,
@@ -168,7 +170,6 @@ export const UserDetailsComponent = memo(() => {
 
   const hasMultiUser = (emails?.split(',') || []).length > 1;
 
-  console.log('gaga--------------------------state.userDetails-----------', state.userDetails);
   return (
     <div
       className={classNames({
@@ -328,36 +329,8 @@ export const UserDetailsComponent = memo(() => {
                                 <span>{Money(item.bonus)}</span>
                               </div>
 
-                              {(item.approxWinnings > 0 && (
-                                <div className="row-wrap">
-                                  <span>Winnings</span>
-
-                                  <Popup
-                                    content="Approximate Earnings."
-                                    position="top center"
-                                    trigger={
-                                      <span
-                                        className={classNames({
-                                          approx: true,
-                                        })}
-                                      >
-                                        {Money(item.approxWinnings)}
-                                      </span>
-                                    }
-                                  />
-                                </div>
-                              )) || (
-                                <div className="row-wrap">
-                                  <span>Winnings</span>
-                                  <span
-                                    className={classNames({
-                                      winnings: item.winnings > 0,
-                                      losses: item.winnings < 0,
-                                    })}
-                                  >
-                                    {Money(item.winnings)}
-                                  </span>
-                                </div>
+                              {(item.approxWinnings > 0 && <ApproxWinnings earnings={item} />) || (
+                                <Winnings earnings={item} />
                               )}
                             </div>
                           </div>

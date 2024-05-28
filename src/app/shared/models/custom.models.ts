@@ -446,6 +446,7 @@ export interface EarningsModel {
   title: string;
   endDate: string;
   bonus: number;
+  bonusDateTime: Date;
   totalStaked: number;
   winnings: number;
   approxWinnings: number;
