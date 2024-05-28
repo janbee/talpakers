@@ -4,9 +4,10 @@
   height: 100%;
   flex: 1;
   justify-content: center;
-  max-width: 1020px;
   overflow: hidden;
   position: relative;
+  min-width: 385px;
+  max-width: 885px;
 
   .pushable {
     overflow: hidden;
@@ -18,7 +19,7 @@
 
     .pusher {
       height: 100%;
-      min-width: 385px;
+
       > .segment {
         min-width: 100px;
       }
