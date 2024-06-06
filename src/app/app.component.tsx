@@ -12,18 +12,20 @@ export const AppComponent = () => {
   const webFontsLoaded = useFontFaceObserver([{ family: `quicksand` }]);
   const [realm] = useApi(() => API.$RealmDB.init());
   return (
-    <div className="container">
-      <HeaderComponent />
-      <div className="content-wrap">
-        {webFontsLoaded && !realm.loading && (
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Suspense fallback={<div>Loading...</div>}>
-              <AppRoutingComponent />
-            </Suspense>
-          </ErrorBoundary>
-        )}
+    <>
+      <div className="container">
+        <HeaderComponent />
+        <div className="content-wrap">
+          {webFontsLoaded && !realm.loading && (
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <Suspense fallback={<div>Loading...</div>}>
+                <AppRoutingComponent />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+        </div>
+        <LoaderComponent />
       </div>
-      <LoaderComponent />
-    </div>
+    </>
   );
 };

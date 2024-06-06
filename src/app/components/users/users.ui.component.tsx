@@ -211,7 +211,6 @@ export const BetsCol = ({ user }: { user: UserDetailModel }) => {
     open: user.data.weekStatus?.betSummary?.betSummary.openBets || 0,
     settled: user.data.weekStatus?.betSummary?.betSummary.settledBets || 0,
   };
-
   const lastBet = user.data.weekStatus?.lastBet || 0;
   if (isNewWeek) {
     bets.open = 0;

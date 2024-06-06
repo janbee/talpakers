@@ -115,7 +115,6 @@ export const UserDetailsComponent = memo(() => {
           winnings = playAbBonus + sumBy(filteredBetSum, (betSummary) => betSummary?.betSummary.totalEarnings || 0);
         }
 
-        console.log('gaga-------------------------------filteredBonus------', filteredBonus);
         return {
           _id: `${mon}-${weekNumber}`,
           mon: monNumber + '-' + mon,
