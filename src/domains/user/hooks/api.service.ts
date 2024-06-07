@@ -1,52 +1,45 @@
-import { RealmService } from '@services/realm.service';
-import { Store } from '@services/store.service';
+
 import {
-  AlertTypeModel,
   BetSummaryModel,
   BonusModel,
   MongoCollection,
   SettledBetModel,
   UserDetailModel,
   WithdrawalModel,
-} from '@models/custom.models';
-import { catchError, map, Observable, of, throwError, timeout } from 'rxjs';
+} from '@api/rxjs-client//models/custom.models';
+import { catchError, map, Observable, of, Subject, throwError, timeout } from 'rxjs';
 import { EJSON } from 'bson';
+import { RealmService } from '@api/rxjs-client/apis/realm.service.ts';
 
 class ApiService {
-  $RealmDB = new RealmService({
+  $RealmDB: RealmService = new RealmService({
     AppId: 'pocketsportsapp-umuum',
     AppClient: 'mongodb-atlas',
     AppDB: 'DB',
   });
 
-  private static catchErrorAlert(err: any) {
-    Store.Alert$.next({
-      type: AlertTypeModel.Failed,
-      message: err.toString(),
-      duration: 7000,
-    });
-  }
 
-  getSettledBets(filter: Object): Observable<SettledBetModel[] | null> {
+  getSettledBets(filter: Record<string, string>) {
+
     return this.$RealmDB
       .collection(MongoCollection.SettledBets)
-      .getBy(filter)
+      .getBy<SettledBetModel[]>(filter)
       .pipe(
         timeout({
           each: 10000,
           with: () => throwError(() => 'Server is taking too long to respond! getSettledBets'),
         }),
         catchError((err) => {
-          ApiService.catchErrorAlert(err);
+
           return of(null);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
-  getBetSummary(filter: Object): Observable<BetSummaryModel[] | null> {
+  getBetSummary(filter: Record<string, string>): Observable<BetSummaryModel[] | null> {
     return this.$RealmDB
       .collection(MongoCollection.BetSummary)
       .getBy(filter)
@@ -56,12 +49,12 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getBetSummary'),
         }),
         catchError((err) => {
-          ApiService.catchErrorAlert(err);
+
           return of(null);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
@@ -75,13 +68,13 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! UpsertUserData'),
         }),
         catchError((err) => {
-          ApiService.catchErrorAlert(err);
+
           return of(null);
-        })
+        }),
       );
   }
 
-  getBonuses(filter: Object): Observable<BonusModel[] | null> {
+  getBonuses(filter: Record<string, string>): Observable<BonusModel[] | null> {
     return this.$RealmDB
       .collection(MongoCollection.Bonuses)
       .getBy(filter)
@@ -91,16 +84,16 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getBonuses'),
         }),
         catchError((err) => {
-          ApiService.catchErrorAlert(err);
+
           return of(null);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
-  getWithdrawals(filter: Object): Observable<WithdrawalModel[] | null> {
+  getWithdrawals(filter: Record<string, string>): Observable<WithdrawalModel[] | null> {
     return this.$RealmDB
       .collection(MongoCollection.Withdrawals)
       .getBy(filter)
@@ -110,16 +103,16 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getWithdrawals'),
         }),
         catchError((err) => {
-          ApiService.catchErrorAlert(err);
+
           return of(null);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
-  getUsers() {
+  getUsers(): Observable<UserDetailModel[]> {
     return this.$RealmDB
       .collection(MongoCollection.User)
       .get()
@@ -129,16 +122,16 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getUsers'),
         }),
         catchError((err) => {
-          ApiService.catchErrorAlert(err);
-          return of(null);
+
+          return throwError(() => `Server is taking too long to respond! getUsers ${err}`);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
-  getUser(filter: Object): Observable<UserDetailModel[] | null> {
+  getUser(filter: Record<string, string>): Observable<UserDetailModel[] | null> {
     return this.$RealmDB
       .collection(MongoCollection.User)
       .getBy(filter)
@@ -148,14 +141,14 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getUser'),
         }),
         catchError((err) => {
-          ApiService.catchErrorAlert(err);
+
           return of(null);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 }
 
-export const API = new ApiService() as ApiService;
+export default new ApiService();

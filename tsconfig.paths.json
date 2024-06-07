@@ -6,7 +6,8 @@
       "@pages/*": ["pages/*"],
       "@layouts/*": ["layouts/*"],
       "@common/*": ["common/*"],
-      "@api/*": ["api/*"]
+      "@api/*": ["api/*"],
+      "@assets/*": ["assets/*"]
     },
     "jsx": "preserve"
   }

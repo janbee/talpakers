@@ -11,7 +11,10 @@
       "withTest": true,
       "withStory": false,
       "withLazy": false,
-      "customDirectory": "template-name"
+      "customDirectory": "template-name",
+      "customTemplates": {
+        "component": "generate-react-templates/domains/TemplateName.tsx"
+      }
     },
     "page": {
       "path": "src/pages",
@@ -33,6 +36,18 @@
       "customDirectory": "template-name",
       "customTemplates": {
         "component": "generate-react-templates/common/TemplateName.tsx"
+      }
+    },
+
+    "hook": {
+      "path": "src/domains",
+      "withStyle": false,
+      "withTest": true,
+      "withStory": false,
+      "withLazy": false,
+      "flat": true,
+      "customTemplates": {
+        "component": "generate-react-templates/hooks/TemplateName.tsx"
       }
     }
   }

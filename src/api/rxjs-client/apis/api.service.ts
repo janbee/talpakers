@@ -1,14 +1,12 @@
-import { RealmService } from '@services/realm.service';
-import { Store } from '@services/store.service';
+import { RealmService } from '@api/rxjs-client/apis/realm.service';
 import {
-  AlertTypeModel,
   BetSummaryModel,
   BonusModel,
   MongoCollection,
   SettledBetModel,
   UserDetailModel,
   WithdrawalModel,
-} from '@models/custom.models';
+} from '@api/rxjs-client//models/custom.models';
 import { catchError, map, Observable, of, throwError, timeout } from 'rxjs';
 import { EJSON } from 'bson';
 
@@ -19,12 +17,8 @@ class ApiService {
     AppDB: 'DB',
   });
 
-  private static catchErrorAlert(err: any) {
-    Store.Alert$.next({
-      type: AlertTypeModel.Failed,
-      message: err.toString(),
-      duration: 7000,
-    });
+  private static catchErrorAlert(err?: any) {
+    console.log('gaga-------------------------------------err', err);
   }
 
   getSettledBets(filter: Object): Observable<SettledBetModel[] | null> {
@@ -42,7 +36,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
@@ -61,7 +55,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
@@ -77,7 +71,7 @@ class ApiService {
         catchError((err) => {
           ApiService.catchErrorAlert(err);
           return of(null);
-        })
+        }),
       );
   }
 
@@ -96,7 +90,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
@@ -115,11 +109,11 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
-  getUsers() {
+  getUsers(): Observable<UserDetailModel[]> {
     return this.$RealmDB
       .collection(MongoCollection.User)
       .get()
@@ -130,11 +124,11 @@ class ApiService {
         }),
         catchError((err) => {
           ApiService.catchErrorAlert(err);
-          return of(null);
+          return throwError(() => `Server is taking too long to respond! getUsers ${err}`);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 
@@ -153,9 +147,9 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res));
-        })
+        }),
       );
   }
 }
 
-export const API = new ApiService() as ApiService;
+export default new ApiService();
