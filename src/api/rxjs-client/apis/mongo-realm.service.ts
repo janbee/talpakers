@@ -1,8 +1,8 @@
-import * as Realm from 'realm-web';
-import { catchError, defer, map, mergeMap, Observable, of, tap } from 'rxjs';
-import { MongoCollection } from '@api/rxjs-client/models/custom.models.ts';
 
 import { isUndefined, mergeWith } from 'lodash';
+import * as Realm from "realm-web";
+import { MongoCollection } from '@api/rxjs-client/models/custom.models.ts';
+import { catchError, defer, map, mergeMap, Observable, of, tap } from 'rxjs';
 
 
 interface UpsertModel {
@@ -34,6 +34,8 @@ export class CRUD {
     if (_id) {
       return defer(() => this.collection.find({ _id })) as Observable<T[]>;
     }
+
+    console.log('gaga-----------------------------------123--', this.collection);
     return defer(() => this.collection.find({}, { sort: { index: 1 } })) as Observable<T[]>;
   }
 
@@ -98,9 +100,9 @@ export class CRUD {
   }
 }
 
-export class RealmService {
-  public app;
-  private client?: globalThis.Realm.Services.MongoDB;
+export class MongoRealmService {
+  public app: Realm.App<globalThis.Realm.DefaultFunctionsFactory, SimpleObject>;
+  private client: globalThis.Realm.Services.MongoDB | undefined;
   private mongoConfig: Record<string, string> = {};
   private collections: Record<string, { CRUD: CRUD }> = {};
 
@@ -111,17 +113,25 @@ export class RealmService {
     this.app = new Realm.App({
       id: this.mongoConfig.AppId,
     });
+
+    this.init().subscribe()
   }
 
   init() {
     const credentials = Realm.Credentials.emailPassword('admin@talpak.com', '--------');
-    return defer(() => this.app?.logIn(credentials)).pipe(
+
+    console.log('gaga------------------------------this.app123123-------', this.app);
+    //const credentials = Realm.Credentials.emailPassword('janbee.angeles@yahoo.com', 'Admin123!@#');
+    return defer(() => this.app.logIn(credentials)).pipe(
       catchError((err) => {
+
         console.error('Failed to log in', err);
         return of(err);
       }),
       tap(() => {
-        this.client = this.app.currentUser?.mongoClient(this.mongoConfig.AppClient);
+        console.log('gaga--------------------------------this.app-----', this.app);
+        if (this.app.currentUser)
+          this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
       }),
     );
   }
@@ -129,11 +139,12 @@ export class RealmService {
   login(email: string, password: string) {
     const credentials = Realm.Credentials.emailPassword(email.toLowerCase(), password);
 
-    return defer(() => this.app?.logIn(credentials)).pipe(
+    return defer(() => this.app.logIn(credentials)).pipe(
       tap(() => {
-        this.client = this.app?.currentUser?.mongoClient(this.mongoConfig.AppClient);
+        if (this.app.currentUser)
+          this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
       }),
-      map(() => this.app?.currentUser?.profile?.email),
+      map(() => this.app.currentUser?.profile.email),
       catchError((err) => {
         console.error('Failed to log in', err);
         return of(err);
@@ -142,7 +153,7 @@ export class RealmService {
   }
 
   isLogin() {
-    return of(!!this.app?.currentUser?.profile?.email);
+    return of(!!this.app?.currentUser?.profile.email);
   }
 
   collection(name: MongoCollection) {

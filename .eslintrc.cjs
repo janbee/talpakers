@@ -21,8 +21,6 @@ module.exports = {
     'vite.config.ts',
     'tailwind.config.js',
     'postcss.config.js',
-    // ignore this auto generated folder from openapi
-    'src/api/*',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

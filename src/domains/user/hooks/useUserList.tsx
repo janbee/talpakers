@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { UserDetailModel } from '@api/index.ts';
-import { Observable, of, tap } from 'rxjs';
+import { tap } from 'rxjs';
+import { UserDetailModel } from '@api/rxjs-client/models/custom.models.ts';
+import { API } from '@api/index.ts';
 
 const useUseUserList = () => {
   const [list, setList] = useState<UserDetailModel[]>([]);
@@ -10,12 +11,8 @@ const useUseUserList = () => {
   useEffect(() => {
     setLoading(true);
 
-    const gaga = (): Observable<UserDetailModel[]>  => {
-      return of([] as UserDetailModel[])
-    }
-
-    const user$ = API.pipe(
-      tap(() => setLoading(false))
+    const user$ = API.getUsers().pipe(
+      tap(() => setLoading(false)),
     ).subscribe({
       next: (list) => setList(list),
       error: () => setError(true),

@@ -13,7 +13,6 @@ const aliases = Object.keys(compilerOptions.paths).map(item => item.replace('/*'
 export default defineConfig({
   plugins: [react(), mkcert()],
   server: {
-    https: true,
     port: 3001,
     open: true,
   },
@@ -26,8 +25,9 @@ export default defineConfig({
     alias: aliases.map(alias => (
       {
         find: alias,
-        replacement: path.resolve(__dirname, `src/${alias.replace('@','')}`),
+        replacement: path.resolve(__dirname, `src/${alias.replace('@', '')}`),
       }
     )),
   },
+  optimizeDeps: { esbuildOptions: { target: 'esnext' } }, // <-- Set this to resolve issue.
 });
