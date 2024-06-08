@@ -21,7 +21,7 @@ const UserListComponent: FC = () => {
         <TableHeader className={'bg-neutral-900'}>
           <TableRow>
             <TableHeaderCell>#</TableHeaderCell>
-            <TableHeaderCell>App Build</TableHeaderCell>
+            <TableHeaderCell textAlign={'center'}>App Build</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
             <TableHeaderCell>Version</TableHeaderCell>
             <TableHeaderCell>
@@ -48,9 +48,9 @@ const UserListComponent: FC = () => {
           {list.map(user => {
             return (
               <TableRow key={user._id}>
-                <TableCell>John Lilki</TableCell>
-                <AppBuildCell user={user} />
-                <StatusCell user={user} />
+                <TableCell></TableCell>
+                <AppBuildCell textAlign={'center'} user={user} />
+                <StatusCell textAlign={'center'} user={user} />
                 <TableCell>jhlilk22@yahoo.com</TableCell>
                 <TableCell>No</TableCell>
               </TableRow>

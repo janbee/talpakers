@@ -5,13 +5,21 @@ import classNames from 'classnames';
 import { formatDistanceToNow } from 'date-fns';
 import { GetDatesUtil, MoneyUtil } from '@common/utils';
 import GetUserStatusUtil from '@common/utils/get-user-status-util/GetUserStatusUtil.ts';
+import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
+import { omit } from 'lodash';
 
-export const AppBuildCell: FC<{ user: UserDetailModel }> = ({ user }) => {
+interface UserTableCellProps extends StrictTableCellProps {
+  user: UserDetailModel;
+}
 
+
+export const AppBuildCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
   const { isNewWeek } = GetDatesUtil(user);
 
+
   return (
-    <TableCell>
+    <TableCell {...omit(props, ['user'])}>
       {!!user.data.weekStatus?.withdrawal && !isNewWeek && (
         <>
           {[
@@ -74,11 +82,11 @@ export const AppBuildCell: FC<{ user: UserDetailModel }> = ({ user }) => {
   );
 };
 
-export const StatusCell: FC<{ user: UserDetailModel }> = ({ user }) => {
-
+export const StatusCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
   const userStatus = GetUserStatusUtil(user);
   return (
-    <>
+    <TableCell {...omit(props, ['user'])}>
       {
         [userStatus].map((s, statusInd) => {
           let className = 'green-light';
@@ -134,6 +142,6 @@ export const StatusCell: FC<{ user: UserDetailModel }> = ({ user }) => {
             />
           );
         })}
-    </>
+    </TableCell>
   );
 };
