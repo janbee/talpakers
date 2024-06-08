@@ -1,13 +1,12 @@
-import { BrowserRouter, useRoutes } from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
 import { ReactElement } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { convertPathToTreeView } from './AppRoutesBuilder.ts';
 import NotFoundComponent from '../not-found/NotFound.tsx';
-import Page from '../../pages/users';
 
 
 const AppRoutes = (): ReactElement | null => {
-  const pagesDir = import.meta.glob('../../pages/**/*', {
+
+  const pagesDir = import.meta.glob(`../../pages/**/*`, {
     eager: true,
   });
 
@@ -30,33 +29,15 @@ const AppRoutes = (): ReactElement | null => {
       element: <Element />,
       index,
     };
-  })
-
-
-  console.log('gaga---------------------------------pages----', pages);
-  console.log('gaga-------------------------------------', [
-    // @ts-expect-error - generated page router
-    ...convertPathToTreeView(pages).children,
-
-    /*
-    * custom route here
-    * */
-    {
-      path: 'gaga',
-      element: <Page />,
-
-    },
-    {
-      path: '*',
-      element: <NotFoundComponent />,
-    },
-  ]);
+  });
 
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return useRoutes([
     // @ts-expect-error - generated page router
     ...convertPathToTreeView(pages).children,
+
+
     /*
     * custom route here
     * */
@@ -69,15 +50,5 @@ const AppRoutes = (): ReactElement | null => {
 
 };
 
-const App = (): ReactElement | null => {
+export default AppRoutes;
 
-  return (
-    <BrowserRouter>
-      <ErrorBoundary fallback={<>Error</>}>
-        <AppRoutes />
-      </ErrorBoundary>
-    </BrowserRouter>
-  );
-};
-
-export default App;

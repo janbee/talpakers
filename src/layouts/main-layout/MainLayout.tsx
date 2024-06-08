@@ -6,9 +6,9 @@ interface MainLayoutProps {
 }
 
 const MainLayoutComponent: FC<MainLayoutProps> = ({ children }) => (
-  <div data-testid='MainLayout'>
+  <div data-testid='MainLayout' className={'h-full flex flex-col'}>
     <HeaderComponent />
-    <div className={'content'}>
+    <div className={'content flex flex-1 w-full'}>
       {children}
     </div>
   </div>

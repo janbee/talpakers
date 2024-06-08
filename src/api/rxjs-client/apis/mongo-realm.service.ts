@@ -34,8 +34,6 @@ export class CRUD {
     if (_id) {
       return defer(() => this.collection.find({ _id })) as Observable<T[]>;
     }
-
-    console.log('gaga-----------------------------------123--', this.collection);
     return defer(() => this.collection.find({}, { sort: { index: 1 } })) as Observable<T[]>;
   }
 
@@ -113,15 +111,11 @@ export class MongoRealmService {
     this.app = new Realm.App({
       id: this.mongoConfig.AppId,
     });
-
-    this.init().subscribe()
   }
 
   init() {
     const credentials = Realm.Credentials.emailPassword('admin@talpak.com', '--------');
 
-    console.log('gaga------------------------------this.app123123-------', this.app);
-    //const credentials = Realm.Credentials.emailPassword('janbee.angeles@yahoo.com', 'Admin123!@#');
     return defer(() => this.app.logIn(credentials)).pipe(
       catchError((err) => {
 
@@ -129,7 +123,6 @@ export class MongoRealmService {
         return of(err);
       }),
       tap(() => {
-        console.log('gaga--------------------------------this.app-----', this.app);
         if (this.app.currentUser)
           this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
       }),

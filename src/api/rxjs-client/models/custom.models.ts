@@ -478,4 +478,8 @@ export interface MoneyModel {
   minimumFractionDigits?: number;
 }
 
-
+export enum UserStatusModel {
+  IsDone = 'Done',
+  InProgress = 'InProgress',
+  IsWaiting = 'Waiting',
+}

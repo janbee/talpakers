@@ -2,7 +2,6 @@ import { DependencyList, Dispatch, SetStateAction, useCallback, useEffect, useMe
 import { BehaviorSubject, map, Observable, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { Store } from '@services/store.service';
 import { MoneyModel, UserDetailModel } from '@models/custom.models';
-import moment from 'moment/moment';
 import { isFunction, merge } from 'lodash';
 
 export const useSubject = <T>(func: (objs: Subject<T>) => Observable<T>): Subject<T> => {

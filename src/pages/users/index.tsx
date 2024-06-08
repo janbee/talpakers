@@ -5,8 +5,7 @@ import { UserList } from '@domains/user';
 
 const Page: FC = () => (
   <MainLayoutComponent>
-    <div data-testid='Users'>
-      Users Page
+    <div data-testid='Users' className={'w-full'}>
       <UserList />
 
       <Outlet />
