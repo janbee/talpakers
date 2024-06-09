@@ -1,5 +1,5 @@
 import { UserDetailModel, UserStatusModel } from '@api/index';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Popup, Progress, TableCell } from 'semantic-ui-react';
 import classNames from 'classnames';
 import { differenceInMinutes, formatDistanceToNow } from 'date-fns';
@@ -159,9 +159,10 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
 
   return (
     <TableCell {...omit(props, ['user'])}>
-      <div className={'week-summary-wrap flex justify-between'}>
+      <div className={'week-summary-wrap flex justify-evenly'}>
         <span
           className={classNames({
+            'block w-[50px]': true,
             'text-green-dark': bonus > 0,
           })}
         >
@@ -170,6 +171,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
         {' + '}
         <span
           className={classNames({
+            'block w-[50px]': true,
             'text-green-dark': totalEarnings > 0,
             'text-red-dark': totalEarnings < 0,
           })}
@@ -179,6 +181,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
         {' = '}
         <span
           className={classNames({
+            'block w-[50px]': true,
             'text-green-dark': winnings > 0,
             'text-red-dark': winnings < 0,
           })}
@@ -294,7 +297,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
         trigger={
           <div
             className={classNames({
-              red: true,
+              'bg-red-dark': true,
               'has-dot': hasBetRestriction,
             })}
           />
@@ -311,7 +314,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
           </span>
         </Popup.Header>
       </Popup>
-      <span style={{ color: bgColor }}>{lastUpdate.fromNow()}</span>
+      <span style={{ color: bgColor }}>{formatDistanceToNow(lastUpdate, { addSuffix: true })}</span>
     </TableCell>
   );
 };
