@@ -42,7 +42,7 @@ export const UsersComponent = memo(() => {
       navigate(`@${user._id}`, {
         relative: 'route',
         replace: currentLocation.includes('@'),
-      });
+      })
     },
     [navigate]
   );

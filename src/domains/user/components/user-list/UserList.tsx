@@ -1,10 +1,11 @@
-import { CSSProperties, FC, FormEvent, LegacyRef, MutableRefObject, useCallback, useMemo, useRef } from 'react';
+import { CSSProperties, FC, FormEvent, useCallback, useMemo, useRef } from 'react';
 import useUserList from '@domains/user/hooks/useUserList.tsx';
 import {
   Checkbox,
   CheckboxProps,
   Dimmer,
   Form,
+  FormField,
   Loader,
   Table,
   TableBody,
@@ -23,32 +24,56 @@ import {
   WeeklySummaryCell,
 } from '@domains/user/components/user-list/UserTableCell.tsx';
 import { UserDetailModel } from '@api/index.ts';
-import { debounce } from 'lodash';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+interface CustomUserDetailModel extends UserDetailModel {
+  checked?: boolean;
+}
 
 const UserListComponent: FC = () => {
-  const { list, loading } = useUserList();
+  const { list, loading }: { list: CustomUserDetailModel[], loading: boolean } = useUserList();
   const formRef = useRef<HTMLFormElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
 
   const handleRowClick = useCallback((user: UserDetailModel) => () => {
-    console.log('gaga---------------------asdasasd----------------', user);
-  }, []);
+    list.forEach((item) => {
+      item.checked = item._id === user._id;
+    });
 
-
-  const debounceMemo = useMemo(() => {
-    return debounce((data: CheckboxProps) => {
-      console.log('gaga-------------------------------------debounceMemo', data);
-    }, 2500);
-  }, []);
+    navigate(`./${user._id}`, { relative: 'route', replace: location.pathname.includes('@') });
+  }, [list, navigate]);
 
   const handleCheckboxMultiUserChange = useCallback((event: FormEvent<HTMLInputElement>, data: CheckboxProps) => {
     event.stopPropagation();
-    console.log('gaga-----------------------------123--------', data);
+    const foundItem = list.find(item => item._id === data.value);
 
-    debounceMemo(data);
-  }, [debounceMemo]);
+    if (foundItem && data.checked) {
+      foundItem.checked = true;
+    } else if (foundItem) {
+      foundItem.checked = false;
+    }
 
-  console.log('gaga-------------------------------------UserListComponent render', list, loading);
+    const selectedUsers = list.filter(item => item.checked).map(item => item._id).join(',');
+    navigate(`./${selectedUsers}`, { relative: 'route', replace: location.pathname.includes('@')  });
+  }, [list, navigate]);
+
+
+  const defaultCheckedList = useMemo(() => {
+    const selectedUsers = location.pathname.replace('/users/', '').split(',').filter(Boolean);
+
+    list.forEach(item => {
+      if (selectedUsers.includes(item._id)) {
+        item.checked = true;
+      }
+    });
+
+    return selectedUsers;
+  }, [location, list]);
+
+
+  console.log('gaga-------------------------------------UserListComponent render', list);
   return (
     <div
       data-testid='UserList'
@@ -108,19 +133,26 @@ const UserListComponent: FC = () => {
           </TableHeader>
 
           <TableBody>
-            {list.map(user => {
+            {list.map((user: CustomUserDetailModel) => {
               return (
                 <TableRow
                   key={user._id}
                   onClick={handleRowClick(user)}>
                   <TableCell>
-                    <Checkbox
-                      value={user._id}
-                      style={{ '--cb-size': '15px' } as CSSProperties}
-                      className={'max-w-[25px] h-[5px] mt-1'}
-                      toggle
-                      onChange={handleCheckboxMultiUserChange}
-                    />
+                    <FormField>
+                      <Checkbox
+                        defaultChecked={defaultCheckedList.includes(user._id)}
+                        checked={user.checked}
+                        type={'checkbox'}
+                        name={'user'}
+                        value={user._id}
+                        style={{ '--cb-size': '15px' } as CSSProperties}
+                        className={'max-w-[25px] h-[5px] mt-1'}
+                        onChange={handleCheckboxMultiUserChange}
+                        toggle
+                      />
+                    </FormField>
+
                   </TableCell>
                   <AppBuildCell user={user} />
                   <StatusCell
