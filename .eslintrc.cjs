@@ -21,6 +21,11 @@ module.exports = {
     'vite.config.ts',
     'tailwind.config.js',
     'postcss.config.js',
+
+    /*
+    * ignore api
+    * */
+    'src/api/*',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

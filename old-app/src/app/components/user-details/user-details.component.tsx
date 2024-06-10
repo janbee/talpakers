@@ -133,6 +133,8 @@ export const UserDetailsComponent = memo(() => {
           withdrawal: foundWithdrawal,
         };
       });
+
+
       const groupedDataList = groupBy(dataList, 'mon');
       const defaultList = Object.keys(groupedDataList).map((key) => {
         return {

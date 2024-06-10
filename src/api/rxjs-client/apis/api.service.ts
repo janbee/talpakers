@@ -38,7 +38,7 @@ class ApiService {
       );
   }
 
-  getBetSummary(filter: Record<string, string>) {
+  getBetSummary(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.BetSummary)
       .getBy(filter)
@@ -74,7 +74,7 @@ class ApiService {
       );
   }
 
-  getBonuses(filter: Record<string, string>) {
+  getBonuses(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.Bonuses)
       .getBy(filter)
@@ -92,7 +92,7 @@ class ApiService {
       );
   }
 
-  getWithdrawals(filter: Record<string, string>) {
+  getWithdrawals(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.Withdrawals)
       .getBy(filter)
@@ -130,7 +130,7 @@ class ApiService {
       );
   }
 
-  getUser(filter: Record<string, string>) {
+  getUser(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.User)
       .getBy(filter)

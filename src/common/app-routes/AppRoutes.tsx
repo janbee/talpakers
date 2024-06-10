@@ -32,6 +32,20 @@ const AppRoutes = (): ReactElement | null => {
   });
 
 
+  console.log('gaga-------------------------------------pages', [
+    // @ts-expect-error - generated page router
+    ...convertPathToTreeView(pages).children,
+
+
+    /*
+    * custom route here
+    * */
+    {
+      path: '*',
+      element: <NotFoundComponent />,
+    },
+  ]);
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return useRoutes([
     // @ts-expect-error - generated page router

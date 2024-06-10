@@ -37,7 +37,7 @@ export class CRUD {
     return defer(() => this.collection.find({}, { sort: { index: 1 } })) as Observable<T[]>;
   }
 
-  getBy<T>(filter: Record<string, string>) {
+  getBy<T>(filter: Record<string, unknown>) {
     return defer(() => this.collection.find(filter)) as Observable<T[]>;
   }
 

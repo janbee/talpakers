@@ -13,7 +13,7 @@ const HeaderComponent: FC = () => (
         alt={'logo'} />
 
     </div>
-    <span className={'pl-4 text-2xl'}>Talpakers</span>
+    <span className={'pl-4 text-3xl'}>Talpakers</span>
   </div>
 );
 HeaderComponent.displayName = 'Header';

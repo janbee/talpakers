@@ -5,7 +5,7 @@ import { UserList } from '@domains/user';
 
 const Page: FC = () => (
   <MainLayoutComponent>
-    <div data-testid='Users' className={'w-full'}>
+    <div data-testid='Users' className={'w-full flex flex-row overflow-auto'}>
       <UserList />
 
       <Outlet />

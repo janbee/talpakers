@@ -241,3 +241,11 @@ td {
         }
     }
 }
+
+hr{
+    border-bottom: 1px solid #464646;
+    border-left: 0;
+    border-right: 0;
+    border-top: 1px solid #000000;
+    width: 100%;
+}
