@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Dimmer, Divider, Header, Loader } from 'semantic-ui-react';
+import { FC } from 'react';
+import { Dimmer, Loader } from 'semantic-ui-react';
 import useUserDetails from '@domains/user/hooks/useUserDetails.tsx';
 import { sumBy } from 'lodash';
 import classNames from 'classnames';
@@ -9,7 +9,7 @@ const UserDetailsComponent: FC = () => {
   const { list, loading, error, userDetails, totalWinnings, totalWithdrawals } = useUserDetails();
 
 
-  console.log('gaga-------------------------------------',list );
+  console.log('gaga-------------------------------------', list);
   return (
     <div
       data-testid='UserDetails'
@@ -23,7 +23,9 @@ const UserDetailsComponent: FC = () => {
           {list.map(mon => {
             const totalMonthlyWinnings = sumBy(mon.data, 'winnings');
 
-            return  <div key={mon.title} className="mon-wrap">
+            return <div
+              key={mon.title}
+              className='mon-wrap'>
               <div className={'title-wrap flex justify-between items-center dark:text-white'}>
                 <span className={'text-lg'}>
                   {mon.title}
@@ -39,7 +41,7 @@ const UserDetailsComponent: FC = () => {
                   {MoneyUtil(totalMonthlyWinnings)}
                 </span>
               </div>
-            </div>
+            </div>;
           })}
         </div>
       </div>

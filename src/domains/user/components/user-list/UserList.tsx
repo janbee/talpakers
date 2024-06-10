@@ -4,7 +4,6 @@ import useUserList from '@domains/user/hooks/useUserList.tsx';
 import {
   Checkbox,
   Dimmer,
-  Divider,
   Form,
   FormField,
   Loader,
