@@ -2,10 +2,10 @@ import { UserDetailModel, UserStatusModel } from '@api/index';
 import { FC } from 'react';
 import { Popup, Progress, TableCell } from 'semantic-ui-react';
 import classNames from 'classnames';
-import { differenceInMinutes, formatDistanceToNow } from 'date-fns';
 import { GetColorUtil, GetDatesUtil, GetUserStatusUtil, MoneyUtil } from '@common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { omit } from 'lodash';
+import dayjs from 'dayjs';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserDetailModel;
@@ -61,7 +61,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
                     )
                   </span>
                   <span className={`transaction-wrap`}>
-                    {` ${user.data.weekStatus?.withdrawal?.TransactionDateTime && formatDistanceToNow(user.data.weekStatus.withdrawal.TransactionDateTime, { addSuffix: true })}`}
+                    {` ${user.data.weekStatus?.withdrawal?.TransactionDateTime && dayjs(user.data.weekStatus.withdrawal.TransactionDateTime).fromNow()}`}
                   </span>
                 </div>
               </Popup.Header>
@@ -275,8 +275,8 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { isNewWeek } = GetDatesUtil(user);
 
 
-  const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date();
-  const minutesPassed = -(differenceInMinutes(lastUpdate, Date.now()));
+  const lastUpdate = dayjs(user.updatedAt ?? user.createdAt ?? new Date());
+  const minutesPassed = -(lastUpdate.diff(Date.now()));
 
 
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
@@ -293,7 +293,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   return (
     <TableCell {...omit(props, ['user'])}>
       <Popup
-        position="left center"
+        position='left center'
         trigger={
           <div
             className={classNames({
@@ -314,7 +314,9 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
           </span>
         </Popup.Header>
       </Popup>
-      <span style={{ color: bgColor }}>{formatDistanceToNow(lastUpdate, { addSuffix: true })}</span>
+      <span style={{ color: bgColor }}>{
+        dayjs(lastUpdate).fromNow()
+      }</span>
     </TableCell>
   );
 };

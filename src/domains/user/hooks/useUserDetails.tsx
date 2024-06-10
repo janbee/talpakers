@@ -2,19 +2,8 @@ import { useEffect, useState } from 'react';
 import { forkJoin } from 'rxjs';
 import { useLocation } from 'react-router-dom';
 import { API, BetSummaryModel, BonusModel, EarningsModel, UserDetailModel, WithdrawalModel } from '@api/index';
-import {
-  endOfWeek,
-  format,
-  getISOWeeksInYear,
-  isAfter,
-  isBefore,
-  isEqual,
-  setISOWeek,
-  startOfDay,
-  startOfWeek,
-  subDays,
-} from 'date-fns';
 import { groupBy, sumBy } from 'lodash';
+import dayjs from 'dayjs';
 
 const useUseUserDetails = () => {
   const { pathname } = useLocation();
@@ -115,20 +104,28 @@ const getWeeksForCurrentYear = (
     userWithdrawalList: WithdrawalModel[];
   },
 ) => {
-  const isoWeeksNumber = getISOWeeksInYear(Date.now());
-  return Array.from({ length: isoWeeksNumber }, (_, i) => i + 1).map((weekNumber) => {
+  const isoWeeksNumber = dayjs().isoWeeksInYear();
+  return Array.from({ length: isoWeeksNumber }, (_, i) => i).map((weekNumber) => {
 
-    const year = format(Date.now(), 'yyyy');
-    const date = setISOWeek(Date.now(), weekNumber).toISOString();
+    const year = dayjs(Date.now()).year();
 
-    const startDate = startOfWeek(date, { weekStartsOn: 1 }).toISOString();
-    const endDate = endOfWeek(startDate, { weekStartsOn: 0 }).toISOString();
-    const mon = format(startDate, 'MMM');
-    const monNumber = format(startDate, 'M');
+
+    let firstMondayOfYear = dayjs().year(year).isoWeek(weekNumber).day(1);
+    console.log('Monday 1:', firstMondayOfYear.format('dddd, DD MMM YYYY'));
+
+    if (firstMondayOfYear.year() !== year) {
+      firstMondayOfYear = firstMondayOfYear.add(7, 'days');
+    }
+
+    const mon = firstMondayOfYear.format('MMM');
+    const monNumber = firstMondayOfYear.format('M');
+
+    const startDate = firstMondayOfYear.startOf('week').add(1, 'day').toISOString();
+    const endDate = firstMondayOfYear.endOf('week').toISOString();
+
 
     const weekStart = new Date(startDate);
     const weekEnd = new Date(endDate);
-    weekStart.setUTCHours(0, 0, 0, 0);
     weekEnd.setUTCHours(23, 59, 59, 999);
 
     const betSummary = getBetSummaryByWeek(betSummaryList, weekStart, weekEnd, year);
@@ -173,15 +170,19 @@ const getWeeksForCurrentYear = (
 };
 
 
-const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: string) => {
+const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number) => {
+
   const betSummaryByWeek = betSummaryList?.filter((item) => {
+
+    const wkStart = new Date(weekStart);
+    wkStart.setUTCHours(0, 0, 0, 0);
+
     return (
-      item.startDate === weekStart.toISOString() &&
+      item.startDate === wkStart.toISOString() &&
       item.endDate === weekEnd.toISOString() &&
-      item.year === parseInt(year)
+      item.year === year
     );
   }) ?? [];
-
 
 
   const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.bonus ?? 0);
@@ -205,9 +206,9 @@ const getBonusByWeek = (userBonusList: BonusModel[], weekStart: Date, weekEnd: D
   return emailArr
     ?.map((email) => {
       return userBonusList?.reverse().find((item) => {
-        const TransactionDateTime = startOfDay(subDays(item.TransactionDateTime, 7));
+        const TransactionDateTime = dayjs(item.TransactionDateTime).startOf('day').subtract(7, 'days');
         return (
-          isAfter(TransactionDateTime, weekStart) && isBefore(TransactionDateTime, weekEnd) && item.email === email
+          TransactionDateTime.isAfter(weekStart) && TransactionDateTime.isBefore(weekEnd) && item.email === email
         );
       });
     })
@@ -220,9 +221,8 @@ const getWithdrawalByWeek = (userWithdrawalList: WithdrawalModel[], weekStart: D
   return userWithdrawalList?.find((item) => {
     const transactionDate = new Date(item.TransactionDateTime.split('T')[0]);
     transactionDate.setUTCHours(0, 0, 0, 0);
-    const isSameOrAfter = isEqual(transactionDate, weekStart) || isAfter(transactionDate, weekStart);
-    const isSameOrBefore = isEqual(transactionDate, weekEnd) || isBefore(transactionDate, weekEnd);
-    return isSameOrAfter && isSameOrBefore;
+    const TransactionDateTime = dayjs(transactionDate);
+    return TransactionDateTime.isSameOrAfter(weekStart) && TransactionDateTime.isSameOrBefore(weekEnd);
   });
 
 };
