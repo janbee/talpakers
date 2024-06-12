@@ -1,12 +1,12 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.172",
+  "version": "0.1.173",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
     "i": "npm install",
     "rm:husky": "rm -rf .husky ",
-    "prepare:husky:precommit": "npm run rm:husky & npx husky install && npx husky add .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && npx --no-install lint-staged\"",
+    "prepare:husky:precommit": "npm run rm:husky & npx husky install && npx husky add .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && npx --no-install lint-staged && npm run deploy\"",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "------------------ ----------------------- ------------------": "",
