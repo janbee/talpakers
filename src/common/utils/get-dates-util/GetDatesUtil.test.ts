@@ -1,14 +1,10 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import GetDatesUtils from './GetDatesUtils';
+import GetDatesUtil from './GetDatesUtil.ts';
 
-describe('<GetDatesUtils />', () => {
+describe('GetDatesUtil', () => {
   test('it should mount', () => {
-    render(<GetDatesUtils />);
-
-    const GetDatesUtils = screen.getByTestId('GetDatesUtils');
-
-    expect(GetDatesUtils).toBeInTheDocument();
+    const result = GetDatesUtil();
+    expect(result.isNewWeek).toBeTruthy();
   });
 });

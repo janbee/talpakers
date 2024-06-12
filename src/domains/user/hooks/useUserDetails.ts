@@ -5,7 +5,7 @@ import { API, BetSummaryModel, BonusModel, EarningsModel, UserDetailModel, Withd
 import { groupBy, sumBy } from 'lodash';
 import dayjs from 'dayjs';
 
-const useUseUserDetails = () => {
+const useUserDetails = () => {
   const { pathname } = useLocation();
   const [list, setList] = useState<{ title: string; data: EarningsModel[] }[]>([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,6 @@ const useUseUserDetails = () => {
   const [emails, setEmails] = useState<string[]>([]);
 
   useEffect(() => {
-
     const emailArr = pathname.split('/').pop()?.split(',') ?? [];
 
     setLoading(true);
@@ -37,7 +36,6 @@ const useUseUserDetails = () => {
           emailArr,
           userWithdrawalList,
         });
-
 
         const weeksGroupedByMon = groupBy(weeksForCurrentYear, 'mon');
         const weeksGroupedByMonKeys = Object.keys(weeksGroupedByMon).map((key) => {
@@ -60,7 +58,6 @@ const useUseUserDetails = () => {
         setList(weeksGroupedByMonKeys);
         setUserDetails(userDetails);
         setEmails(emailArr);
-
       },
       error: () => setError(true),
     });
@@ -73,38 +70,39 @@ const useUseUserDetails = () => {
 };
 
 const getUserBonusList = (bonusList: BonusModel[]) => {
-  return bonusList?.filter((item) => {
-    return (
-      item.TransactionStatus === 'Approved' &&
-      item.TransactionType === 'Bonus' &&
-      ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) &&
-      item.Amount >= 10
-    );
-  }) ?? [];
+  return (
+    bonusList?.filter((item) => {
+      return (
+        item.TransactionStatus === 'Approved' &&
+        item.TransactionType === 'Bonus' &&
+        ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) &&
+        item.Amount >= 10
+      );
+    }) ?? []
+  );
 };
 
 const getUserWithdrawalList = (withdrawalList: WithdrawalModel[]) => {
-  return withdrawalList?.filter((item) => {
-    return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
-  }) ?? [];
+  return (
+    withdrawalList?.filter((item) => {
+      return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
+    }) ?? []
+  );
 };
 
-const getWeeksForCurrentYear = (
-  {
-    betSummaryList,
-    userBonusList,
-    emailArr,
-    userWithdrawalList,
-  }: {
-    betSummaryList: BetSummaryModel[];
-    userBonusList: BonusModel[];
-    emailArr: string[];
-    userWithdrawalList: WithdrawalModel[];
-  },
-) => {
+const getWeeksForCurrentYear = ({
+  betSummaryList,
+  userBonusList,
+  emailArr,
+  userWithdrawalList,
+}: {
+  betSummaryList: BetSummaryModel[];
+  userBonusList: BonusModel[];
+  emailArr: string[];
+  userWithdrawalList: WithdrawalModel[];
+}) => {
   const isoWeeksNumber = dayjs().isoWeeksInYear();
   return Array.from({ length: isoWeeksNumber }, (_, i) => i).map((weekNumber) => {
-
     const year = dayjs(Date.now()).year();
     const firstMondayOfYear = dayjs().year(year).isoWeek(0).day(1);
 
@@ -116,19 +114,16 @@ const getWeeksForCurrentYear = (
       console.log('Monday 2:', monday.format('dddd, DD MMM YYYY'));
     }
 
-
     const mon = monday.format('MMM');
     const monNumber = monday.format('M');
 
     const startDate = monday;
     const endDate = monday.endOf('week');
 
-
     const weekStart = startDate.startOf('day').toDate();
     const weekEnd = endDate.endOf('day').toDate();
 
     console.log('Monday 3:', dayjs(endDate).utc().endOf('day').toISOString());
-
 
     const betSummary = getBetSummaryByWeek(betSummaryList, weekStart, weekEnd, year);
     const { betSummaryByWeek, bonus, totalStaked, totalEarnings } = betSummary;
@@ -167,23 +162,18 @@ const getWeeksForCurrentYear = (
       emails: emailArr,
       withdrawal: withdrawalByWeek,
     };
-
-
   });
 };
 
-
 const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number) => {
-
-
-  const betSummaryByWeek = betSummaryList?.filter((item) => {
-
-    return (
-      item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
-      item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
-      item.year === year
-    );
-  }) ?? [];
+  const betSummaryByWeek =
+    betSummaryList?.filter((item) => {
+      return (
+        item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
+        item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
+        item.year === year
+      );
+    }) ?? [];
 
   const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.bonus ?? 0);
   const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalStaked ?? 0);
@@ -192,12 +182,14 @@ const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date,
 
   return {
     betSummaryByWeek,
-    bonus, totalStaked, totalEarnings, approxWinnings,
+    bonus,
+    totalStaked,
+    totalEarnings,
+    approxWinnings,
   };
 };
 
 const getBonusByWeek = (userBonusList: BonusModel[], weekStart: Date, weekEnd: Date, emailArr: string[]) => {
-
   /*
    * get bonus
    * reverse to get the first occurrence not the latest
@@ -206,24 +198,19 @@ const getBonusByWeek = (userBonusList: BonusModel[], weekStart: Date, weekEnd: D
     ?.map((email) => {
       return userBonusList?.reverse().find((item) => {
         const TransactionDateTime = dayjs(item.TransactionDateTime).startOf('day').subtract(7, 'days');
-        return (
-          TransactionDateTime.isAfter(weekStart) && TransactionDateTime.isBefore(weekEnd) && item.email === email
-        );
+        return TransactionDateTime.isAfter(weekStart) && TransactionDateTime.isBefore(weekEnd) && item.email === email;
       });
     })
     .filter(Boolean);
-
 };
 
 const getWithdrawalByWeek = (userWithdrawalList: WithdrawalModel[], weekStart: Date, weekEnd: Date) => {
-
   return userWithdrawalList?.find((item) => {
     const transactionDate = new Date(item.TransactionDateTime.split('T')[0]);
     transactionDate.setUTCHours(0, 0, 0, 0);
     const TransactionDateTime = dayjs(transactionDate);
     return TransactionDateTime.isSameOrAfter(weekStart) && TransactionDateTime.isSameOrBefore(weekEnd);
   });
-
 };
 
-export default useUseUserDetails;
+export default useUserDetails;

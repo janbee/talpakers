@@ -1,14 +1,11 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import MoneyUtils from './MoneyUtils';
+import MoneyUtil from './MoneyUtil.ts';
 
-describe('<MoneyUtils />', () => {
+describe('MoneyUtil;', () => {
   test('it should mount', () => {
-    render(<MoneyUtils />);
-
-    const MoneyUtils = screen.getByTestId('MoneyUtils');
-
-    expect(MoneyUtils).toBeInTheDocument();
+    const result = MoneyUtil(10);
+    console.log('gaga-------------------------------------', result);
+    expect(result).toEqual('$10.00');
   });
 });

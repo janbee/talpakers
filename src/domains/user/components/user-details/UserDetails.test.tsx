@@ -1,14 +1,19 @@
-import React from 'react';
+import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import UserDetails from './UserDetails';
+import { BrowserRouter } from 'react-router-dom';
 
 describe('<UserDetails />', () => {
   test('it should mount', () => {
-    render(<UserDetails />);
+    render(
+      <BrowserRouter>
+        <UserDetails />
+      </BrowserRouter>
+    );
 
-    const UserDetails = screen.getByTestId('UserDetails');
+    const _UserDetails = screen.getByTestId('UserDetails');
 
-    expect(UserDetails).toBeInTheDocument();
+    expect(_UserDetails).toBeInTheDocument();
   });
 });

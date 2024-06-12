@@ -1,14 +1,11 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import GetUserStatusUtil from './GetUserStatusUtil';
+import GetUserStatusUtil from './GetUserStatusUtil.ts';
+import { UserDetailModel, UserStatusModel } from '@api/rxjs-client/models/custom.models.ts';
 
-describe('<GetUserStatusUtil />', () => {
+describe('GetUserStatusUtil;', () => {
   test('it should mount', () => {
-    render(<GetUserStatusUtil />);
-
-    const GetUserStatusUtil = screen.getByTestId('GetUserStatusUtil');
-
-    expect(GetUserStatusUtil).toBeInTheDocument();
+    const result = GetUserStatusUtil({} as UserDetailModel);
+    expect(result).toEqual(UserStatusModel.IsWaiting);
   });
 });

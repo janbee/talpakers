@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { Dimmer, Loader } from 'semantic-ui-react';
-import useUserDetails from '@domains/user/hooks/useUserDetails.tsx';
 import { sumBy } from 'lodash';
 import classNames from 'classnames';
 import { MoneyUtil } from '@common/utils';
@@ -10,14 +9,13 @@ import {
   WithdrawalPopup,
 } from '@domains/user/components/user-details/UserDetailsUI.tsx';
 import UserSettingsComponent from '@domains/user/components/user-settings/UserSettings.tsx';
+import useUserDetails from '@domains/user/hooks/useUserDetails';
 
 const UserDetailsComponent: FC = () => {
   const { list, loading, userDetails, totalWinnings, totalWithdrawals, emails } = useUserDetails();
 
   return (
-    <div
-      data-testid='UserDetails'
-      className={'w-full m-4 bg-neutral-800 rounded-lg relative'}>
+    <div data-testid="UserDetails" className={'w-full m-4 bg-neutral-800 rounded-lg relative'}>
       <div className={'flex flex-col p-4 h-full min-w-[370px]'}>
         <div className={'flex flex-row justify-between items-start h-12'}>
           <div className={'flex flex-row'}>
@@ -26,7 +24,8 @@ const UserDetailsComponent: FC = () => {
               <UserYearlySummary
                 userDetails={userDetails}
                 totalWinnings={totalWinnings}
-                totalWithdrawals={totalWithdrawals} />
+                totalWithdrawals={totalWithdrawals}
+              />
             )}
           </div>
 
@@ -34,17 +33,13 @@ const UserDetailsComponent: FC = () => {
         </div>
         <hr />
         <div className={'flex-1 overflow-auto mt-4'}>
-          {list.map(mon => {
+          {list.map((mon) => {
             const totalMonthlyWinnings = sumBy(mon.data, 'winnings');
 
             return (
-              <div
-                key={mon.title}
-                className='mon-wrap'>
+              <div key={mon.title} className="mon-wrap">
                 <div className={'title-wrap flex justify-between items-center dark:text-white pt-2 pb-2 '}>
-                  <span>
-                    {mon.title}
-                  </span>
+                  <span>{mon.title}</span>
                   <span
                     className={classNames({
                       'text-md': true,
@@ -57,19 +52,15 @@ const UserDetailsComponent: FC = () => {
                 </div>
                 <hr />
                 <div className={'week-wrap flex flex-row flex-wrap'}>
-                  {mon.data.map(item => {
+                  {mon.data.map((item) => {
                     return (
-                      <div
-                        key={item._id}
-                        className={'relative'}>
+                      <div key={item._id} className={'relative'}>
                         <WithdrawalPopup earnings={item} />
-                        <WeeklyCard
-                          earnings={item} />
+                        <WeeklyCard earnings={item} />
                       </div>
                     );
                   })}
                 </div>
-
               </div>
             );
           })}

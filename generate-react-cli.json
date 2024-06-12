@@ -13,7 +13,8 @@
       "withLazy": false,
       "customDirectory": "template-name",
       "customTemplates": {
-        "component": "generate-react-templates/domains/TemplateName.tsx"
+        "component": "generate-react-templates/domains/TemplateName.tsx",
+        "test": "generate-react-templates/domains/TemplateName.test.tsx"
       }
     },
     "page": {

@@ -1,14 +1,17 @@
-import React from 'react';
+import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import MainLayout from './MainLayout';
 
 describe('<MainLayout />', () => {
   test('it should mount', () => {
-    render(<MainLayout />);
+    render(
+      <MainLayout>
+        <div />
+      </MainLayout>
+    );
 
-    const MainLayout = screen.getByTestId('MainLayout');
+    const mainLayout = screen.getByTestId('MainLayout');
 
-    expect(MainLayout).toBeInTheDocument();
+    expect(mainLayout).toBeInTheDocument();
   });
 });

@@ -1,14 +1,18 @@
-import React from 'react';
+import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import UserList from './UserList';
+import { BrowserRouter } from 'react-router-dom';
 
 describe('<UserList />', () => {
   test('it should mount', () => {
-    render(<UserList />);
+    render(
+      <BrowserRouter>
+        <UserList />
+      </BrowserRouter>
+    );
+    const _UserList = screen.getByTestId('UserList');
 
-    const UserList = screen.getByTestId('UserList');
-
-    expect(UserList).toBeInTheDocument();
+    expect(_UserList).toBeInTheDocument();
   });
 });

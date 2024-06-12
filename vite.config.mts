@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import mkcert from 'vite-plugin-mkcert';
 // @ts-ignore
@@ -20,6 +20,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['src/__tests__/setup.ts'],
+    exclude:[
+      ...configDefaults.exclude,
+      'generate-react-templates'
+    ]
   },
   resolve: {
     alias: aliases.map(alias => (
@@ -28,6 +32,13 @@ export default defineConfig({
         replacement: path.resolve(__dirname, `src/${alias.replace('@', '')}`),
       }
     )),
+  },
+  // https://stackoverflow.com/questions/76616620/vite-refuses-to-use-the-correct-build-target-in-my-svelte-ts-project
+  build: {
+    target: "es2022"
+  },
+  esbuild: {
+    target: "es2022"
   },
   optimizeDeps: { esbuildOptions: { target: 'esnext' } }, // <-- Set this to resolve issue.
 });

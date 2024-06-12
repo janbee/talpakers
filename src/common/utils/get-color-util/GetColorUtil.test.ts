@@ -1,14 +1,10 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import GetColorUtil from './GetColorUtil';
+import GetColorUtil from './GetColorUtil.ts';
 
-describe('<GetColorUtil />', () => {
+describe('GetColorUtil', () => {
   test('it should mount', () => {
-    render(<GetColorUtil />);
-
-    const GetColorUtil = screen.getByTestId('GetColorUtil');
-
-    expect(GetColorUtil).toBeInTheDocument();
+    const result = GetColorUtil(3);
+    expect(result).toEqual('#bcf139');
   });
 });
