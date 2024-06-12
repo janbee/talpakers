@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { CSSProperties, FC, useCallback, useEffect, useMemo } from 'react';
+import { CSSProperties, FC, useCallback, useMemo } from 'react';
 import useUserList from '@domains/user/hooks/useUserList.tsx';
 import {
+  Button,
   Checkbox,
   Dimmer,
   Form,
-  FormField,
+  FormField, Icon,
   Loader,
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHeader,
   TableHeaderCell,
   TableRow,
@@ -23,14 +25,13 @@ import {
   WeeklyProgressCell,
   WeeklySummaryCell,
 } from '@domains/user/components/user-list/UserTableCell.tsx';
-import { UserDetailModel } from '@api/index.ts';
+import { UserDetailModel, UserStatusModel } from '@api/index.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
-import { endOfWeek, format, getISOWeeksInYear, setISOWeek, startOfWeek } from 'date-fns';
 
 
 const UserListComponent: FC = () => {
-  const { list, loading } = useUserList();
+  const { list, loading, handleOrderByStatus, statusCount } = useUserList();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -73,55 +74,14 @@ const UserListComponent: FC = () => {
 
 
   console.log('gaga-------------------------------------UserListComponent render');
-
-
-  useEffect(() => {
-
-    const isoWeeksNumber = getISOWeeksInYear(Date.now());
-    const weekInfo = Array.from({ length: isoWeeksNumber }, (_, i) => i + 1).map((weekNumber) => {
-
-      const year = format(Date.now(), 'yyyy');
-      const date = setISOWeek(Date.now(), weekNumber).toISOString();
-      const mon = format(date, 'MMM');
-      const monNumber = format(date, 'M');
-
-      const startDate = startOfWeek(date, { weekStartsOn: 2 }).toISOString();
-      const endDate = endOfWeek(startDate, { weekStartsOn: 0 }).toISOString();
-
-
-      const weekStart = new Date(startDate);
-      const weekEnd = new Date(endDate);
-      weekStart.setUTCHours(0, 0, 0, 0);
-      weekEnd.setUTCHours(23, 59, 59, 999);
-
-
-      return {
-        weekNumber,
-        mon,
-        monNumber,
-        year,
-        date,
-        startDate,
-        endDate,
-        weekStart,
-        weekEnd,
-
-        gaga: format(startDate, 'MM-dd-yyyy'),
-      };
-
-
-    });
-
-    console.log('gaga-------asdasd------------------------------', weekInfo);
-  }, []);
-
   return (
     <div
       data-testid='UserList'
       className={'w-full m-4 bg-neutral-800 rounded-lg relative [&:has(+[data-testid="UserDetails"])]:mr-0'}>
       <div className={'flex flex-col p-4 h-full'}>
-        <div className={'h-12'}>
-          <span className={'dark:text-white text-2xl'}>Users</span>
+        <div className={'flex flex-row items-start justify-between h-12'}>
+          <span className={'dark:text-white text-2xl'}>Users {(selectedUserMemo.size > 1) && selectedUserMemo.size}</span>
+          <Icon circular inverted  className={'cursor-pointer pt-1 !text-xl'} onClick={handleOrderByStatus}  name="refresh" />
         </div>
         <hr />
         <Form className={'flex-1 overflow-auto mt-4'}>
@@ -170,7 +130,7 @@ const UserListComponent: FC = () => {
                 <TableHeaderCell
                   collapsing
                   textAlign={'center'}
-                  className={'min-w-[100px]'}>
+                  className={'min-w-[105px]'}>
                   Active
                 </TableHeaderCell>
               </TableRow>
@@ -217,7 +177,47 @@ const UserListComponent: FC = () => {
                 );
               })}
             </TableBody>
+            <TableFooter className={'bg-neutral-800 sticky bottom-0 z-10'}>
+              <TableRow>
+                <TableHeaderCell  colSpan={100}>
+                  <div className={'flex flex-row justify-between items-center w-full'}>
+                    <span className={''}>{`Total Users ${list.length}`}</span>
+                    <div className={'filter-wrap'}>
+                      <Button
+                        compact
+                        onClick={handleOrderByStatus}
+                        className={'!bg-green-dark !pt-1 !pb-1'}
+                        size={'small'}
+                        filter={UserStatusModel.IsDone}
+                      >
+                        Done {!!statusCount[UserStatusModel.IsDone] && `#${statusCount[UserStatusModel.IsDone]}`}
+                      </Button>
+                      <Button
+                        compact
+                        onClick={handleOrderByStatus}
+                        className={'!bg-yellow-dark !pt-1 !pb-1'}
+                        size={'small'}
+                        filter={UserStatusModel.InProgress}
+                      >
+                        InProgress {!!statusCount[UserStatusModel.InProgress] && `#${statusCount[UserStatusModel.InProgress]}`}
+                      </Button>
+                      <Button
+                        compact
+                        onClick={handleOrderByStatus}
+                        className={'!bg-red-dark !pt-1 !pb-1'}
+                        size={'small'}
+                        filter={UserStatusModel.IsWaiting}
+                      >
+                        Waiting {!!statusCount[UserStatusModel.IsWaiting] && `#${statusCount[UserStatusModel.IsWaiting]}`}
+                      </Button>
+                    </div>
+                  </div>
+
+                </TableHeaderCell>
+              </TableRow>
+            </TableFooter>
           </Table>
+
         </Form>
       </div>
       <Dimmer active={loading}>

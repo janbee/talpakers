@@ -419,9 +419,11 @@ export interface WeeklyStatusModel {
   betSummary: BetSummaryModel;
   withdrawal: WithdrawalModel | null;
   hasBetRestriction?: boolean;
+  hasMinimumBetRestriction?: number;
   hasWagerLimit?: string;
   betRejectedTryLower?: string;
   lastBet?: number;
+  highestTotalStaked?: number;
 }
 
 export interface UserDataModel {
@@ -454,6 +456,7 @@ export interface EarningsModel {
   loading: boolean;
   fetch: number;
   withdrawal?: WithdrawalModel;
+  emails: string[];
 }
 
 export interface BetSummaryModel {

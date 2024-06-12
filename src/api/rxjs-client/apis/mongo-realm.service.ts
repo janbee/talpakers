@@ -2,7 +2,7 @@
 import { isUndefined, mergeWith } from 'lodash';
 import * as Realm from "realm-web";
 import { MongoCollection } from '@api/rxjs-client/models/custom.models.ts';
-import { catchError, defer, map, mergeMap, Observable, of, tap } from 'rxjs';
+import { catchError, defer, map, mergeMap, Observable, of, tap, throwError } from 'rxjs';
 
 
 interface UpsertModel {
@@ -140,7 +140,7 @@ export class MongoRealmService {
       map(() => this.app.currentUser?.profile.email),
       catchError((err) => {
         console.error('Failed to log in', err);
-        return of(err);
+        return throwError(() => err);
       }),
     );
   }

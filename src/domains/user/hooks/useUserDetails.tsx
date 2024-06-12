@@ -13,13 +13,13 @@ const useUseUserDetails = () => {
   const [userDetails, setUserDetails] = useState<UserDetailModel[]>([]);
   const [totalWinnings, setTotalWinnings] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
+  const [emails, setEmails] = useState<string[]>([]);
 
   useEffect(() => {
 
     const emailArr = pathname.split('/').pop()?.split(',') ?? [];
 
     setLoading(true);
-    console.log('gaga-------------------------------------emailArr', emailArr);
     const userDetails$ = forkJoin([
       API.getBetSummary({ email: { $in: emailArr } }),
       API.getBonuses({ email: { $in: emailArr } }),
@@ -55,13 +55,11 @@ const useUseUserDetails = () => {
           return sumBy(item.data, 'withdrawal.Amount');
         });
 
-        console.log('gaga-----------------------------weeksGroupedByMonKeys--------', weeksGroupedByMonKeys);
-
-
         setTotalWithdrawals(yearTotalWithdrawals);
         setTotalWinnings(yearTotalWinnings);
         setList(weeksGroupedByMonKeys);
         setUserDetails(userDetails);
+        setEmails(emailArr);
 
       },
       error: () => setError(true),
@@ -71,7 +69,7 @@ const useUseUserDetails = () => {
     };
   }, [pathname]);
 
-  return { list, loading, error, userDetails, totalWinnings, totalWithdrawals };
+  return { list, loading, error, userDetails, emails, totalWinnings, totalWithdrawals };
 };
 
 const getUserBonusList = (bonusList: BonusModel[]) => {
@@ -108,25 +106,29 @@ const getWeeksForCurrentYear = (
   return Array.from({ length: isoWeeksNumber }, (_, i) => i).map((weekNumber) => {
 
     const year = dayjs(Date.now()).year();
+    const firstMondayOfYear = dayjs().year(year).isoWeek(0).day(1);
 
-
-    let firstMondayOfYear = dayjs().year(year).isoWeek(weekNumber).day(1);
-    console.log('Monday 1:', firstMondayOfYear.format('dddd, DD MMM YYYY'));
+    let monday = dayjs().year(year).isoWeek(weekNumber).day(1);
+    console.log('Monday 1:', monday.format('dddd, DD MMM YYYY'));
 
     if (firstMondayOfYear.year() !== year) {
-      firstMondayOfYear = firstMondayOfYear.add(7, 'days');
+      monday = monday.add(7, 'days');
+      console.log('Monday 2:', monday.format('dddd, DD MMM YYYY'));
     }
 
-    const mon = firstMondayOfYear.format('MMM');
-    const monNumber = firstMondayOfYear.format('M');
 
-    const startDate = firstMondayOfYear.startOf('week').add(1, 'day').toISOString();
-    const endDate = firstMondayOfYear.endOf('week').toISOString();
+    const mon = monday.format('MMM');
+    const monNumber = monday.format('M');
+
+    const startDate = monday;
+    const endDate = monday.endOf('week');
 
 
-    const weekStart = new Date(startDate);
-    const weekEnd = new Date(endDate);
-    weekEnd.setUTCHours(23, 59, 59, 999);
+    const weekStart = startDate.startOf('day').toDate();
+    const weekEnd = endDate.endOf('day').toDate();
+
+    console.log('Monday 3:', dayjs(endDate).utc().endOf('day').toISOString());
+
 
     const betSummary = getBetSummaryByWeek(betSummaryList, weekStart, weekEnd, year);
     const { betSummaryByWeek, bonus, totalStaked, totalEarnings } = betSummary;
@@ -162,6 +164,7 @@ const getWeeksForCurrentYear = (
       fetch: 0,
       title: mon,
 
+      emails: emailArr,
       withdrawal: withdrawalByWeek,
     };
 
@@ -172,24 +175,20 @@ const getWeeksForCurrentYear = (
 
 const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number) => {
 
+
   const betSummaryByWeek = betSummaryList?.filter((item) => {
 
-    const wkStart = new Date(weekStart);
-    wkStart.setUTCHours(0, 0, 0, 0);
-
     return (
-      item.startDate === wkStart.toISOString() &&
-      item.endDate === weekEnd.toISOString() &&
+      item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
+      item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
       item.year === year
     );
   }) ?? [];
-
 
   const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.bonus ?? 0);
   const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalStaked ?? 0);
   const totalEarnings = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalEarnings ?? 0);
   const approxWinnings = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.winnings ?? 0);
-
 
   return {
     betSummaryByWeek,

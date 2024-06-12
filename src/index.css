@@ -2,25 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --cb-size: 20px;
-    line-height: 1.5;
-    font-weight: 400;
-
-    font-family: "Quicksand", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
 a {
     font-weight: 500;
     color: #646cff;
@@ -38,7 +19,23 @@ body {
     min-width: 320px;
     min-height: 100vh;
     background: none;
+    font-family: "Quicksand", sans-serif;
+    --cb-size: 20px;
+    line-height: 1.5;
+    font-weight: 400;
 
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     #root {
         width: 100%;
     }

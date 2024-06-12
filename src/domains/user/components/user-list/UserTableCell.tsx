@@ -197,7 +197,7 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isNewWeek } = GetDatesUtil(user);
 
-  let totalStaked = user.data?.weekStatus?.betSummary?.betSummary.totalStaked ?? 0;
+  let totalStaked = user.data?.weekStatus?.highestTotalStaked ?? 0;
   if (isNewWeek) {
     totalStaked = 0;
   }
@@ -276,11 +276,12 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
 
 
   const lastUpdate = dayjs(user.updatedAt ?? user.createdAt ?? new Date());
-  const minutesPassed = -(lastUpdate.diff(Date.now()));
+  const minutesPassed = dayjs.duration(-(lastUpdate.diff(Date.now()))).asMinutes();
 
 
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
   let hasBetRestriction = isNewWeek ? null : user.data.weekStatus?.hasBetRestriction === true;
+
 
   let txt = 'Bet Restricted (T_T) !!!';
 
@@ -288,17 +289,21 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
     hasBetRestriction = true;
     txt = 'Missing TWO_FACTOR_AUTH';
   }
-
+  if (user.data.weekStatus?.hasMinimumBetRestriction) {
+    hasBetRestriction = true;
+    const expiry = (user.data.weekStatus.hasMinimumBetRestriction ?? new Date().getTime()) as number;
+    txt = `will reset: ${dayjs(new Date(expiry)).format(' hh:mm A')}`;
+  }
 
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'relative'} {...omit(props, ['user'])}>
       <Popup
         position='left center'
         trigger={
           <div
             className={classNames({
-              'bg-red-dark': true,
-              'has-dot': hasBetRestriction,
+              'rounded-full h-2 w-2 top-2 right-2 absolute cursor-pointer': hasBetRestriction,
+              'bg-red-light': true,
             })}
           />
         }
@@ -307,7 +312,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
         <Popup.Header>
           <span
             className={classNames({
-              'red-light': true,
+              'text-red-light': true,
             })}
           >
             {txt}
@@ -315,7 +320,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
         </Popup.Header>
       </Popup>
       <span style={{ color: bgColor }}>{
-        dayjs(lastUpdate).fromNow()
+        dayjs(lastUpdate).fromNow(true)
       }</span>
     </TableCell>
   );
