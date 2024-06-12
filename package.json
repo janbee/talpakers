@@ -1,11 +1,11 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.150",
+  "version": "0.1.157",
   "homepage": "https://janbee.github.io/talpakers/build",
   "private": true,
   "scripts": {
     "i": "npm install",
-    "prepare:husky": "rm -rf .husky & npx husky install && npx husky add .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && yarn build && npx --no-install lint-staged\"",
+    "prepare:husky": "rm -rf .husky & npx husky install && npx husky add .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && npm run build && npx --no-install lint-staged\"",
     "------------------ ----------------------- ------------------": "",
     "dev": "vite",
     "build": "tsc && vite build",
@@ -24,7 +24,7 @@
     "git:add": "git add .",
     "git:commit": "git commit -a -m 'auto'",
     "git:push": "git push",
-    "git:run": "yarn run git:add && yarn run git:commit && yarn run git:push"
+    "git:run": "npm run git:add && npm run git:commit && npm run git:push"
   },
   "dependencies": {
     "@types/lodash": "^4.17.4",
