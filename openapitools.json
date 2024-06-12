@@ -8,7 +8,7 @@
         "generatorName": "typescript-rxjs",
         "output": "./src/api/rxjs-client",
         "skipValidateSpec": true,
-        "inputSpec": "https://raw.githubusercontent.com/RobotsAndPencils/AkrochemERP/main/backend/docs/api.yml?token=GHSAT0AAAAAACRKRW3JM5XW7EDZCRZ5ZBIEZS7SSWQ",
+        "inputSpec": "https://raw.githubusercontent.com/RobotsAndPencils/AkrochemERP/main/backend/docs/api.yml",
         "additionalProperties": {
           "supportsES6": true,
           "useSingleRequestParameter": true
