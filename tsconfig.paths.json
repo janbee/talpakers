@@ -2,14 +2,12 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "@app/*": ["./app/*"],
-      "@services/*": ["./app/shared/services/*"],
-      "@utilities/*": ["./app/shared/utils/*"],
-      "@components/*": ["./app/components/*"],
-      "@models/*": ["./app/shared/models/*"],
-      "@assets/*": ["./assets/*"],
-      "crypto": ["node_modules/crypto-browserify"],
-      "stream": ["node_modules/stream-browserify"]
+      "@domains/*": ["domains/*"],
+      "@pages/*": ["pages/*"],
+      "@layouts/*": ["layouts/*"],
+      "@common/*": ["common/*"],
+      "@api/*": ["api/*"],
+      "@assets/*": ["assets/*"]
     },
     "jsx": "preserve"
   }
