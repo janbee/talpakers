@@ -3,9 +3,7 @@ import { ReactElement } from 'react';
 import { convertPathToTreeView } from './AppRoutesBuilder.ts';
 import NotFoundComponent from '../not-found/NotFound.tsx';
 
-
 const AppRoutes = (): ReactElement | null => {
-
   const pagesDir = import.meta.glob(`../../pages/**/*`, {
     eager: true,
   });
@@ -31,15 +29,13 @@ const AppRoutes = (): ReactElement | null => {
     };
   });
 
-
   console.log('gaga-------------------------------------pages', [
     // @ts-expect-error - generated page router
     ...convertPathToTreeView(pages).children,
 
-
     /*
-    * custom route here
-    * */
+     * custom route here
+     * */
     {
       path: '*',
       element: <NotFoundComponent />,
@@ -51,18 +47,14 @@ const AppRoutes = (): ReactElement | null => {
     // @ts-expect-error - generated page router
     ...convertPathToTreeView(pages).children,
 
-
     /*
-    * custom route here
-    * */
+     * custom route here
+     * */
     {
       path: '*',
       element: <NotFoundComponent />,
     },
   ]);
-
-
 };
 
 export default AppRoutes;
-

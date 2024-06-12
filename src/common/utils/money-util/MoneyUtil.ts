@@ -1,15 +1,13 @@
 import { MoneyModel } from '@api/index';
 import { merge } from 'lodash';
 
-
 const MoneyUtil = (money: string | number, config?: MoneyModel) => {
-
   const _config = merge(
     {
       currency: 'USD',
       minimumFractionDigits: 2,
     } as MoneyModel,
-    config,
+    config
   );
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',

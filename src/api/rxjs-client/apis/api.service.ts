@@ -17,9 +17,7 @@ class ApiService {
     AppDB: 'DB',
   });
 
-
   getSettledBets(filter: Record<string, string>) {
-
     return this.$RealmDB
       .collection(MongoCollection.SettledBets)
       .getBy(filter)
@@ -29,12 +27,11 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getSettledBets'),
         }),
         catchError((err) => {
-
           return throwError(() => `Server is taking too long to respond! getSettledBets ${err}`);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as SettledBetModel[];
-        }),
+        })
       );
   }
 
@@ -52,7 +49,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as BetSummaryModel[];
-        }),
+        })
       );
   }
 
@@ -70,7 +67,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as UserDetailModel;
-        }),
+        })
       );
   }
 
@@ -88,7 +85,7 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as BonusModel[];
-        }),
+        })
       );
   }
 
@@ -102,12 +99,11 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getWithdrawals'),
         }),
         catchError((err) => {
-
           return throwError(() => `Server is taking too long to respond! getWithdrawals ${err}`);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as WithdrawalModel[];
-        }),
+        })
       );
   }
 
@@ -121,12 +117,11 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getUsers'),
         }),
         catchError((err) => {
-
           return throwError(() => `Server is taking too long to respond! getUsers ${err}`);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as UserDetailModel[];
-        }),
+        })
       );
   }
 
@@ -140,12 +135,11 @@ class ApiService {
           with: () => throwError(() => 'Server is taking too long to respond! getUser'),
         }),
         catchError((err) => {
-
           return throwError(() => `Server is taking too long to respond! getUser ${err}`);
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as UserDetailModel[];
-        }),
+        })
       );
   }
 }

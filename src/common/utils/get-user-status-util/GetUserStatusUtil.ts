@@ -8,7 +8,7 @@ const GetUserStatusUtilComponent = (user: UserDetailModel): UserStatusModel => {
   const inProgress = user.data?.weekStatus?.done === false;
 
   const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date();
-  const minutesPassed = -(differenceInMinutes(lastUpdate, Date.now()));
+  const minutesPassed = -differenceInMinutes(lastUpdate, Date.now());
 
   let isIdle = false;
 

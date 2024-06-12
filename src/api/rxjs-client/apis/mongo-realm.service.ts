@@ -1,9 +1,7 @@
-
 import { isUndefined, mergeWith } from 'lodash';
-import * as Realm from "realm-web";
+import * as Realm from 'realm-web';
 import { MongoCollection } from '@api/rxjs-client/models/custom.models.ts';
 import { catchError, defer, map, mergeMap, Observable, of, tap, throwError } from 'rxjs';
-
 
 interface UpsertModel {
   _id: string;
@@ -46,20 +44,13 @@ export class CRUD {
       mergeMap((foundItem) => {
         if (foundItem.length) {
           if (object.updatedAt) {
-            object = mergeWith(
-              foundItem[0],
-              object,
-              (a: Record<string, string>, b) => {
-                return (isUndefined(b) === undefined ? a : undefined);
-              });
+            object = mergeWith(foundItem[0], object, (a: Record<string, string>, b) => {
+              return isUndefined(b) === undefined ? a : undefined;
+            });
           } else {
-            object = mergeWith(
-              foundItem[0],
-              { ...object, updatedAt: new Date() },
-              (a: Record<string, string>, b) => {
-                return isUndefined(b) === undefined ? a : undefined;
-              },
-            );
+            object = mergeWith(foundItem[0], { ...object, updatedAt: new Date() }, (a: Record<string, string>, b) => {
+              return isUndefined(b) === undefined ? a : undefined;
+            });
           }
         } else {
           object.createdAt = new Date();
@@ -78,14 +69,14 @@ export class CRUD {
             object as unknown as globalThis.Realm.Services.MongoDB.Update,
             {
               upsert: true,
-            },
-          ),
+            }
+          )
         ).pipe(
           map(() => {
             return object;
-          }),
+          })
         );
-      }),
+      })
     );
   }
 
@@ -93,7 +84,7 @@ export class CRUD {
     return defer(() => this.collection.deleteMany(filter as Record<string, unknown>)).pipe(
       map(() => {
         return null;
-      }),
+      })
     );
   }
 }
@@ -118,14 +109,12 @@ export class MongoRealmService {
 
     return defer(() => this.app.logIn(credentials)).pipe(
       catchError((err) => {
-
         console.error('Failed to log in', err);
         return of(err);
       }),
       tap(() => {
-        if (this.app.currentUser)
-          this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
-      }),
+        if (this.app.currentUser) this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
+      })
     );
   }
 
@@ -134,14 +123,13 @@ export class MongoRealmService {
 
     return defer(() => this.app.logIn(credentials)).pipe(
       tap(() => {
-        if (this.app.currentUser)
-          this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
+        if (this.app.currentUser) this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
       }),
       map(() => this.app.currentUser?.profile.email),
       catchError((err) => {
         console.error('Failed to log in', err);
         return throwError(() => err);
-      }),
+      })
     );
   }
 
@@ -159,7 +147,10 @@ export class MongoRealmService {
       CRUD: crud,
     };
 
-    this.collections[name].CRUD.setCurrentUser(this.app.currentUser?.id ?? '', this.app.currentUser?.profile?.email ?? '');
+    this.collections[name].CRUD.setCurrentUser(
+      this.app.currentUser?.id ?? '',
+      this.app.currentUser?.profile?.email ?? ''
+    );
     return this.collections[name].CRUD;
   }
 }

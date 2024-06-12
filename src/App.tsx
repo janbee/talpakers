@@ -10,12 +10,14 @@ const App = (): ReactElement | null => {
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
-    const realmInit$ = API.$RealmDB.init().pipe(delay(500)).subscribe(() => setAppReady(true));
+    const realmInit$ = API.$RealmDB
+      .init()
+      .pipe(delay(500))
+      .subscribe(() => setAppReady(true));
     return () => {
       realmInit$.unsubscribe();
     };
   }, []);
-
 
   console.log('gaga-------------------------------------render APP', appReady);
   return (
@@ -32,7 +34,6 @@ const App = (): ReactElement | null => {
         <Loader />
       </Dimmer>
     </>
-
   );
 };
 

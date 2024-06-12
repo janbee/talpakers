@@ -1,6 +1,5 @@
 import { UserDetailModel } from '@api/index';
 
-
 const GetDatesUtil = (user?: UserDetailModel) => {
   const tz = new Date().getTimezoneOffset() * 60000;
   const today = new Date(new Date().getTime() - tz);
