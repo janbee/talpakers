@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@domains/*": ["domains/*"],
+      "@pages/*": ["pages/*"],
+      "@layouts/*": ["layouts/*"],
+      "@common/*": ["common/*"],
+      "@api/*": ["api/*"],
+      "@assets/*": ["assets/*"]
+    },
+    "jsx": "preserve"
+  }
+}
