@@ -16,7 +16,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { isNewWeek } = GetDatesUtil(user);
 
   return (
-    <TableCell {...omit(props, ['user'])} className={'relative'}>
+    <TableCell {...omit(props, ['user'])}>
       {!!user.data.weekStatus?.withdrawal && !isNewWeek && (
         <>
           {[

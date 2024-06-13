@@ -29,6 +29,7 @@ import {
 import { UserDetailModel, UserStatusModel } from '@api/index.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
+import classNames from 'classnames';
 
 const UserListComponent: FC = () => {
   const { list, loading, handleOrderByStatus, statusCount } = useUserList();
@@ -95,8 +96,13 @@ const UserListComponent: FC = () => {
         </div>
         <hr />
         <Form className={'flex-1 overflow-auto mt-4'}>
-          <Table size={'small'} selectable compact striped celled inverted>
-            <TableHeader className={'bg-neutral-900 sticky top-0 z-10'}>
+          <Table size={'small'} selectable compact striped celled inverted unstackable>
+            <TableHeader
+              className={classNames({
+                'bg-neutral-900 sticky top-0 z-10': true,
+                'md:!hidden': true,
+              })}
+            >
               <TableRow>
                 <TableHeaderCell collapsing>#</TableHeaderCell>
                 <TableHeaderCell collapsing textAlign={'center'}>
@@ -130,8 +136,15 @@ const UserListComponent: FC = () => {
             <TableBody>
               {list.map((user) => {
                 return (
-                  <TableRow key={user._id} onClick={handleRowClick(user)}>
-                    <TableCell>
+                  <TableRow
+                    className={classNames({
+                      'md:flex md:flex-row md:flex-wrap': true,
+                      'child:md:!border-0 child:relative': true,
+                    })}
+                    key={user._id}
+                    onClick={handleRowClick(user)}
+                  >
+                    <TableCell className={'md:!min-w-[33%]'}>
                       <FormField>
                         <Checkbox
                           checked={selectedUserMemo.has(user._id)}
@@ -145,14 +158,20 @@ const UserListComponent: FC = () => {
                         />
                       </FormField>
                     </TableCell>
-                    <AppBuildCell user={user} />
-                    <StatusCell textAlign={'center'} user={user} />
-                    <TableCell collapsing>{user.data?.version}</TableCell>
-                    <WeeklySummaryCell textAlign={'center'} user={user} />
-                    <WeeklyProgressCell textAlign={'center'} user={user} />
-                    <BetsCell user={user} />
-                    <NextWithdrawalCell user={user} />
-                    <ActiveCell textAlign={'center'} user={user} />
+                    <AppBuildCell className={'md:!min-w-[33%] md:!text-center'} user={user} />
+                    <StatusCell className={'md:!min-w-[33%] md:!text-right'} textAlign={'center'} user={user} />
+
+                    <TableCell className={'md:!min-w-[20%]'} collapsing>
+                      {user.data?.version}
+                    </TableCell>
+                    <WeeklySummaryCell className={'md:flex-1'} textAlign={'center'} user={user} />
+
+                    <WeeklyProgressCell className={'md:w-full'} textAlign={'center'} user={user} />
+
+                    <BetsCell className={'md:flex-1'} user={user} />
+                    <NextWithdrawalCell className={'md:flex-1'} user={user} />
+
+                    <ActiveCell className={'md:flex-1'} textAlign={'center'} user={user} />
                   </TableRow>
                 );
               })}
