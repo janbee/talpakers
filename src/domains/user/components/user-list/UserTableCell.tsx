@@ -188,7 +188,8 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isNewWeek } = GetDatesUtil(user);
 
-  let totalStaked = user.data?.weekStatus?.highestTotalStaked ?? 0;
+  let totalStaked =
+    user.data?.weekStatus?.highestTotalStaked ?? user.data.weekStatus?.betSummary.betSummary.totalStaked ?? 0;
   if (isNewWeek) {
     totalStaked = 0;
   }

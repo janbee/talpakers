@@ -11,6 +11,9 @@ const aliases = Object.keys(compilerOptions.paths).map(item => item.replace('/*'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    BUILD_DATE: JSON.stringify(new Date().valueOf()),
+  },
   plugins: [react(), mkcert()],
   base: '/talpakers/',
   server: {
@@ -40,6 +43,7 @@ export default defineConfig({
   },
   esbuild: {
     target: 'es2022',
+    drop: ['console', 'debugger'],
   },
   optimizeDeps: { esbuildOptions: { target: 'esnext' } }, // <-- Set this to resolve issue.
 });

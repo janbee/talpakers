@@ -3,12 +3,13 @@ import logo from '@assets/logo.png';
 import { Link } from 'react-router-dom';
 import { Popup } from 'semantic-ui-react';
 import { version } from '../../../package.json';
+import dayjs from 'dayjs';
 
 const HeaderComponent: FC = () => (
   <div data-testid="Header" className={'h-20 bg-black p-3'}>
     <Popup
       size={'mini'}
-      content={`v${version}`}
+      content={`v${version} build ${dayjs(BUILD_DATE).fromNow()}`}
       position="right center"
       trigger={
         <Link className={'h-full inline-flex flex-row items-center'} to={'/'}>

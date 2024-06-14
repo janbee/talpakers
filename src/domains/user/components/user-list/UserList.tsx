@@ -168,10 +168,10 @@ const UserListComponent: FC = () => {
 
                     <WeeklyProgressCell className={'md:w-full'} textAlign={'center'} user={user} />
 
-                    <BetsCell className={'md:flex-1'} user={user} />
-                    <NextWithdrawalCell className={'md:flex-1'} user={user} />
+                    <BetsCell className={'md:w-[60px]'} user={user} />
+                    <NextWithdrawalCell className={'md:w-[100px]'} user={user} />
 
-                    <ActiveCell className={'md:flex-1'} textAlign={'center'} user={user} />
+                    <ActiveCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />
                   </TableRow>
                 );
               })}

@@ -3,6 +3,7 @@ import logo from '@assets/logo.png';
 import { Link } from 'react-router-dom';
 import { Popup } from 'semantic-ui-react';
 import { version } from '../../package.json';
+import dayjs from 'dayjs';
 
 const Page: FC = () => {
   return (
@@ -11,7 +12,6 @@ const Page: FC = () => {
         className={'rounded-full overflow-hidden w-[100px] aspect-square flex items-center border-gray-700 border-8'}
       >
         <Popup
-          content={`Talapkers v${version}`}
           open
           position="top center"
           trigger={
@@ -19,7 +19,15 @@ const Page: FC = () => {
               <img className={'h-full'} src={logo} alt={'logo'} />
             </Link>
           }
-        />
+        >
+          <div>Talapkers</div>
+          <div>
+            <span>{`Version: ${version}`}</span>
+          </div>
+          <div>
+            <span>{`Build Date: ${dayjs(BUILD_DATE).fromNow()}`}</span>
+          </div>
+        </Popup>
       </div>
     </div>
   );
