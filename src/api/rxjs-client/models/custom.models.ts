@@ -424,6 +424,7 @@ export interface WeeklyStatusModel {
   betRejectedTryLower?: string;
   lastBet?: number;
   highestTotalStaked?: number;
+  hasNotification?: { [key: string]: boolean }[];
 }
 
 export interface UserDataModel {

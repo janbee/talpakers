@@ -267,16 +267,41 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
   let hasBetRestriction = isNewWeek ? null : user.data.weekStatus?.hasBetRestriction === true;
 
-  let txt = 'Bet Restricted (T_T) !!!';
+  const txt = [];
+
+  if (hasBetRestriction) {
+    txt.push('Bet Restricted (T_T) !!!');
+  }
 
   if (!user.data.userSession?.TWO_FACTOR_AUTH) {
     hasBetRestriction = true;
-    txt = 'Missing TWO_FACTOR_AUTH';
+    txt.push('Missing TWO_FACTOR_AUTH');
   }
+
   if (user.data.weekStatus?.hasMinimumBetRestriction) {
     hasBetRestriction = true;
-    const expiry = (user.data.weekStatus.hasMinimumBetRestriction ?? new Date().getTime()) as number;
-    txt = `will reset: ${dayjs(new Date(expiry)).format(' hh:mm A')}`;
+    const expiry = user.data.weekStatus.hasMinimumBetRestriction ?? new Date().getTime();
+    txt.push(`Minimum bet ${dayjs(new Date(expiry)).format(' hh:mm A')}`);
+  }
+
+  console.log(
+    'gaga------------------------------user.data.weekStatus?.hasNotification-------',
+    user._id,
+    user.data.weekStatus?.hasNotification
+  );
+  const hasNotification =
+    user.data.weekStatus?.hasNotification?.filter((item) => {
+      const key = Object.keys(item)[0];
+      return item[key];
+    }) ?? [];
+
+  if (hasNotification.length) {
+    hasBetRestriction = true;
+
+    hasNotification.forEach((item) => {
+      const key = Object.keys(item)[0];
+      txt.push(key);
+    });
   }
 
   return (
@@ -293,15 +318,17 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
         }
         flowing
       >
-        <Popup.Header>
-          <span
-            className={classNames({
-              'text-red-light': true,
-            })}
-          >
-            {txt}
-          </span>
-        </Popup.Header>
+        {txt.map((t) => (
+          <Popup.Header key={t}>
+            <span
+              className={classNames({
+                'text-red-light': true,
+              })}
+            >
+              {t}
+            </span>
+          </Popup.Header>
+        ))}
       </Popup>
       <span style={{ color: bgColor }}>{dayjs(lastUpdate).fromNow(true)}</span>
     </TableCell>

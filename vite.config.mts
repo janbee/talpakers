@@ -1,7 +1,6 @@
 import { configDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import mkcert from 'vite-plugin-mkcert';
-// @ts-ignore
 import { compilerOptions } from './tsconfig.paths.json';
 import * as path from 'path';
 
@@ -9,6 +8,7 @@ import * as path from 'path';
 const aliases = Object.keys(compilerOptions.paths).map(item => item.replace('/*', ''));
 
 
+console.log('gaga-------------------------------------', process.env.environment);
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
@@ -19,6 +19,7 @@ export default defineConfig({
   server: {
     port: 3001,
     open: true,
+    host: true,
   },
   test: {
     globals: true,
@@ -43,7 +44,7 @@ export default defineConfig({
   },
   esbuild: {
     target: 'es2022',
-    drop: ['console', 'debugger'],
+    drop: process.env.NODE_ENV === 'development' ? [] : ['console', 'debugger'],
   },
   optimizeDeps: { esbuildOptions: { target: 'esnext' } }, // <-- Set this to resolve issue.
 });
