@@ -285,10 +285,11 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   }
 
   console.log(
-    'gaga------------------------------user.data.weekStatus?.hasNotification-------',
+    'gaga------------------------------hasNotification-------',
     user._id,
     user.data.weekStatus?.hasNotification
   );
+
   const hasNotification =
     user.data.weekStatus?.hasNotification?.filter((item) => {
       const key = Object.keys(item)[0];
