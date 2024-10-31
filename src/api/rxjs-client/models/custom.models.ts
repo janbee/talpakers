@@ -379,6 +379,7 @@ export enum MongoCollection {
   BetSummary = 'betSummary',
   Bonuses = 'bonuses',
   Withdrawals = 'withdrawals',
+  Predictions = 'predictions',
 }
 
 export interface UserSessionModel {
@@ -418,13 +419,16 @@ export interface WeeklyStatusModel {
   endDate: string;
   betSummary: BetSummaryModel;
   withdrawal: WithdrawalModel | null;
-  hasBetRestriction?: boolean;
+  hasBetRestriction?: number;
   hasMinimumBetRestriction?: number;
   hasWagerLimit?: string;
   betRejectedTryLower?: string;
-  lastBet?: number;
+  lastBet?: string[];
   highestTotalStaked?: number;
-  hasNotification?: { [key: string]: boolean }[];
+  hasNotification?: { [key: string]: unknown }[];
+  prediction?: number;
+
+  [key: string]: any | any[];
 }
 
 export interface UserDataModel {
@@ -486,4 +490,26 @@ export enum UserStatusModel {
   IsDone = 'Done',
   InProgress = 'InProgress',
   IsWaiting = 'Waiting',
+}
+
+export interface PredictionModel {
+  _id: string;
+  prediction: string;
+  team1Name: string;
+  team2Name: string;
+  bet1Rate: string;
+  bet2Rate: string;
+  game: string;
+  weekStart: Date;
+  weekEnd: Date;
+  today: Date;
+  from: string;
+  predictedWinner: string;
+  winningTeam: string;
+  winningPercentage: number;
+  chatGptVersion: string;
+  createdAt: Date;
+  owner_id: string;
+  email: string;
+  year: number;
 }

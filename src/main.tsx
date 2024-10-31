@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'semantic-ui-css/semantic.min.css';
-import App from './App.tsx';
 import './index.css';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -12,6 +11,8 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import utc from 'dayjs/plugin/utc';
 import duration from 'dayjs/plugin/duration';
+import App from './App';
+import 'react-datepicker/dist/react-datepicker.css';
 
 dayjs.extend(relativeTime);
 dayjs.extend(isoWeek);

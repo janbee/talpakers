@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import HeaderComponent from '../../common/header/Header.tsx';
+import HeaderComponent from '../../common/header/Header';
 
 interface MainLayoutProps {
   children: ReactNode;

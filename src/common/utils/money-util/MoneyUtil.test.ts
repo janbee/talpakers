@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import MoneyUtil from './MoneyUtil.ts';
+import MoneyUtil from './MoneyUtil';
 
 describe('MoneyUtil;', () => {
   test('it should mount', () => {

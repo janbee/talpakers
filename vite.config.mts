@@ -4,7 +4,6 @@ import mkcert from 'vite-plugin-mkcert';
 import { compilerOptions } from './tsconfig.paths.json';
 import * as path from 'path';
 
-
 const aliases = Object.keys(compilerOptions.paths).map(item => item.replace('/*', ''));
 
 
@@ -31,12 +30,13 @@ export default defineConfig({
     ],
   },
   resolve: {
-    alias: aliases.map(alias => (
-      {
+    alias: aliases.map(alias => {
+      return {
         find: alias,
         replacement: path.resolve(__dirname, `src/${alias.replace('@', '')}`),
-      }
-    )),
+      };
+
+    }),
   },
   // https://stackoverflow.com/questions/76616620/vite-refuses-to-use-the-correct-build-target-in-my-svelte-ts-project
   build: {

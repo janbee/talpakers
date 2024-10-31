@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import GetUserStatusUtil from './GetUserStatusUtil.ts';
-import { UserDetailModel, UserStatusModel } from '@api/rxjs-client/models/custom.models.ts';
+import GetUserStatusUtil from './GetUserStatusUtil';
+import { UserDetailModel, UserStatusModel } from '@api/rxjs-client/models/custom.models';
 
 describe('GetUserStatusUtil;', () => {
   test('it should mount', () => {

@@ -1,36 +1,24 @@
-import { useCallback, useEffect, useState } from 'react';
+import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { tap } from 'rxjs';
-import { API, UserDetailModel, UserStatusModel } from '@api/index.ts';
+import { API, UserDetailModel, UserStatusModel } from '@api/index';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import { orderBy } from 'lodash';
-import { GetUserStatusUtil } from '@common/utils';
-import * as React from 'react';
+import { GetDatesUtil, GetUserStatusUtil } from '@common/utils';
 
 const useUseUserList = () => {
   const [list, setList] = useState<UserDetailModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [statusCount, setStatusCount] = useState({
-    [UserStatusModel.IsDone]: 0,
-    [UserStatusModel.InProgress]: 0,
-    [UserStatusModel.IsWaiting]: 0,
-  });
 
   useEffect(() => {
     setLoading(true);
     setError(false);
 
-    const user$ = API.getUsers()
+    const user$ = API.getUsers({ sort: { createdAt: 1 } })
       .pipe(tap(() => setLoading(false)))
       .subscribe({
-        next: (list) => {
-          setStatusCount({
-            [UserStatusModel.IsDone]: userListFilterByStatus(list, UserStatusModel.IsDone).length,
-            [UserStatusModel.InProgress]: userListFilterByStatus(list, UserStatusModel.InProgress).length,
-            [UserStatusModel.IsWaiting]: userListFilterByStatus(list, UserStatusModel.IsWaiting).length,
-          });
-          setList(list);
-        },
+        next: (list) => setList(list),
         error: () => setError(true),
       });
 
@@ -45,7 +33,9 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    API.getUsers()
+    console.log('gaga------------------------asd-------------handleOrderByStatus', data);
+    console.log('gaga------------------------asd-------------handleOrderByStatus', data.filter);
+    API.getUsers({ sort: { createdAt: 1 } })
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: (list) => {
@@ -87,20 +77,54 @@ const useUseUserList = () => {
               ],
               ['desc', 'desc']
             );
+          } else if (data.filter === 'nextWithdrawal') {
+            newList = orderBy(
+              list,
+              [
+                (user) => {
+                  const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
+                  const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
+                  const cashout = user.data.userSession?.cashout ?? 0;
+                  return (cashout / fixedAmount) * 30;
+                },
+              ],
+              ['desc']
+            );
+          } else if (data.filter === 'earnings') {
+            newList = orderBy(
+              list,
+              [
+                (user) => {
+                  const { isNewWeek } = GetDatesUtil(user);
+                  return isNewWeek ? 0 : user.data?.weekStatus?.betSummary?.betSummary.totalEarnings ?? 0;
+                },
+              ],
+              ['asc']
+            );
           }
-
-          setStatusCount({
-            [UserStatusModel.IsDone]: userListFilterByStatus(newList, UserStatusModel.IsDone).length,
-            [UserStatusModel.InProgress]: userListFilterByStatus(newList, UserStatusModel.InProgress).length,
-            [UserStatusModel.IsWaiting]: userListFilterByStatus(newList, UserStatusModel.IsWaiting).length,
-          });
           setList(newList);
         },
         error: () => setError(true),
       });
   }, []);
 
-  return { list, loading, error, handleOrderByStatus, statusCount };
+  const statusCount = useMemo(() => {
+    return {
+      [UserStatusModel.IsDone]: userListFilterByStatus(list, UserStatusModel.IsDone).length,
+      [UserStatusModel.InProgress]: userListFilterByStatus(list, UserStatusModel.InProgress).length,
+      [UserStatusModel.IsWaiting]: userListFilterByStatus(list, UserStatusModel.IsWaiting).length,
+    };
+  }, [list]);
+
+  const restrictedCount = useMemo(() => {
+    return list.filter((item) => item.data.weekStatus?.hasBetRestriction).length;
+  }, [list]);
+
+  const emailUpdateCount = useMemo(() => {
+    return list.filter((item) => item.data.weekStatus?.emailUpdate).length;
+  }, [list]);
+
+  return { list, loading, error, handleOrderByStatus, statusCount, restrictedCount, emailUpdateCount };
 };
 
 const userListFilterByStatus = (list: UserDetailModel[], status: UserStatusModel) => {

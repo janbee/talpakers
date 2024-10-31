@@ -86,43 +86,13 @@ export const StatusCell: FC<UserTableCellProps> = (props) => {
     <TableCell {...omit(props, ['user'])}>
       {[userStatus].map((s, statusInd) => {
         let className = 'text-green-light cursor-pointer';
-        let FIcon = (
-          <i
-            key={statusInd}
-            className="fa-solid fa-circle-check fa-beat text-green-dark cursor-pointer"
-            style={
-              {
-                '--fa-animation-duration': '10s',
-              } as never
-            }
-          />
-        );
+        let FIcon = <i key={statusInd} className="fa-solid fa-circle-check  text-green-dark cursor-pointer" />;
         if (s === UserStatusModel.InProgress) {
           className = 'text-yellow-light cursor-pointer';
-          FIcon = (
-            <i
-              key={statusInd}
-              className="fa-solid fa-basketball fa-beat text-yellow-dark cursor-pointer"
-              style={
-                {
-                  '--fa-animation-duration': '2s',
-                } as never
-              }
-            />
-          );
+          FIcon = <i key={statusInd} className="fa-solid fa-basketball  text-yellow-dark cursor-pointer" />;
         } else if (s === UserStatusModel.IsWaiting) {
           className = 'text-red-light cursor-pointer';
-          FIcon = (
-            <i
-              key={statusInd}
-              className="fa-solid fa-circle-stop fa-beat text-red-dark cursor-pointer"
-              style={
-                {
-                  '--fa-animation-duration': '5s',
-                } as never
-              }
-            />
-          );
+          FIcon = <i key={statusInd} className="fa-solid fa-circle-stop  text-red-dark cursor-pointer" />;
         }
         return (
           <Popup key={statusInd} position="top center" trigger={FIcon} mouseEnterDelay={1500} mouseLeaveDelay={500}>
@@ -139,8 +109,8 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { isNewWeek } = GetDatesUtil(user);
 
   let totalEarnings = user.data?.weekStatus?.betSummary?.betSummary.totalEarnings ?? 0;
-  let bonus = user.data?.weekStatus?.betSummary?.betSummary.bonus ?? 0;
   let winnings = user.data?.weekStatus?.betSummary?.betSummary.winnings ?? 0;
+  let bonus = user.data?.weekStatus?.betSummary?.betSummary.bonus ?? 0;
 
   if (isNewWeek) {
     totalEarnings = 0;
@@ -189,20 +159,19 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { isNewWeek } = GetDatesUtil(user);
 
   let totalStaked =
-    user.data?.weekStatus?.highestTotalStaked ?? user.data.weekStatus?.betSummary.betSummary.totalStaked ?? 0;
+    user.data?.weekStatus?.highestTotalStaked ?? user.data.weekStatus?.betSummary?.betSummary.totalStaked ?? 0;
   if (isNewWeek) {
     totalStaked = 0;
   }
   return (
     <TableCell {...omit(props, ['user'])}>
       <Progress
-        indicating
         inverted
         success={user.data?.weekStatus?.done === true && totalStaked !== 0}
         precision={0}
         value={Math.floor(totalStaked)}
         progress={'percent'}
-        total={380}
+        total={500}
         label={MoneyUtil(totalStaked)}
       />
     </TableCell>
@@ -216,11 +185,16 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
     open: user.data.weekStatus?.betSummary?.betSummary.openBets ?? 0,
     settled: user.data.weekStatus?.betSummary?.betSummary.settledBets ?? 0,
   };
-  const lastBet = user.data.weekStatus?.lastBet ?? 0;
   if (isNewWeek) {
     bets.open = 0;
     bets.settled = 0;
   }
+
+  const lastBets = user.data.weekStatus?.lastBet
+    ?.map((item) => {
+      return MoneyUtil(item, { minimumFractionDigits: 2 });
+    })
+    .join(' | ');
   return (
     <TableCell {...omit(props, ['user'])}>
       {[bets].map(({ open, settled }, betsIndex) => {
@@ -228,9 +202,10 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
           <div key={betsIndex} className={'flex justify-between'}>
             <Popup position="left center" trigger={<span>{open}</span>} flowing>
               <Popup.Header>
-                <span className={'text-green-light'}>Last Bet - {MoneyUtil(lastBet)}</span>
+                <span className={'text-green-light'}>Prev Bets: [{lastBets}]</span>
               </Popup.Header>
             </Popup>
+
             <span>-</span>
             <span>{settled}</span>
           </div>
@@ -243,12 +218,32 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
 export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + 80;
+  const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
+  const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
   const cashout = user.data.userSession?.cashout ?? 0;
+  const cash = user.data.userSession?.cash ?? 0;
+  const cashoutPercent = Math.floor((cashout / fixedAmount) * 100);
+
+  const nextCashOutPercent = (cashout / fixedAmount) * -30 + 30;
+  const bgColor = nextCashOutPercent > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(nextCashOutPercent));
+
   return (
     <TableCell {...omit(props, ['user'])}>
       <div className={'flex justify-between'}>
-        <span>{MoneyUtil(cashout.toFixed(0), { minimumFractionDigits: 0 })}</span>
+        <Popup
+          position="left center"
+          trigger={
+            <span style={{ color: bgColor }}>{MoneyUtil(cashout.toFixed(0), { minimumFractionDigits: 0 })}</span>
+          }
+          flowing
+        >
+          <Popup.Header>
+            <span className={'text-green-light'}>Current Cash - {MoneyUtil(cash, { minimumFractionDigits: 0 })}</span>
+          </Popup.Header>
+          <Popup.Header>
+            <span className={'text-green-light'}>Cashout at - {`${cashoutPercent}%`}</span>
+          </Popup.Header>
+        </Popup>
         <span>/</span>
         <span>{MoneyUtil(fixedAmount, { minimumFractionDigits: 0 })}</span>
       </div>
@@ -256,22 +251,82 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   );
 };
 
-export const ActiveCell: FC<UserTableCellProps> = (props) => {
+export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
   const { isNewWeek } = GetDatesUtil(user);
+
+  const hasBetRestriction = isNewWeek ? null : !!user.data.weekStatus?.hasBetRestriction;
+
+  return (
+    <TableCell className={'relative'} {...omit(props, ['user'])}>
+      {hasBetRestriction && (
+        <Popup position="left center" trigger={<span className={'text-red-dark'}>true</span>} flowing>
+          <Popup.Header>
+            <span className={'text-red-light'}>{dayjs(user.data.weekStatus?.hasBetRestriction).fromNow()}</span>
+          </Popup.Header>
+        </Popup>
+      )}
+    </TableCell>
+  );
+};
+
+export const EmailUpdateCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  const { isNewWeek } = GetDatesUtil(user);
+
+  const needsEmailUpdate = isNewWeek ? null : !!user.data.weekStatus?.emailUpdate;
+
+  return (
+    <TableCell className={'relative'} {...omit(props, ['user'])}>
+      {needsEmailUpdate && <span className={'text-red-dark'}>true</span>}
+    </TableCell>
+  );
+};
+
+export const FreeBetCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  const { isNewWeek } = GetDatesUtil(user);
+
+  const foundFreeBets = isNewWeek ? undefined : user.data.weekStatus?.hasNotification?.find((item) => item.freeBets);
+
+  const freeBets = (foundFreeBets ? foundFreeBets.freeBets : []) as {
+    PlayerBonusID: string;
+    BonusAmount: string;
+    FreeGameUsageExpirationDateTime: Date;
+  }[];
+
+  return (
+    <TableCell className={'relative'} {...omit(props, ['user'])}>
+      <Popup
+        position="top center"
+        trigger={<span>{!!freeBets.length && <span className={'text-green-dark'}>{freeBets.length}</span>}</span>}
+        flowing
+      >
+        {freeBets.map((t) => (
+          <Popup.Header key={t.PlayerBonusID} className={'text-green-light'}>
+            <span>{MoneyUtil(t.BonusAmount)}</span>
+            <span> - </span>
+            <span>{dayjs(t.FreeGameUsageExpirationDateTime).fromNow()}</span>
+          </Popup.Header>
+        ))}
+      </Popup>
+    </TableCell>
+  );
+};
+
+export const ActiveCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
 
   const lastUpdate = dayjs(user.updatedAt ?? user.createdAt ?? new Date());
   const minutesPassed = dayjs.duration(-lastUpdate.diff(Date.now())).asMinutes();
 
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
-  let hasBetRestriction = isNewWeek ? null : user.data.weekStatus?.hasBetRestriction === true;
+  let hasBetRestriction = false;
 
   const txt = [];
-
-  if (hasBetRestriction) {
-    txt.push('Bet Restricted (T_T) !!!');
-  }
 
   if (!user.data.userSession?.TWO_FACTOR_AUTH) {
     hasBetRestriction = true;
@@ -284,12 +339,6 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
     txt.push(`Minimum bet ${dayjs(new Date(expiry)).format(' hh:mm A')}`);
   }
 
-  console.log(
-    'gaga------------------------------hasNotification-------',
-    user._id,
-    user.data.weekStatus?.hasNotification
-  );
-
   const hasNotification =
     user.data.weekStatus?.hasNotification?.filter((item) => {
       const key = Object.keys(item)[0];
@@ -299,7 +348,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   if (hasNotification.length) {
     hasBetRestriction = true;
 
-    hasNotification.forEach((item) => {
+    hasNotification.forEach((item: NonNullable<unknown>) => {
       const key = Object.keys(item)[0];
       txt.push(key);
     });

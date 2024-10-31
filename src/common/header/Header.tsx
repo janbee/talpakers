@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { Popup } from 'semantic-ui-react';
 import { version } from '../../../package.json';
 import dayjs from 'dayjs';
+import { PredictionPopup } from '@domains/prediction';
 
 const HeaderComponent: FC = () => (
-  <div data-testid="Header" className={'h-20 bg-black p-3'}>
+  <div data-testid="Header" className={'h-20 bg-black p-3 flex justify-between items-center'}>
     <Popup
       size={'mini'}
       content={`v${version} build ${dayjs(BUILD_DATE).fromNow()}`}
@@ -20,6 +21,8 @@ const HeaderComponent: FC = () => (
         </Link>
       }
     />
+
+    <PredictionPopup />
   </div>
 );
 HeaderComponent.displayName = 'Header';

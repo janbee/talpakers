@@ -21,6 +21,7 @@ module.exports = {
     'vite.config.ts',
     'tailwind.config.js',
     'postcss.config.js',
+    'generate-react-templates/*',
 
     /*
     * ignore api

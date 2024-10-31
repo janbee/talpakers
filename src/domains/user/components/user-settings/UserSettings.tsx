@@ -1,9 +1,10 @@
 import { ChangeEvent, FC } from 'react';
 import { Button, Dimmer, Form, Icon, Input, Message, MessageHeader } from 'semantic-ui-react';
-import { UserDetailModel } from '@api/index.ts';
+import { UserDetailModel } from '@api/index';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
-import useUserSettings from '@domains/user/hooks/useUserSettings';
+import useUserSettings from '../../hooks/useUserSettings';
+import DatePicker from 'react-datepicker';
 
 interface UserSettingsProps {
   userDetails: UserDetailModel[];
@@ -17,7 +18,13 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
   console.log('gaga-------------------------------------UserSettingsComponent', userDetails[0]);
   return (
     <div data-testid="UserSettings">
-      <Icon circular inverted onClick={modal.handleOpen} className={'cursor-pointer pt-1 !text-xl'} name="setting" />
+      <Icon
+        circular
+        inverted
+        onClick={modal.handleOpen}
+        className={'cursor-pointer !text-xl !mt-[-3px]'}
+        name="setting"
+      />
       <Dimmer className={classNames({})} active={modal.active}>
         <div className={'flex flex-col p-4 h-full relative'}>
           <div className={'flex flex-row items-start justify-between h-12'}>
@@ -26,7 +33,7 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
               circular
               inverted
               onClick={modal.handleCLose}
-              className={'cursor-pointer pt-1 !text-xl'}
+              className={'cursor-pointer !text-xl !mt-[-3px]'}
               name="close"
             />
           </div>
@@ -37,6 +44,44 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
             <div className={'text-xl mb-3 text-left'}>{userDetails[0].build}</div>
 
             <div className={'form-values flex-1'}>
+              <div className={'flex flex-col items-start mb-5 '}>
+                <span className={'text-md mb-2'}>Change Date Created</span>
+
+                <div className={'flex flex-row relative'}>
+                  <Button
+                    inverted
+                    name={'createdAt'}
+                    color="green"
+                    size={'small'}
+                    circular
+                    type={'button'}
+                    active={!!form.formFieldState.get('createdAt')}
+                    onClick={() => {
+                      form.patchValues(
+                        'createdAt',
+                        form.formFieldState.get('createdAt') ?? dayjs().subtract(1, 'h').toDate()
+                      );
+                    }}
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                  >
+                    Yes
+                  </Button>
+                  {!!form.formFieldState.get('createdAt') && (
+                    <DatePicker
+                      className={'opacity-0 absolute'}
+                      popperClassName={'relative !left-[-30px]'}
+                      autoFocus={true}
+                      selected={new Date()}
+                      onFocus={(date) => {
+                        form.patchValues('createdAt', date);
+                      }}
+                      onChange={(date) => {
+                        form.patchValues('createdAt', date);
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
               <div className={'flex flex-col items-start mb-5'}>
                 <span className={'text-md mb-2'}>Change Time</span>
 
@@ -51,7 +96,7 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                   onClick={() => {
                     form.patchValues(
                       'updatedAt',
-                      form.formFieldState.get('updatedAt') ?? dayjs().subtract(1, 'h').toDate()
+                      form.formFieldState.get('updatedAt') ?? dayjs().subtract(4, 'd').toDate()
                     );
                   }}
                   onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
@@ -84,6 +129,37 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                     type={'button'}
                     active={form.formFieldState.get('data.settings.electronAutoLogin') === false}
                     onClick={() => form.patchValues('data.settings.electronAutoLogin', false)}
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                  >
+                    False
+                  </Button>
+                </div>
+              </div>
+              <div className={'flex flex-col items-start mb-5'}>
+                <span className={'text-md mb-2'}>Set Done</span>
+                <div className={'flex flex-row'}>
+                  <Button
+                    name={'data.weekStatus.done'}
+                    inverted
+                    color="green"
+                    size={'small'}
+                    circular
+                    type={'button'}
+                    active={form.formFieldState.get('data.weekStatus.done') === true}
+                    onClick={() => form.patchValues('data.weekStatus.done', true)}
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                  >
+                    True
+                  </Button>
+                  <Button
+                    name={'data.weekStatus.done'}
+                    inverted
+                    color="red"
+                    size={'small'}
+                    circular
+                    type={'button'}
+                    active={form.formFieldState.get('data.weekStatus.done') === false}
+                    onClick={() => form.patchValues('data.weekStatus.done', false)}
                     onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
                   >
                     False

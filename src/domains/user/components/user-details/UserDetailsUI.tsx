@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { MoneyUtil } from '@common/utils';
 import classNames from 'classnames';
-import { EarningsModel, UserDetailModel } from '@api/rxjs-client/models/custom.models.ts';
+import { EarningsModel, UserDetailModel } from '@api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
 import { Header, Icon, Label, Menu, Popup } from 'semantic-ui-react';
 

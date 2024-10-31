@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.1.190",
+  "version": "0.1.230",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
     "----------- COMPONENT GENERATOR ----------": "",
     "gen:domain": "echo 'Enter Domain name in PascalCase' && read cmpName && npx generate-react-cli component $cmpName",
     "gen:common:component": "echo 'Enter Page name in PascalCase' && read cmpName && npx generate-react-cli component $cmpName --type=common",
-    "gen:hook:component": "echo 'Enter Page name in CamelCase' && read cmpName && npx generate-react-cli component $cmpName --type=hook",
+    "gen:hook:component": "echo 'Enter Page name in CamelCase prefix with \"use\"' && read cmpName && npx generate-react-cli component $cmpName --type=hook",
     "gen:page:component": "echo 'Enter Page name in PascalCase' && read cmpName && npx generate-react-cli component $cmpName --type=page",
     "------------------ git ------------------": "",
     "git:add": "git add .",
@@ -30,14 +30,13 @@
     "git:run": "npm run git:add && npm run git:commit && npm run git:push"
   },
   "dependencies": {
-    "@types/lodash": "^4.17.4",
     "bson": "^6.2.0",
     "classnames": "^2.5.1",
-    "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
     "gh-pages": "^6.1.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
+    "react-datepicker": "^7.3.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.12",
     "react-router-dom": "6.21.2",
@@ -48,8 +47,10 @@
     "vite-plugin-mkcert": "^1.17.5"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.4",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
+    "@types/node": "^20.14.10",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
@@ -69,7 +70,7 @@
     "pre-commit": "^1.2.2",
     "prettier": "3.2.5",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.6.0-dev.20240607",
+    "typescript": "5.5",
     "vite": "^5.2.0",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"

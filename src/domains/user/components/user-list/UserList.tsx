@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { CSSProperties, FC, useCallback, useMemo } from 'react';
-import useUserList from '@domains/user/hooks/useUserList';
 import {
   Button,
   Checkbox,
@@ -17,22 +16,27 @@ import {
   TableHeaderCell,
   TableRow,
 } from 'semantic-ui-react';
+
+import { UserDetailModel, UserStatusModel } from '@api/index';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
+import classNames from 'classnames';
 import {
   ActiveCell,
   AppBuildCell,
+  BetRestrictedCell,
   BetsCell,
+  EmailUpdateCell,
+  FreeBetCell,
   NextWithdrawalCell,
   StatusCell,
   WeeklyProgressCell,
   WeeklySummaryCell,
-} from '@domains/user/components/user-list/UserTableCell.tsx';
-import { UserDetailModel, UserStatusModel } from '@api/index.ts';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
-import classNames from 'classnames';
+} from './UserTableCell';
+import useUserList from '../../hooks/useUserList';
 
 const UserListComponent: FC = () => {
-  const { list, loading, handleOrderByStatus, statusCount } = useUserList();
+  const { list, loading, handleOrderByStatus, statusCount, restrictedCount, emailUpdateCount } = useUserList();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -77,7 +81,7 @@ const UserListComponent: FC = () => {
     [location.pathname, navigate, selectedUserMemo]
   );
 
-  console.log('gaga-------------------------------------UserListComponent render');
+  console.log('gaga-------------------------------------UserListComponent render', list);
   return (
     <div
       data-testid="UserList"
@@ -89,7 +93,7 @@ const UserListComponent: FC = () => {
           <Icon
             circular
             inverted
-            className={'cursor-pointer pt-1 !text-xl'}
+            className={'cursor-pointer !text-xl !mt-[-3px]'}
             onClick={handleOrderByStatus}
             name="refresh"
           />
@@ -112,9 +116,15 @@ const UserListComponent: FC = () => {
                   Status
                 </TableHeaderCell>
                 <TableHeaderCell collapsing>Version</TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[205px]'}>
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[205px] relative'}>
                   Weekly Summary <br />
                   (Bonus + Earnings = Total)
+                  <Button
+                    className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
+                    inverted
+                    onClick={handleOrderByStatus}
+                    filter={'earnings'}
+                  />
                 </TableHeaderCell>
                 <TableHeaderCell textAlign={'center'} className={'min-w-[74px]'}>
                   Weekly <br />
@@ -123,9 +133,42 @@ const UserListComponent: FC = () => {
                 <TableHeaderCell collapsing className={'min-w-[60px]'}>
                   Bets
                 </TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px]'}>
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px] relative'}>
                   Next <br />
                   Withdrawal
+                  <Button
+                    className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
+                    inverted
+                    onClick={handleOrderByStatus}
+                    filter={'nextWithdrawal'}
+                  />
+                </TableHeaderCell>
+
+                {!!restrictedCount && (
+                  <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+                    Bet <br />
+                    Restricted
+                  </TableHeaderCell>
+                )}
+
+                {!!emailUpdateCount && (
+                  <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+                    Email <br />
+                    Update
+                  </TableHeaderCell>
+                )}
+
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+                  Free <br />
+                  Bet
+                </TableHeaderCell>
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[95px]'}>
+                  Active <br />
+                  Predictions
+                </TableHeaderCell>
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[50px]'}>
+                  Auto <br />
+                  Login
                 </TableHeaderCell>
                 <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px]'}>
                   Active
@@ -170,6 +213,27 @@ const UserListComponent: FC = () => {
 
                     <BetsCell className={'md:w-[60px]'} user={user} />
                     <NextWithdrawalCell className={'md:w-[100px]'} user={user} />
+
+                    {!!restrictedCount && <BetRestrictedCell textAlign={'center'} user={user} />}
+                    {!!emailUpdateCount && <EmailUpdateCell textAlign={'center'} user={user} />}
+
+                    <FreeBetCell user={user} textAlign={'center'} />
+
+                    <TableCell collapsing textAlign={'center'}>
+                      {/*Predictions*/}
+                      {user.data.weekStatus?.predictions ?? 0}
+                    </TableCell>
+                    <TableCell
+                      className={classNames({
+                        'md:!min-w-[20%]': true,
+                        'text-green-dark': !!user.data?.settings?.electronAutoLogin,
+                        'text-red-dark': !user.data?.settings?.electronAutoLogin,
+                      })}
+                      collapsing
+                      textAlign={'center'}
+                    >
+                      {`${!!user.data?.settings?.electronAutoLogin}`}
+                    </TableCell>
 
                     <ActiveCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />
                   </TableRow>

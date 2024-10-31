@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import GetColorUtil from './GetColorUtil.ts';
+import GetColorUtil from './GetColorUtil';
 
 describe('GetColorUtil', () => {
   test('it should mount', () => {

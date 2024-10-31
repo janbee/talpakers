@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { API, UserDetailModel } from '@api/index.ts';
+import { API, UserDetailModel } from '@api/index';
 import { mergeMap } from 'rxjs';
 import { set } from 'lodash';
 
@@ -38,6 +38,8 @@ const useUseUserSettings = () => {
       const email = formData.get('email') as string;
       const pword = formData.get('password') as string;
 
+      formData.delete('password');
+
       const userDetails: Partial<UserDetailModel> = {
         _id: email,
       };
@@ -48,12 +50,15 @@ const useUseUserSettings = () => {
         set(userDetails, key, val);
       }
 
+      console.log('gaga----------------------------------userDetails---', userDetails);
+
       setLoading(true);
       setError('');
       API.$RealmDB
         .login(email, pword)
         .pipe(
           mergeMap(() => {
+            console.log('gaga---------------------------------userDetails----', userDetails);
             return API.upsertUserData(userDetails as UserDetailModel);
           })
         )

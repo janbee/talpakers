@@ -3,13 +3,9 @@ import { Dimmer, Loader } from 'semantic-ui-react';
 import { sumBy } from 'lodash';
 import classNames from 'classnames';
 import { MoneyUtil } from '@common/utils';
-import {
-  UserYearlySummary,
-  WeeklyCard,
-  WithdrawalPopup,
-} from '@domains/user/components/user-details/UserDetailsUI.tsx';
-import UserSettingsComponent from '@domains/user/components/user-settings/UserSettings.tsx';
-import useUserDetails from '@domains/user/hooks/useUserDetails';
+import { UserYearlySummary, WeeklyCard, WithdrawalPopup } from '../user-details/UserDetailsUI';
+import UserSettingsComponent from '../user-settings/UserSettings';
+import useUserDetails from '../../hooks/useUserDetails';
 
 const UserDetailsComponent: FC = () => {
   const { list, loading, userDetails, totalWinnings, totalWithdrawals, emails } = useUserDetails();

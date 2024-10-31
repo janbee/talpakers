@@ -36,7 +36,8 @@
       "withLazy": false,
       "customDirectory": "template-name",
       "customTemplates": {
-        "component": "generate-react-templates/common/TemplateName.tsx"
+        "component": "generate-react-templates/common/TemplateName.tsx",
+        "test": "generate-react-templates/common/TemplateName.test.tsx"
       }
     },
 
@@ -48,7 +49,8 @@
       "withLazy": false,
       "flat": true,
       "customTemplates": {
-        "component": "generate-react-templates/hooks/TemplateName.tsx"
+        "component": "generate-react-templates/hooks/TemplateName.ts",
+        "test": "generate-react-templates/hooks/TemplateName.test.ts"
       }
     }
   }

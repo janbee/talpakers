@@ -1,2 +1,2 @@
-export { default as API } from './rxjs-client/apis/api.service.ts';
-export * from './rxjs-client/models/custom.models.ts';
+export { default as API } from './rxjs-client/apis/api.service';
+export * from './rxjs-client/models/custom.models';

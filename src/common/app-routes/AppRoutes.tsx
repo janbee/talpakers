@@ -1,7 +1,8 @@
 import { useRoutes } from 'react-router-dom';
 import { ReactElement } from 'react';
-import { convertPathToTreeView } from './AppRoutesBuilder.ts';
-import NotFoundComponent from '../not-found/NotFound.tsx';
+import { convertPathToTreeView } from './AppRoutesBuilder';
+import NotFoundComponent from '../not-found/NotFound';
+import { RouteObject } from 'react-router/dist/lib/context';
 
 const AppRoutes = (): ReactElement | null => {
   const pagesDir = import.meta.glob(`../../pages/**/*`, {
@@ -30,8 +31,7 @@ const AppRoutes = (): ReactElement | null => {
   });
 
   console.log('gaga-------------------------------------pages', [
-    // @ts-expect-error - generated page router
-    ...convertPathToTreeView(pages).children,
+    ...(convertPathToTreeView(pages as unknown as RouteObject[]).children ?? []),
 
     /*
      * custom route here
@@ -44,8 +44,7 @@ const AppRoutes = (): ReactElement | null => {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return useRoutes([
-    // @ts-expect-error - generated page router
-    ...convertPathToTreeView(pages).children,
+    ...(convertPathToTreeView(pages as unknown as RouteObject[]).children ?? []),
 
     /*
      * custom route here

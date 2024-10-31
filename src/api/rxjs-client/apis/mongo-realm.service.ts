@@ -1,6 +1,6 @@
 import { isUndefined, mergeWith } from 'lodash';
 import * as Realm from 'realm-web';
-import { MongoCollection } from '@api/rxjs-client/models/custom.models.ts';
+import { MongoCollection } from '@api/rxjs-client/models/custom.models';
 import { catchError, defer, map, mergeMap, Observable, of, tap, throwError } from 'rxjs';
 
 interface UpsertModel {
@@ -35,8 +35,8 @@ export class CRUD {
     return defer(() => this.collection.find({}, { sort: { index: 1 } })) as Observable<T[]>;
   }
 
-  getBy<T>(filter: Record<string, unknown>) {
-    return defer(() => this.collection.find(filter)) as Observable<T[]>;
+  getBy<T>({ filter, sort }: { filter?: Record<string, unknown>; sort?: Record<string, number> }) {
+    return defer(() => this.collection.find(filter ?? {}, { sort: sort ?? {} })) as Observable<T[]>;
   }
 
   upsert<T>(object: UpsertModel) {
@@ -62,6 +62,8 @@ export class CRUD {
         object.owner_id = this.currentUserId;
         object.email = this.currentUserEmail;
         object.year = year;
+
+        console.log('gaga------------sdfsdf-------------------------', object);
 
         return defer(() =>
           this.collection.updateOne(

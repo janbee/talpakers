@@ -1,9 +1,9 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { HashRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
-import AppRoutes from '@common/app-routes/AppRoutes.tsx';
+import AppRoutes from '@common/app-routes/AppRoutes';
 import { Dimmer, Loader } from 'semantic-ui-react';
-import { API } from '@api/index.ts';
+import { API } from '@api/index';
 import { delay } from 'rxjs';
 
 const App = (): ReactElement | null => {

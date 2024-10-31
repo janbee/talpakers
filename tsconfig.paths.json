@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@domains/*": ["domains/*"],
-      "@pages/*": ["pages/*"],
-      "@layouts/*": ["layouts/*"],
-      "@common/*": ["common/*"],
-      "@api/*": ["api/*"],
-      "@assets/*": ["assets/*"]
+      "@domains/*": ["src/domains/*"],
+      "@pages/*": ["src/pages/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@common/*": ["src/common/*"],
+      "@api/*": ["src/api/*"],
+      "@assets/*": ["src/assets/*"]
     },
     "jsx": "preserve"
   }

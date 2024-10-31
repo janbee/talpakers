@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import templateName from './templateName';
+import usePredictionList from './usePredictionList';
 
-describe('templateName', () => {
+describe('usePredictionList', () => {
   test('it should load init state', () => {
-    const { result } = renderHook(templateName);
-    expect(result.current.data).toBeTruthy();
+    const { result } = renderHook(usePredictionList);
+    expect(result.current.list).toBeTruthy();
   });
 });

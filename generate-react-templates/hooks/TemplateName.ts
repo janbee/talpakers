@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useTemplateName = () => {
+const templateName = () => {
   const [data, setData] = useState(true);
 
   useEffect(() => {}, []);
@@ -8,4 +8,4 @@ const useTemplateName = () => {
   return { data };
 };
 
-export default useTemplateName;
+export default templateName;

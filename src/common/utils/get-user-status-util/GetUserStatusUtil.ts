@@ -1,14 +1,14 @@
-import { UserDetailModel, UserStatusModel } from '@api/index.ts';
+import { UserDetailModel, UserStatusModel } from '@api/index';
 import { GetDatesUtil } from '@common/utils';
-import { differenceInMinutes } from 'date-fns';
+import dayjs from 'dayjs';
 
 const GetUserStatusUtilComponent = (user: UserDetailModel): UserStatusModel => {
   const { weekStart } = GetDatesUtil();
   const isDone = user.data?.weekStatus?.done === true;
   const inProgress = user.data?.weekStatus?.done === false;
 
-  const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date();
-  const minutesPassed = -differenceInMinutes(lastUpdate, Date.now());
+  const lastUpdate = dayjs(user.updatedAt ?? user.createdAt ?? new Date());
+  const minutesPassed = dayjs.duration(-lastUpdate.diff(Date.now())).asMinutes();
 
   let isIdle = false;
 

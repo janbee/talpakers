@@ -2,6 +2,7 @@ import {
   BetSummaryModel,
   BonusModel,
   MongoCollection,
+  PredictionModel,
   SettledBetModel,
   UserDetailModel,
   WithdrawalModel,
@@ -20,7 +21,7 @@ class ApiService {
   getSettledBets(filter: Record<string, string>) {
     return this.$RealmDB
       .collection(MongoCollection.SettledBets)
-      .getBy(filter)
+      .getBy({ filter })
       .pipe(
         timeout({
           each: 10000,
@@ -38,7 +39,7 @@ class ApiService {
   getBetSummary(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.BetSummary)
-      .getBy(filter)
+      .getBy({ filter })
       .pipe(
         timeout({
           each: 10000,
@@ -74,7 +75,7 @@ class ApiService {
   getBonuses(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.Bonuses)
-      .getBy(filter)
+      .getBy({ filter })
       .pipe(
         timeout({
           each: 10000,
@@ -92,7 +93,7 @@ class ApiService {
   getWithdrawals(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.Withdrawals)
-      .getBy(filter)
+      .getBy({ filter })
       .pipe(
         timeout({
           each: 10000,
@@ -107,10 +108,10 @@ class ApiService {
       );
   }
 
-  getUsers() {
+  getUsers({ filter, sort }: { filter?: Record<string, unknown>; sort?: Record<string, number> }) {
     return this.$RealmDB
       .collection(MongoCollection.User)
-      .get()
+      .getBy({ filter, sort })
       .pipe(
         timeout({
           each: 10000,
@@ -128,7 +129,7 @@ class ApiService {
   getUser(filter: any) {
     return this.$RealmDB
       .collection(MongoCollection.User)
-      .getBy(filter)
+      .getBy({ filter })
       .pipe(
         timeout({
           each: 10000,
@@ -139,6 +140,24 @@ class ApiService {
         }),
         map((res) => {
           return EJSON.parse(JSON.stringify(res)) as UserDetailModel[];
+        })
+      );
+  }
+
+  getPredictions() {
+    return this.$RealmDB
+      .collection(MongoCollection.Predictions)
+      .getBy({ sort: { createdAt: -1 } })
+      .pipe(
+        timeout({
+          each: 10000,
+          with: () => throwError(() => 'Server is taking too long to respond! getPredictions'),
+        }),
+        catchError((err) => {
+          return throwError(() => `Server is taking too long to respond! getPredictions ${err}`);
+        }),
+        map((res) => {
+          return EJSON.parse(JSON.stringify(res)) as PredictionModel[];
         })
       );
   }

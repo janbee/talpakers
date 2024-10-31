@@ -79,8 +79,8 @@ button:focus-visible {
 }
 
 td {
-  .ui.indicating.progress {
-    margin-bottom: 0;
+  .ui.progress {
+    margin-bottom: 0 !important;
 
     .bar {
       &:after {
@@ -106,7 +106,7 @@ td {
       .progress {
         font-size: 10px;
         font-weight: bold;
-        color: #000;
+        color: #000 !important;
       }
     }
 
@@ -115,7 +115,7 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent^='3'] .bar {
+  .ui.progress[data-percent^='3'] .bar {
     background-color: #ee9e56;
 
     & ~ .label {
@@ -123,7 +123,7 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent^='4'] .bar {
+  .ui.progress[data-percent^='4'] .bar {
     background-color: #e7b052;
 
     & ~ .label {
@@ -131,7 +131,7 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent^='5'] .bar {
+  .ui.progress[data-percent^='5'] .bar {
     background-color: #dfc14d;
 
     & ~ .label {
@@ -139,7 +139,7 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent^='6'] .bar {
+  .ui.progress[data-percent^='6'] .bar {
     background-color: #d5d148;
 
     & ~ .label {
@@ -147,8 +147,8 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent^='7'] .bar,
-  .ui.indicating.progress[data-percent^='8'] .bar {
+  .ui.progress[data-percent^='7'] .bar,
+  .ui.progress[data-percent^='8'] .bar {
     background-color: #cae141;
 
     & ~ .label {
@@ -156,7 +156,7 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent^='9'] .bar {
+  .ui.progress[data-percent^='9'] .bar {
     background-color: #bdf039;
 
     & ~ .label {
@@ -164,7 +164,7 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent='0'] .bar {
+  .ui.progress[data-percent='0'] .bar {
     @apply bg-red-dark;
 
     & ~ .label {
@@ -172,17 +172,17 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent='1'] .bar,
-  .ui.indicating.progress[data-percent='2'] .bar,
-  .ui.indicating.progress[data-percent='3'] .bar,
-  .ui.indicating.progress[data-percent='4'] .bar,
-  .ui.indicating.progress[data-percent='5'] .bar,
-  .ui.indicating.progress[data-percent='6'] .bar,
-  .ui.indicating.progress[data-percent='7'] .bar,
-  .ui.indicating.progress[data-percent='8'] .bar,
-  .ui.indicating.progress[data-percent='9'] .bar,
-  .ui.indicating.progress[data-percent^='1'] .bar,
-  .ui.indicating.progress[data-percent^='2'] .bar {
+  .ui.progress[data-percent='1'] .bar,
+  .ui.progress[data-percent='2'] .bar,
+  .ui.progress[data-percent='3'] .bar,
+  .ui.progress[data-percent='4'] .bar,
+  .ui.progress[data-percent='5'] .bar,
+  .ui.progress[data-percent='6'] .bar,
+  .ui.progress[data-percent='7'] .bar,
+  .ui.progress[data-percent='8'] .bar,
+  .ui.progress[data-percent='9'] .bar,
+  .ui.progress[data-percent^='1'] .bar,
+  .ui.progress[data-percent^='2'] .bar {
     background-color: #f58c59;
 
     & ~ .label {
@@ -190,7 +190,7 @@ td {
     }
   }
 
-  .ui.indicating.progress[data-percent='100'] .bar {
+  .ui.progress[data-percent='100'] .bar {
     background-color: #bdf039;
 
     & ~ .label {

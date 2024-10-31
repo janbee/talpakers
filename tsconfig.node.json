@@ -3,9 +3,11 @@
     "composite": true,
     "skipLibCheck": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true
   },
-  "include": ["vite.config.mts"]
+  "include": ["vite.config.mts", "./tsconfig.paths.json"]
 }
