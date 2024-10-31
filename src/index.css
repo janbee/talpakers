@@ -1,0 +1,248 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  width: 100%;
+  min-width: 320px;
+  font-family: 'Quicksand', sans-serif;
+  --cb-size: 20px;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  font-optical-sizing: auto;
+  font-style: normal;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background: #242424;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  
+  a:hover {
+    color: #747bff;
+  }
+  
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+td {
+  .ui.progress {
+    margin-bottom: 0 !important;
+    
+    .bar {
+      &:after {
+        background: #000;
+      }
+      
+      & ~ .label {
+        font-size: 10px;
+        font-weight: bold;
+        left: 6px;
+        top: 6px;
+        background: #383737;
+        height: 13px;
+        padding: 5px 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        width: auto;
+        margin: 0;
+      }
+      
+      .progress {
+        font-size: 10px;
+        font-weight: bold;
+        color: #000 !important;
+      }
+    }
+    
+    .label {
+      position: absolute;
+    }
+  }
+  
+  .ui.progress[data-percent^='3'] .bar {
+    background-color: #ee9e56;
+    
+    & ~ .label {
+      color: #ee9e56;
+    }
+  }
+  
+  .ui.progress[data-percent^='4'] .bar {
+    background-color: #e7b052;
+    
+    & ~ .label {
+      color: #e7b052;
+    }
+  }
+  
+  .ui.progress[data-percent^='5'] .bar {
+    background-color: #dfc14d;
+    
+    & ~ .label {
+      color: #dfc14d;
+    }
+  }
+  
+  .ui.progress[data-percent^='6'] .bar {
+    background-color: #d5d148;
+    
+    & ~ .label {
+      color: #d5d148;
+    }
+  }
+  
+  .ui.progress[data-percent^='7'] .bar,
+  .ui.progress[data-percent^='8'] .bar {
+    background-color: #cae141;
+    
+    & ~ .label {
+      color: #cae141;
+    }
+  }
+  
+  .ui.progress[data-percent^='9'] .bar {
+    background-color: #bdf039;
+    
+    & ~ .label {
+      color: #bdf039;
+    }
+  }
+  
+  .ui.progress[data-percent='0'] .bar {
+    @apply bg-red-dark;
+    
+    & ~ .label {
+      @apply text-red-dark;
+    }
+  }
+  
+  .ui.progress[data-percent='1'] .bar,
+  .ui.progress[data-percent='2'] .bar,
+  .ui.progress[data-percent='3'] .bar,
+  .ui.progress[data-percent='4'] .bar,
+  .ui.progress[data-percent='5'] .bar,
+  .ui.progress[data-percent='6'] .bar,
+  .ui.progress[data-percent='7'] .bar,
+  .ui.progress[data-percent='8'] .bar,
+  .ui.progress[data-percent='9'] .bar,
+  .ui.progress[data-percent^='1'] .bar,
+  .ui.progress[data-percent^='2'] .bar {
+    background-color: #f58c59;
+    
+    & ~ .label {
+      color: #f58c59;
+    }
+  }
+  
+  .ui.progress[data-percent='100'] .bar {
+    background-color: #bdf039;
+    
+    & ~ .label {
+      color: #bdf039;
+    }
+  }
+  
+  .ui.progress.success .bar {
+    background-color: #71ba00 !important;
+    
+    & ~ .label {
+      color: #71ba00 !important;
+    }
+  }
+}
+
+.checkbox {
+  min-height: auto !important;
+  height: var(--cb-size);
+  
+  &.checked {
+    label {
+      &:after {
+        left: calc(100% - var(--cb-size)) !important;
+      }
+    }
+  }
+  
+  label {
+    min-height: auto !important;
+    height: 100%;
+    
+    &:after {
+      min-height: auto !important;
+      min-width: auto !important;
+      height: var(--cb-size) !important;
+      width: var(--cb-size) !important;
+      aspect-ratio: 1 !important;
+    }
+    
+    &:before {
+      width: 100% !important;
+      height: var(--cb-size) !important;
+    }
+  }
+}
+
+hr {
+  border-bottom: 1px solid #464646;
+  border-left: 0;
+  border-right: 0;
+  border-top: 1px solid #000000;
+  width: 100%;
+}
