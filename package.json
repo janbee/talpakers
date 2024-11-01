@@ -19,10 +19,9 @@
     "gh-pages": "^6.2.0",
     "husky": "^9.1.6"
   },
-
   "husky": {
     "hooks": {
-      "pre-commit": "echo"
+      "pre-commit": "echo gagagag"
     }
   },
   "lint-staged": {
