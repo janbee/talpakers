@@ -9,7 +9,7 @@ describe('<UserList />', () => {
     render(
       <BrowserRouter>
         <UserList />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     const _UserList = screen.getByTestId('UserList');
 

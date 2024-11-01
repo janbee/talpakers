@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.0.0",
+  "version": "0.0.20",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
@@ -16,18 +16,16 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "gh-pages": "^6.2.0",
-    "husky": "^9.1.6"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm --no-git-tag-version version patch && git add . && npx --no-install lint-staged && npm run deploy"
-    }
+    "gh-pages": "^6.2.0"
   },
   "lint-staged": {
-    "*.{jsx,ts,tsx,css,md,json}": [
-      "git add .",
-      "prettier --write './**/*.{ts,tsx}'"
+    "*.{jsx,ts,tsx,css,md}": [
+      "prettier --write './**/*.{ts,tsx}'",
+      "git add ."
     ]
+  },
+  "devDependencies": {
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10"
   }
 }

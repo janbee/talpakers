@@ -1,5 +1,13 @@
 import { ChangeEvent, FC } from 'react';
-import { Button, Dimmer, Form, Icon, Input, Message, MessageHeader } from 'semantic-ui-react';
+import {
+  Button,
+  Dimmer,
+  Form,
+  Icon,
+  Input,
+  Message,
+  MessageHeader,
+} from 'semantic-ui-react';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import useUserSettings from '../../hooks/useUserSettings';
@@ -11,15 +19,16 @@ interface UserSettingsProps {
 }
 
 const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
-  const {
-    modal,
-    form
-  } = useUserSettings();
+  const { modal, form } = useUserSettings();
 
   if (!userDetails) return null;
 
-  console.log('gaga-------------------------------------UserSettingsComponent', userDetails);
-  return (<div data-testid="UserSettings">
+  console.log(
+    'gaga-------------------------------------UserSettingsComponent',
+    userDetails,
+  );
+  return (
+    <div data-testid="UserSettings">
       <Icon
         circular
         inverted
@@ -41,8 +50,16 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
           </div>
           <hr />
 
-          <Form className={'flex flex-col p-3 w-[360px]'} onSubmit={form.submit}>
-            <input hidden name={'email'} key={userDetails._id} defaultValue={userDetails._id} />
+          <Form
+            className={'flex flex-col p-3 w-[360px]'}
+            onSubmit={form.submit}
+          >
+            <input
+              hidden
+              name={'email'}
+              key={userDetails._id}
+              defaultValue={userDetails._id}
+            />
             <div className={'text-xl mb-3 text-left'}>{userDetails.build}</div>
 
             <div className={'form-values flex-1'}>
@@ -59,13 +76,20 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                     type={'button'}
                     active={!!form.formFieldState.get('createdAt')}
                     onClick={() => {
-                      form.patchValues('createdAt', form.formFieldState.get('createdAt') ?? dayjs().subtract(1, 'h').toDate());
+                      form.patchValues(
+                        'createdAt',
+                        form.formFieldState.get('createdAt') ??
+                          dayjs().subtract(1, 'h').toDate(),
+                      );
                     }}
-                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) =>
+                      e.target.blur()
+                    }
                   >
                     Yes
                   </Button>
-                  {!!form.formFieldState.get('createdAt') && (<DatePicker
+                  {!!form.formFieldState.get('createdAt') && (
+                    <DatePicker
                       className={'opacity-0 absolute'}
                       popperClassName={'relative !left-[-30px]'}
                       autoFocus={true}
@@ -76,7 +100,8 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                       onChange={(date) => {
                         form.patchValues('createdAt', date);
                       }}
-                    />)}
+                    />
+                  )}
                 </div>
               </div>
               <div className={'flex flex-col items-start mb-5'}>
@@ -91,9 +116,15 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                   type={'button'}
                   active={!!form.formFieldState.get('updatedAt')}
                   onClick={() => {
-                    form.patchValues('updatedAt', form.formFieldState.get('updatedAt') ?? dayjs().subtract(4, 'd').toDate());
+                    form.patchValues(
+                      'updatedAt',
+                      form.formFieldState.get('updatedAt') ??
+                        dayjs().subtract(4, 'd').toDate(),
+                    );
                   }}
-                  onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                  onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) =>
+                    e.target.blur()
+                  }
                 >
                   Yes
                 </Button>
@@ -108,9 +139,17 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.settings.electronAutoLogin') === true}
-                    onClick={() => form.patchValues('data.settings.electronAutoLogin', true)}
-                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                    active={
+                      form.formFieldState.get(
+                        'data.settings.electronAutoLogin',
+                      ) === true
+                    }
+                    onClick={() =>
+                      form.patchValues('data.settings.electronAutoLogin', true)
+                    }
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) =>
+                      e.target.blur()
+                    }
                   >
                     True
                   </Button>
@@ -121,9 +160,17 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.settings.electronAutoLogin') === false}
-                    onClick={() => form.patchValues('data.settings.electronAutoLogin', false)}
-                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                    active={
+                      form.formFieldState.get(
+                        'data.settings.electronAutoLogin',
+                      ) === false
+                    }
+                    onClick={() =>
+                      form.patchValues('data.settings.electronAutoLogin', false)
+                    }
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) =>
+                      e.target.blur()
+                    }
                   >
                     False
                   </Button>
@@ -139,9 +186,15 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.weekStatus.done') === true}
-                    onClick={() => form.patchValues('data.weekStatus.done', true)}
-                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                    active={
+                      form.formFieldState.get('data.weekStatus.done') === true
+                    }
+                    onClick={() =>
+                      form.patchValues('data.weekStatus.done', true)
+                    }
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) =>
+                      e.target.blur()
+                    }
                   >
                     True
                   </Button>
@@ -152,9 +205,15 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.weekStatus.done') === false}
-                    onClick={() => form.patchValues('data.weekStatus.done', false)}
-                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
+                    active={
+                      form.formFieldState.get('data.weekStatus.done') === false
+                    }
+                    onClick={() =>
+                      form.patchValues('data.weekStatus.done', false)
+                    }
+                    onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) =>
+                      e.target.blur()
+                    }
                   >
                     False
                   </Button>
@@ -163,13 +222,17 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
               <div className={'flex flex-col items-start mb-5'}>
                 <span className={'text-md mb-2'}>Set Two Factor Auth</span>
                 <div className={'w-full'}>
-                  <div className={'mt-1 mb-2'}>{userDetails.data.userSession?.TWO_FACTOR_AUTH}</div>
+                  <div className={'mt-1 mb-2'}>
+                    {userDetails.data.userSession?.TWO_FACTOR_AUTH}
+                  </div>
 
                   <Input className={'w-full'} placeholder="Two factor auth">
                     <input
                       key={userDetails.data.userSession?.TWO_FACTOR_AUTH}
                       name={'data.userSession.TWO_FACTOR_AUTH'}
-                      defaultValue={userDetails.data.userSession?.TWO_FACTOR_AUTH}
+                      defaultValue={
+                        userDetails.data.userSession?.TWO_FACTOR_AUTH
+                      }
                     />
                   </Input>
                 </div>
@@ -179,19 +242,28 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
             <Input className={'w-full mb-2'} placeholder="Password">
               <input name={'password'} />
             </Input>
-            <Button loading={form.loading} className={'w-full !bg-violet-500 !text-white'} type="submit">
+            <Button
+              loading={form.loading}
+              className={'w-full !bg-violet-500 !text-white'}
+              type="submit"
+            >
               Update
             </Button>
           </Form>
           <div className={'flex items-center h-[110px]'}>
-            <Message hidden={!form.error} className={'text-left w-full'} negative>
+            <Message
+              hidden={!form.error}
+              className={'text-left w-full'}
+              negative
+            >
               <MessageHeader>Error</MessageHeader>
               <p>{form.error}</p>
             </Message>
           </div>
         </div>
       </Dimmer>
-    </div>);
+    </div>
+  );
 };
 UserSettingsComponent.displayName = 'UserSettings';
 export default UserSettingsComponent;

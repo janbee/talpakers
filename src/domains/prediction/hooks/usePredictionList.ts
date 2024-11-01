@@ -18,7 +18,7 @@ const usePredictionList = () => {
         next: (list: SetStateAction<PredictionModel[]>) => {
           setList(list);
         },
-        error: () => setError(true)
+        error: () => setError(true),
       });
   }, []);
 
@@ -33,7 +33,7 @@ const usePredictionList = () => {
     list,
     loading,
     error,
-    reload
+    reload,
   };
 };
 

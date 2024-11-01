@@ -20,7 +20,7 @@ const useUseUserList = () => {
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: (list) => setList(list),
-        error: () => setError(true)
+        error: () => setError(true),
       });
 
     return () => {
@@ -28,64 +28,122 @@ const useUseUserList = () => {
     };
   }, []);
 
-  const handleOrderByStatus = useCallback((event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
-    event.preventDefault();
+  const handleOrderByStatus = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
+      event.preventDefault();
 
-    setLoading(true);
-    setError(false);
+      setLoading(true);
+      setError(false);
 
-    console.log('gaga------------------------asd-------------handleOrderByStatus', data);
-    console.log('gaga------------------------asd-------------handleOrderByStatus', data.filter);
-    SharedApi.getUsers()
-      .pipe(tap(() => setLoading(false)))
-      .subscribe({
-        next: (list) => {
-          let newList: UserModel[] = list;
+      console.log(
+        'gaga------------------------asd-------------handleOrderByStatus',
+        data,
+      );
+      console.log(
+        'gaga------------------------asd-------------handleOrderByStatus',
+        data.filter,
+      );
+      SharedApi.getUsers()
+        .pipe(tap(() => setLoading(false)))
+        .subscribe({
+          next: (list) => {
+            let newList: UserModel[] = list;
 
-          if (data.filter === UserStatusModel.IsDone) {
-            newList = orderBy(list, [(user) => {
-              const userStatus = GetUserStatusUtil(user);
-              return userStatus === UserStatusModel.IsDone;
-            }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
-          } else if (data.filter === UserStatusModel.InProgress) {
-            newList = orderBy(list, [(user) => {
-              const userStatus = GetUserStatusUtil(user);
-              return userStatus === UserStatusModel.InProgress;
-            }, 'data.weekStatus.betSummary.betSummary.totalStaked'], ['desc', 'desc']);
-          } else if (data.filter === UserStatusModel.IsWaiting) {
-            newList = orderBy(list, [(user) => {
-              const userStatus = GetUserStatusUtil(user);
-              return userStatus === UserStatusModel.IsWaiting;
-            }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
-          } else if (data.filter === 'nextWithdrawal') {
-            newList = orderBy(list, [(user) => {
-              const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
-              const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
-              const cashout = user.data.userSession?.cashout ?? 0;
-              return (cashout / fixedAmount) * 30;
-            }], ['desc']);
-          } else if (data.filter === 'earnings') {
-            newList = orderBy(list, [(user) => {
-              const { isNewWeek } = GetDatesUtil(user);
-              return isNewWeek ? 0 : user.data?.weekStatus?.betSummary?.betSummary.totalEarnings ?? 0;
-            }], ['asc']);
-          }
-          setList(newList);
-        },
-        error: () => setError(true)
-      });
-  }, []);
+            if (data.filter === UserStatusModel.IsDone) {
+              newList = orderBy(
+                list,
+                [
+                  (user) => {
+                    const userStatus = GetUserStatusUtil(user);
+                    return userStatus === UserStatusModel.IsDone;
+                  },
+                  (user) => user.updatedAt ?? user.createdAt,
+                ],
+                ['desc', 'desc'],
+              );
+            } else if (data.filter === UserStatusModel.InProgress) {
+              newList = orderBy(
+                list,
+                [
+                  (user) => {
+                    const userStatus = GetUserStatusUtil(user);
+                    return userStatus === UserStatusModel.InProgress;
+                  },
+                  'data.weekStatus.betSummary.betSummary.totalStaked',
+                ],
+                ['desc', 'desc'],
+              );
+            } else if (data.filter === UserStatusModel.IsWaiting) {
+              newList = orderBy(
+                list,
+                [
+                  (user) => {
+                    const userStatus = GetUserStatusUtil(user);
+                    return userStatus === UserStatusModel.IsWaiting;
+                  },
+                  (user) => user.updatedAt ?? user.createdAt,
+                ],
+                ['desc', 'desc'],
+              );
+            } else if (data.filter === 'nextWithdrawal') {
+              newList = orderBy(
+                list,
+                [
+                  (user) => {
+                    const maintainCash =
+                      user.data.userSession?.autoCashout?.maintainCash ?? 50;
+                    const fixedAmount =
+                      (user.data.userSession?.autoCashout?.fixedAmount ?? 900) +
+                      maintainCash;
+                    const cashout = user.data.userSession?.cashout ?? 0;
+                    return (cashout / fixedAmount) * 30;
+                  },
+                ],
+                ['desc'],
+              );
+            } else if (data.filter === 'earnings') {
+              newList = orderBy(
+                list,
+                [
+                  (user) => {
+                    const { isNewWeek } = GetDatesUtil(user);
+                    return isNewWeek
+                      ? 0
+                      : (user.data?.weekStatus?.betSummary?.betSummary
+                          .totalEarnings ?? 0);
+                  },
+                ],
+                ['asc'],
+              );
+            }
+            setList(newList);
+          },
+          error: () => setError(true),
+        });
+    },
+    [],
+  );
 
   const statusCount = useMemo(() => {
     return {
-      [UserStatusModel.IsDone]: userListFilterByStatus(list, UserStatusModel.IsDone).length,
-      [UserStatusModel.InProgress]: userListFilterByStatus(list, UserStatusModel.InProgress).length,
-      [UserStatusModel.IsWaiting]: userListFilterByStatus(list, UserStatusModel.IsWaiting).length
+      [UserStatusModel.IsDone]: userListFilterByStatus(
+        list,
+        UserStatusModel.IsDone,
+      ).length,
+      [UserStatusModel.InProgress]: userListFilterByStatus(
+        list,
+        UserStatusModel.InProgress,
+      ).length,
+      [UserStatusModel.IsWaiting]: userListFilterByStatus(
+        list,
+        UserStatusModel.IsWaiting,
+      ).length,
     };
   }, [list]);
 
   const restrictedCount = useMemo(() => {
-    return list.filter((item) => item.data.weekStatus?.hasBetRestriction).length;
+    return list.filter((item) => item.data.weekStatus?.hasBetRestriction)
+      .length;
   }, [list]);
 
   return {
@@ -94,7 +152,7 @@ const useUseUserList = () => {
     error,
     handleOrderByStatus,
     statusCount,
-    restrictedCount
+    restrictedCount,
   };
 };
 

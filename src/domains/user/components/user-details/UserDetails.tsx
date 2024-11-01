@@ -3,19 +3,35 @@ import { Dimmer, Loader } from 'semantic-ui-react';
 import { sumBy } from 'lodash';
 import classNames from 'classnames';
 import { MoneyUtil } from '@PlayAbWeb/common/utils';
-import { UserYearlySummary, WeeklyCard, WithdrawalPopup } from '../user-details/UserDetailsUI';
+import {
+  UserYearlySummary,
+  WeeklyCard,
+  WithdrawalPopup,
+} from '../user-details/UserDetailsUI';
 import UserSettingsComponent from '../user-settings/UserSettings';
 import useUserDetails from '../../hooks/useUserDetails';
 
 const UserDetailsComponent: FC = () => {
-  const { list, loading, userDetails, totalWinnings, totalWithdrawals, emails } = useUserDetails();
+  const {
+    list,
+    loading,
+    userDetails,
+    totalWinnings,
+    totalWithdrawals,
+    emails,
+  } = useUserDetails();
 
   return (
-    <div data-testid="UserDetails" className={'w-full m-4 bg-neutral-800 rounded-lg relative'}>
+    <div
+      data-testid="UserDetails"
+      className={'w-full m-4 bg-neutral-800 rounded-lg relative'}
+    >
       <div className={'flex flex-col p-4 h-full min-w-[370px]'}>
         <div className={'flex flex-row justify-between items-start h-12'}>
           <div className={'flex flex-row'}>
-            <span className={'dark:text-white text-2xl'}>{emails.length === 1 ? emails[0] : 'Multi User View'}</span>
+            <span className={'dark:text-white text-2xl'}>
+              {emails.length === 1 ? emails[0] : 'Multi User View'}
+            </span>
             {emails.length === 1 && (
               <UserYearlySummary
                 userDetails={userDetails}
@@ -25,7 +41,9 @@ const UserDetailsComponent: FC = () => {
             )}
           </div>
           {emails.length + '------'}
-          {emails.length === 1 && <UserSettingsComponent userDetails={userDetails} />}
+          {emails.length === 1 && (
+            <UserSettingsComponent userDetails={userDetails} />
+          )}
         </div>
         <hr />
         <div className={'flex-1 overflow-auto mt-4'}>
@@ -34,7 +52,11 @@ const UserDetailsComponent: FC = () => {
 
             return (
               <div key={mon.title} className="mon-wrap">
-                <div className={'title-wrap flex justify-between items-center dark:text-white pt-2 pb-2 '}>
+                <div
+                  className={
+                    'title-wrap flex justify-between items-center dark:text-white pt-2 pb-2 '
+                  }
+                >
                   <span>{mon.title}</span>
                   <span
                     className={classNames({

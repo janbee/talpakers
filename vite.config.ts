@@ -5,7 +5,6 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import mkcert from 'vite-plugin-mkcert';
 
-
 export default defineConfig({
   root: __dirname,
   define: {
@@ -33,8 +32,8 @@ export default defineConfig({
 
   optimizeDeps: {
     esbuildOptions: {
-      target: 'esnext'
-    }
+      target: 'esnext',
+    },
   },
   build: {
     target: 'esnext',

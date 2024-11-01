@@ -1,7 +1,7 @@
-import { UserStatusModel } from '@PlayAbWeb/api/index';
-import { GetDatesUtil } from '@PlayAbWeb/common/utils';
-import dayjs from 'dayjs';
+import { UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { UserModel } from '@PlayAb/shared';
+import GetDatesUtil from '../get-dates-util/GetDatesUtil';
+import dayjs from 'dayjs';
 
 const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
   const { weekStart } = GetDatesUtil();
@@ -9,7 +9,9 @@ const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
   const inProgress = user.data?.weeklyStatus?.done === false;
 
   const lastUpdate = dayjs(user.updatedAt ?? user.createdAt ?? new Date());
-  const minutesPassed = dayjs.duration(-lastUpdate.diff(Date.now())).asMinutes();
+  const minutesPassed = dayjs
+    .duration(-lastUpdate.diff(Date.now()))
+    .asMinutes();
 
   let isIdle = false;
 

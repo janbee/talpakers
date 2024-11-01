@@ -18,7 +18,7 @@ export function convertPathToTreeView(pages: RouteObject[]): RouteObject {
 export function convertFolderOrFileToTree(
   currentTree: RouteObject,
   fileNames: string[],
-  route: RouteObject
+  route: RouteObject,
 ): RouteObject {
   if (!fileNames.length) {
     return currentTree;
@@ -31,7 +31,9 @@ export function convertFolderOrFileToTree(
       return {
         ...currentTree,
         children: [
-          ...(currentTree.children?.filter((tree) => tree.path !== child.path) ?? []),
+          ...(currentTree.children?.filter(
+            (tree) => tree.path !== child.path,
+          ) ?? []),
           convertFolderOrFileToTree(child, fileNames.slice(1), route),
         ],
       } as RouteObject;
@@ -39,11 +41,21 @@ export function convertFolderOrFileToTree(
       const newTree: RouteObject = { path: fileNames[0] };
       return {
         ...currentTree,
-        children: [...(currentTree.children ?? []), convertFolderOrFileToTree(newTree, fileNames.slice(1), route)],
+        children: [
+          ...(currentTree.children ?? []),
+          convertFolderOrFileToTree(newTree, fileNames.slice(1), route),
+        ],
       } as RouteObject;
     } else {
-      const newTree: RouteObject = { path: fileNames[0], element: route.element, id: route.id };
-      return { ...currentTree, children: [...(currentTree.children ?? []), newTree] } as RouteObject;
+      const newTree: RouteObject = {
+        path: fileNames[0],
+        element: route.element,
+        id: route.id,
+      };
+      return {
+        ...currentTree,
+        children: [...(currentTree.children ?? []), newTree],
+      } as RouteObject;
     }
   }
 }

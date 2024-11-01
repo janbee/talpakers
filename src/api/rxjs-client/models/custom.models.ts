@@ -331,7 +331,8 @@ export interface BonusModel {
 export const WorkerInfo: { [key: string]: WorkerInfoModel } = {
   'com.playabapp.bets.001': {
     name: 'Matthew Maunders',
-    details: 'Matthew Maunders loves building stuff. When not working, he is spending time with his family and kids.',
+    details:
+      'Matthew Maunders loves building stuff. When not working, he is spending time with his family and kids.',
     hire: 'Hire Matt for price',
     workWeeks: 4,
     pronoun1: 'His',
@@ -341,7 +342,8 @@ export const WorkerInfo: { [key: string]: WorkerInfoModel } = {
 
   'com.playabapp.bets.002': {
     name: 'Bob Baker',
-    details: 'Bob Baker is a sound engineer who enjoys playing piano and hanging with his parrot.',
+    details:
+      'Bob Baker is a sound engineer who enjoys playing piano and hanging with his parrot.',
     hire: 'Hire Bob for price',
     workWeeks: 2,
     pronoun1: 'His',
@@ -354,7 +356,8 @@ export const WorkerInfo: { [key: string]: WorkerInfoModel } = {
   /*subs*/
   'com.playabapp.bets.101': {
     name: 'Lenny Lawrence',
-    details: 'Lenny Lawrence is a star employee. She loves solving problems, likes music and exercise.',
+    details:
+      'Lenny Lawrence is a star employee. She loves solving problems, likes music and exercise.',
     hire: 'Hire Lenny for price',
     workWeeks: 8,
     pronoun1: 'Her',
@@ -394,7 +397,12 @@ export interface UserSessionModel {
   ServerTime: string;
   cash: number;
   cashout: number;
-  autoCashout?: { cashoutEmail: string; maintainCash: number; withdrawAllIfCashGTE: number; fixedAmount: number };
+  autoCashout?: {
+    cashoutEmail: string;
+    maintainCash: number;
+    withdrawAllIfCashGTE: number;
+    fixedAmount: number;
+  };
 }
 
 export interface UserDetailModel {

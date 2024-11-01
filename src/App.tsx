@@ -10,12 +10,12 @@ const App = (): ReactElement | null => {
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
-
-    const realmInit$ = SharedApi.mongoService.login('admin@talpak.com', '--------').pipe(delay(500))
+    const realmInit$ = SharedApi.mongoService
+      .login('admin@talpak.com', '--------')
+      .pipe(delay(500))
       .subscribe((res) => {
         setAppReady(true);
       });
-
 
     return () => {
       realmInit$.unsubscribe();
@@ -23,17 +23,21 @@ const App = (): ReactElement | null => {
   }, []);
 
   console.log('gaga-------------------------------------render APP', appReady);
-  return (<>
-    {appReady && (<HashRouter>
-      <ErrorBoundary fallback={<>Error</>}>
-        <AppRoutes />
-      </ErrorBoundary>
-    </HashRouter>)}
+  return (
+    <>
+      {appReady && (
+        <HashRouter>
+          <ErrorBoundary fallback={<>Error</>}>
+            <AppRoutes />
+          </ErrorBoundary>
+        </HashRouter>
+      )}
 
-    <Dimmer active={!appReady}>
-      <Loader />
-    </Dimmer>
-  </>);
+      <Dimmer active={!appReady}>
+        <Loader />
+      </Dimmer>
+    </>
+  );
 };
 
 export default App;

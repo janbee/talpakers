@@ -21,13 +21,14 @@ const GetDatesUtil = (user?: UserModel) => {
   const weekEnd = new Date(forWeekEnd);
   weekEnd.setUTCHours(23, 59, 59, 999);
 
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+  const isNewWeek =
+    weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
   return {
     today,
     weekStart,
     weekEnd,
-    isNewWeek
+    isNewWeek,
   };
 };
 

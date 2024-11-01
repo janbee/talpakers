@@ -5,12 +5,26 @@ import dayjs from 'dayjs';
 
 const PredictionListComponent: FC = () => {
   const { list, reload, loading } = usePredictionList();
-  console.log('gaga-------------------------------------PredictionListComponent render');
+  console.log(
+    'gaga-------------------------------------PredictionListComponent render',
+  );
   return (
     <div data-testid="PredictionList" className={'flex flex-col h-full'}>
-      <div className={'flex flex-row items-start justify-between h-10   sticky top-0'}>
-        <span className={'dark:text-white text-2xl'}>Predictions (#{list.length})</span>
-        <Icon circular inverted className={'cursor-pointer !text-xl !mt-[-7px]'} name="refresh" onClick={reload} />
+      <div
+        className={
+          'flex flex-row items-start justify-between h-10   sticky top-0'
+        }
+      >
+        <span className={'dark:text-white text-2xl'}>
+          Predictions (#{list.length})
+        </span>
+        <Icon
+          circular
+          inverted
+          className={'cursor-pointer !text-xl !mt-[-7px]'}
+          name="refresh"
+          onClick={reload}
+        />
       </div>
       <hr />
 
@@ -28,7 +42,10 @@ const PredictionListComponent: FC = () => {
           } = item;
 
           return (
-            <div key={team1Name+team2Name} className={'bg-neutral-950 rounded-lg mt-3 p-3 dark:text-white'}>
+            <div
+              key={team1Name + team2Name}
+              className={'bg-neutral-950 rounded-lg mt-3 p-3 dark:text-white'}
+            >
               <div className={'flex justify-between'}>
                 <span>Game</span>
                 <span>{game}</span>
@@ -42,7 +59,8 @@ const PredictionListComponent: FC = () => {
               <div className={'flex justify-between'}>
                 <span>Predicted Winner</span>
                 <span>
-                  {predictedWinner} ({winningTeam} team {winningPercentage.toString().replace('%', '')}%)
+                  {predictedWinner} ({winningTeam} team{' '}
+                  {winningPercentage.toString().replace('%', '')}%)
                 </span>
               </div>
 
