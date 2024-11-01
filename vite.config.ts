@@ -37,7 +37,7 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    outDir: '../../dist/apps/PlayAbWeb',
+    outDir: 'dist',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
