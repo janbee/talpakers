@@ -1,1 +1,0 @@
-npm --no-git-tag-version version patch && prettier --write './**/*.{ts,tsx}' && git add .
