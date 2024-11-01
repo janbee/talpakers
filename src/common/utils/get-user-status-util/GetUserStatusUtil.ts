@@ -19,8 +19,10 @@ const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
     isIdle = true;
   }
 
-  const waiting = weekStart.toISOString() !== user.data?.weeklyStatus?.startDate;
-  const isWaiting = waiting || isIdle || user.data?.weeklyStatus?.done === undefined;
+  const waiting =
+    weekStart.toISOString() !== user.data?.weeklyStatus?.startDate;
+  const isWaiting =
+    waiting || isIdle || user.data?.weeklyStatus?.done === undefined;
 
   if (isWaiting) {
     return UserStatusModel.IsWaiting;

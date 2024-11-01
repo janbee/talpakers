@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.0.20",
+  "version": "0.0.24",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
@@ -19,9 +19,9 @@
     "gh-pages": "^6.2.0"
   },
   "lint-staged": {
-    "*.{jsx,ts,tsx,css,md}": [
-      "prettier --write './**/*.{ts,tsx}'",
-      "git add ."
+    "*.{jsx,ts,tsx,css,md,json}": [
+      "git add .",
+      "prettier --write './**/*.{ts,tsx}'"
     ]
   },
   "devDependencies": {
