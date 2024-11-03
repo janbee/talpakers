@@ -1,17 +1,15 @@
 {
   "name": "play-ab-web",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
     "i": "npm install",
-    "rm:husky": "rm -rf .husky ",
-    "prepare:husky:precommit": "npm run rm:husky && .husky/pre-commit \"npm --no-git-tag-version version patch && git add . && npm run deploy\"",
     "deploy": "gh-pages -d dist",
     "git:add": "git add .",
     "git:commit": "git commit -a -m 'auto'",
     "git:push": "git push",
-    "git:run": "npm run build && npm run git:add && npm run git:commit && npm run git:push && npm run deploy",
+    "git:run": "npm --no-git-tag-version version patch && npm run build && npm run git:add && npm run git:commit && npm run git:push && npm run deploy",
     "build": "tsc && vite build"
   },
   "dependencies": {
