@@ -1,10 +1,7 @@
 import { FC } from 'react';
 import { MoneyUtil } from '@PlayAbWeb/common/utils';
 import classNames from 'classnames';
-import {
-  EarningsModel,
-  UserDetailModel,
-} from '@PlayAbWeb/api/rxjs-client/models/custom.models';
+import { EarningsModel, UserDetailModel } from '@PlayAbWeb/api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
 import { Header, Icon, Label, Menu, Popup } from 'semantic-ui-react';
 import { UserModel } from '@PlayAb/shared';
@@ -37,17 +34,13 @@ export const WeeklyCard: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
           <span>Bonus</span>
           <span>{MoneyUtil(earnings.bonus)}</span>
         </div>
-        {(earnings.approxWinnings > 0 && (
-          <ApproxWinnings earnings={earnings} />
-        )) || <Winnings earnings={earnings} />}
+        {(earnings.approxWinnings > 0 && <ApproxWinnings earnings={earnings} />) || <Winnings earnings={earnings} />}
       </div>
     </div>
   );
 };
 
-export const ApproxWinnings: FC<{ earnings: EarningsModel }> = ({
-  earnings,
-}) => {
+export const ApproxWinnings: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
   return (
     <div className={'flex flex-1 justify-between'}>
       <span>Winnings</span>
@@ -93,9 +86,7 @@ export const Winnings: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
   );
 };
 
-export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({
-  earnings,
-}) => {
+export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
   const multipleUserView = earnings.emails.length >= 2;
 
   if (!earnings.withdrawal || multipleUserView) {
@@ -106,9 +97,7 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({
     {
       Pending: earnings.withdrawal.TransactionStatus === 'Pending',
       Approved: earnings.withdrawal.TransactionStatus === 'Approved',
-      Processing: ['In Process', 'Sending to Processor'].includes(
-        earnings.withdrawal.TransactionStatus,
-      ),
+      Processing: ['In Process', 'Sending to Processor'].includes(earnings.withdrawal.TransactionStatus),
     },
   ];
 
@@ -123,8 +112,7 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({
             trigger={
               <div
                 className={classNames({
-                  'rounded-full h-2 w-2 top-6 right-6 absolute cursor-pointer':
-                    true,
+                  'rounded-full h-2 w-2 top-6 right-6 absolute cursor-pointer': true,
                   'bg-yellow-dark': status.Pending,
                   'bg-green-dark': status.Approved,
                   'bg-blue-dark': status.Processing,
@@ -165,13 +153,7 @@ export const UserYearlySummary: FC<{
     <Popup
       on="hover"
       basic
-      trigger={
-        <Icon
-          name="info circle"
-          size={'small'}
-          className={'cursor-pointer dark:text-white'}
-        />
-      }
+      trigger={<Icon name="info circle" size={'small'} className={'cursor-pointer dark:text-white'} />}
       position="bottom right"
       mouseLeaveDelay={60000}
     >

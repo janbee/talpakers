@@ -10,9 +10,7 @@ interface FormData {
 
 const useUseUserSettings = () => {
   const [active, setActive] = useState(false);
-  const [formFieldState, setFormFieldState] = useState(
-    new Map<string, unknown>(),
-  );
+  const [formFieldState, setFormFieldState] = useState(new Map<string, unknown>());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -50,6 +48,7 @@ const useUseUserSettings = () => {
         _id: email,
       };
 
+
       // @ts-expect-error - yes
       for (const [key, val] of formData.entries()) {
         set(userDetails, key, val);
@@ -58,10 +57,7 @@ const useUseUserSettings = () => {
         set(userDetails, key, val);
       }
 
-      console.log(
-        'gaga----------------------------------userDetails---',
-        userDetails,
-      );
+      console.log('gaga----------------------------------userDetails---', userDetails);
 
       setLoading(true);
       setError('');
@@ -69,12 +65,9 @@ const useUseUserSettings = () => {
         .login(email, pword)
         .pipe(
           mergeMap(() => {
-            console.log(
-              'gaga---------------------------------userDetails----',
-              userDetails,
-            );
+            console.log('gaga---------------------------------userDetails----', userDetails);
             return SharedApi.upsertUserData(userDetails as UserModel);
-          }),
+          })
         )
         .subscribe({
           next: (res) => {
@@ -87,7 +80,7 @@ const useUseUserSettings = () => {
           },
         });
     },
-    [formFieldState],
+    [formFieldState]
   );
 
   return {

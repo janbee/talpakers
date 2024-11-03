@@ -1,16 +1,7 @@
 import { isUndefined, mergeWith } from 'lodash';
 import * as Realm from 'realm-web';
 import { MongoCollection } from '@PlayAbWeb/api/rxjs-client/models/custom.models';
-import {
-  catchError,
-  defer,
-  map,
-  mergeMap,
-  Observable,
-  of,
-  tap,
-  throwError,
-} from 'rxjs';
+import { catchError, defer, map, mergeMap, Observable, of, tap, throwError } from 'rxjs';
 
 interface UpsertModel {
   _id: string;
@@ -28,9 +19,7 @@ export class CRUD {
   private currentUserId = '';
   private currentUserEmail = '';
 
-  setCollection(
-    collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<UpsertModel>,
-  ) {
+  setCollection(collection: globalThis.Realm.Services.MongoDB.MongoDBCollection<UpsertModel>) {
     this.collection = collection;
   }
 
@@ -43,21 +32,11 @@ export class CRUD {
     if (_id) {
       return defer(() => this.collection.find({ _id })) as Observable<T[]>;
     }
-    return defer(() =>
-      this.collection.find({}, { sort: { index: 1 } }),
-    ) as Observable<T[]>;
+    return defer(() => this.collection.find({}, { sort: { index: 1 } })) as Observable<T[]>;
   }
 
-  getBy<T>({
-    filter,
-    sort,
-  }: {
-    filter?: Record<string, unknown>;
-    sort?: Record<string, number>;
-  }) {
-    return defer(() =>
-      this.collection.find(filter ?? {}, { sort: sort ?? {} }),
-    ) as Observable<T[]>;
+  getBy<T>({ filter, sort }: { filter?: Record<string, unknown>; sort?: Record<string, number> }) {
+    return defer(() => this.collection.find(filter ?? {}, { sort: sort ?? {} })) as Observable<T[]>;
   }
 
   upsert<T>(object: UpsertModel) {
@@ -65,21 +44,13 @@ export class CRUD {
       mergeMap((foundItem) => {
         if (foundItem.length) {
           if (object.updatedAt) {
-            object = mergeWith(
-              foundItem[0],
-              object,
-              (a: Record<string, string>, b) => {
-                return isUndefined(b) === undefined ? a : undefined;
-              },
-            );
+            object = mergeWith(foundItem[0], object, (a: Record<string, string>, b) => {
+              return isUndefined(b) === undefined ? a : undefined;
+            });
           } else {
-            object = mergeWith(
-              foundItem[0],
-              { ...object, updatedAt: new Date() },
-              (a: Record<string, string>, b) => {
-                return isUndefined(b) === undefined ? a : undefined;
-              },
-            );
+            object = mergeWith(foundItem[0], { ...object, updatedAt: new Date() }, (a: Record<string, string>, b) => {
+              return isUndefined(b) === undefined ? a : undefined;
+            });
           }
         } else {
           object.createdAt = new Date();
@@ -100,24 +71,22 @@ export class CRUD {
             object as unknown as globalThis.Realm.Services.MongoDB.Update,
             {
               upsert: true,
-            },
-          ),
+            }
+          )
         ).pipe(
           map(() => {
             return object;
-          }),
+          })
         );
-      }),
+      })
     );
   }
 
   delete(filter: Record<string, string> = {}) {
-    return defer(() =>
-      this.collection.deleteMany(filter as Record<string, unknown>),
-    ).pipe(
+    return defer(() => this.collection.deleteMany(filter as Record<string, unknown>)).pipe(
       map(() => {
         return null;
-      }),
+      })
     );
   }
 }
@@ -128,11 +97,7 @@ export class MongoRealmService {
   private mongoConfig: Record<string, string> = {};
   private collections: Record<string, { CRUD: CRUD }> = {};
 
-  constructor(mongoConfig: {
-    AppId: string;
-    AppClient: string;
-    AppDB: string;
-  }) {
+  constructor(mongoConfig: { AppId: string; AppClient: string; AppDB: string }) {
     this.mongoConfig.AppId = mongoConfig.AppId;
     this.mongoConfig.AppClient = mongoConfig.AppClient;
     this.mongoConfig.AppDB = mongoConfig.AppDB;
@@ -142,10 +107,7 @@ export class MongoRealmService {
   }
 
   init() {
-    const credentials = Realm.Credentials.emailPassword(
-      'admin@talpak.com',
-      '--------',
-    );
+    const credentials = Realm.Credentials.emailPassword('admin@talpak.com', '--------');
 
     return defer(() => this.app.logIn(credentials)).pipe(
       catchError((err) => {
@@ -153,32 +115,23 @@ export class MongoRealmService {
         return of(err);
       }),
       tap(() => {
-        if (this.app.currentUser)
-          this.client = this.app.currentUser.mongoClient(
-            this.mongoConfig.AppClient,
-          );
-      }),
+        if (this.app.currentUser) this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
+      })
     );
   }
 
   login(email: string, password: string) {
-    const credentials = Realm.Credentials.emailPassword(
-      email.toLowerCase(),
-      password,
-    );
+    const credentials = Realm.Credentials.emailPassword(email.toLowerCase(), password);
 
     return defer(() => this.app.logIn(credentials)).pipe(
       tap(() => {
-        if (this.app.currentUser)
-          this.client = this.app.currentUser.mongoClient(
-            this.mongoConfig.AppClient,
-          );
+        if (this.app.currentUser) this.client = this.app.currentUser.mongoClient(this.mongoConfig.AppClient);
       }),
       map(() => this.app.currentUser?.profile.email),
       catchError((err) => {
         console.error('Failed to log in', err);
         return throwError(() => err);
-      }),
+      })
     );
   }
 
@@ -190,9 +143,7 @@ export class MongoRealmService {
     const crud = new CRUD();
     const collection = this.client?.db(this.mongoConfig.AppDB).collection(name);
     if (collection) {
-      crud.setCollection(
-        collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<UpsertModel>,
-      );
+      crud.setCollection(collection as globalThis.Realm.Services.MongoDB.MongoDBCollection<UpsertModel>);
     }
     this.collections[name] = {
       CRUD: crud,
@@ -200,7 +151,7 @@ export class MongoRealmService {
 
     this.collections[name].CRUD.setCurrentUser(
       this.app.currentUser?.id ?? '',
-      this.app.currentUser?.profile?.email ?? '',
+      this.app.currentUser?.profile?.email ?? ''
     );
     return this.collections[name].CRUD;
   }

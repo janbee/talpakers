@@ -31,8 +31,7 @@ const AppRoutes = (): ReactElement | null => {
   });
 
   console.log('gaga-------------------------------------pages', [
-    ...(convertPathToTreeView(pages as unknown as RouteObject[]).children ??
-      []),
+    ...(convertPathToTreeView(pages as unknown as RouteObject[]).children ?? []),
 
     /*
      * custom route here
@@ -45,8 +44,7 @@ const AppRoutes = (): ReactElement | null => {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return useRoutes([
-    ...(convertPathToTreeView(pages as unknown as RouteObject[]).children ??
-      []),
+    ...(convertPathToTreeView(pages as unknown as RouteObject[]).children ?? []),
 
     /*
      * custom route here

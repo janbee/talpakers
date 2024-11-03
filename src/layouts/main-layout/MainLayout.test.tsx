@@ -7,7 +7,7 @@ describe('<MainLayout />', () => {
     render(
       <MainLayout>
         <div />
-      </MainLayout>,
+      </MainLayout>
     );
 
     const mainLayout = screen.getByTestId('MainLayout');
