@@ -16,6 +16,7 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
+
     const user$ = SharedApi.getUsers()
       .pipe(tap(() => setLoading(false)))
       .subscribe({
