@@ -133,27 +133,27 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                 <span className={'text-md mb-2'}>Set Done</span>
                 <div className={'flex flex-row'}>
                   <Button
-                    name={'data.weekStatus.done'}
+                    name={'data.weeklyStatus.done'}
                     inverted
                     color="green"
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.weekStatus.done') === true}
-                    onClick={() => form.patchValues('data.weekStatus.done', true)}
+                    active={form.formFieldState.get('data.weeklyStatus.done') === true}
+                    onClick={() => form.patchValues('data.weeklyStatus.done', true)}
                     onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
                   >
                     True
                   </Button>
                   <Button
-                    name={'data.weekStatus.done'}
+                    name={'data.weeklyStatus.done'}
                     inverted
                     color="red"
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.weekStatus.done') === false}
-                    onClick={() => form.patchValues('data.weekStatus.done', false)}
+                    active={form.formFieldState.get('data.weeklyStatus.done') === false}
+                    onClick={() => form.patchValues('data.weeklyStatus.done', false)}
                     onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
                   >
                     False

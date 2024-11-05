@@ -6,18 +6,6 @@
   "tags": [],
   "// targets": "to see all targets run: nx show project PlayAbWeb --web",
   "targets": {
-    "vite:builder": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands":[
-          "export ACCOUNT=JANBEE && electron-vite preview",
-          "export ACCOUNT=SHIRLY && electron-vite preview",
-          "export ACCOUNT=BOB && electron-vite preview",
-          "export ACCOUNT=ARIEL && electron-vite preview"
-        ],
-        "cwd": "apps/PlayAbMac",
-        "parallel": true
-      }
-    }
+
   }
 }

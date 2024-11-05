@@ -52,7 +52,7 @@ const useUseUserList = () => {
             newList = orderBy(list, [(user) => {
               const userStatus = GetUserStatusUtil(user);
               return userStatus === UserStatusModel.InProgress;
-            }, 'data.weekStatus.betSummary.betSummary.totalStaked'], ['desc', 'desc']);
+            }, 'data.weeklyStatus.betSummary.betSummary.totalStaked'], ['desc', 'desc']);
           } else if (data.filter === UserStatusModel.IsWaiting) {
             newList = orderBy(list, [(user) => {
               const userStatus = GetUserStatusUtil(user);
@@ -68,7 +68,7 @@ const useUseUserList = () => {
           } else if (data.filter === 'earnings') {
             newList = orderBy(list, [(user) => {
               const { isNewWeek } = GetDatesUtil(user);
-              return isNewWeek ? 0 : user.data?.weekStatus?.betSummary?.betSummary.totalEarnings ?? 0;
+              return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.betSummary.totalEarnings ?? 0;
             }], ['asc']);
           }
           setList(newList);
@@ -86,7 +86,7 @@ const useUseUserList = () => {
   }, [list]);
 
   const restrictedCount = useMemo(() => {
-    return list.filter((item) => item.data.weekStatus?.hasBetRestriction).length;
+    return list.filter((item) => item.data.weeklyStatus?.hasBetRestriction).length;
   }, [list]);
 
   return {

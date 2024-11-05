@@ -6,7 +6,7 @@ import { GetColorUtil, GetDatesUtil, GetUserStatusUtil, MoneyUtil } from '@PlayA
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { omit } from 'lodash';
 import dayjs from 'dayjs';
-import { UserModel } from '@PlayAb/shared';
+import { getDates, isDateWithin, UserModel } from '@PlayAb/shared';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserModel;
@@ -14,14 +14,20 @@ interface UserTableCellProps extends StrictTableCellProps {
 
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isNewWeek } = GetDatesUtil(user);
+  const withdrawal = user.data.weeklyStatus?.withdrawal
+  const TransactionDateTime = user.data.weeklyStatus?.withdrawal?.TransactionDateTime
+  const {weekStart, weekEnd} = getDates();
+  const isThisWeek = isDateWithin(TransactionDateTime, {
+    starDate: weekStart.toISOString(),
+    endDate: weekEnd.toISOString()
+  });
 
   return (<TableCell {...omit(props, ['user'])}>
-    {!!user.data.weekStatus?.withdrawal && !isNewWeek && (<>
+    {!!user.data.weeklyStatus?.withdrawal && isThisWeek && (<>
       {[{
-        Pending: user.data.weekStatus?.withdrawal.TransactionStatus === 'Pending',
-        Approved: user.data.weekStatus?.withdrawal.TransactionStatus === 'Approved',
-        Processing: ['In Process', 'Sending to Processor'].includes(user.data.weekStatus?.withdrawal.TransactionStatus)
+        Pending: user.data.weeklyStatus?.withdrawal.TransactionStatus === 'Pending',
+        Approved: user.data.weeklyStatus?.withdrawal.TransactionStatus === 'Approved',
+        Processing: ['In Process', 'Sending to Processor'].includes(user.data.weeklyStatus?.withdrawal.TransactionStatus)
       }].map((status, index) => (<Popup
         key={index}
         position="right center"
@@ -46,18 +52,18 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
                         'text-blue-light': status.Processing
                       })}
                     >
-                      {user.data.weekStatus?.withdrawal?.TransactionStatus}
+                      {user.data.weeklyStatus?.withdrawal?.TransactionStatus}
                     </span>
                     )
                   </span>
             <span className={`transaction-wrap`}>
-                    {` ${user.data.weekStatus?.withdrawal?.TransactionDateTime && dayjs(user.data.weekStatus.withdrawal.TransactionDateTime).fromNow()}`}
+                    {` ${user.data.weeklyStatus?.withdrawal?.TransactionDateTime && dayjs(user.data.weeklyStatus.withdrawal.TransactionDateTime).fromNow()}`}
                   </span>
           </div>
         </Popup.Header>
         <Popup.Content>
           <div>
-            {`${user.data.weekStatus?.withdrawal?.PaymentMethodInfo} ${MoneyUtil(user.data.weekStatus?.withdrawal?.Amount ?? 0)}`}
+            {`${user.data.weeklyStatus?.withdrawal?.PaymentMethodInfo} ${MoneyUtil(user.data.weeklyStatus?.withdrawal?.Amount ?? 0)}`}
           </div>
         </Popup.Content>
       </Popup>))}
@@ -163,7 +169,7 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
     bets.settled = 0;
   }
 
-  const lastBets = user.data.weekStatus?.lastBet
+  const lastBets = user.data.weeklyStatus?.lastBet
     ?.map((item) => {
       return MoneyUtil(item, { minimumFractionDigits: 2 });
     })
@@ -225,13 +231,13 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
 
   const { isNewWeek } = GetDatesUtil(user);
 
-  const hasBetRestriction = isNewWeek ? null : !!user.data.weekStatus?.hasBetRestriction;
+  const hasBetRestriction = isNewWeek ? null : !!user.data.weeklyStatus?.hasBetRestriction;
 
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
     {hasBetRestriction && (
       <Popup position="left center" trigger={<span className={'text-red-dark'}>true</span>} flowing>
         <Popup.Header>
-          <span className={'text-red-light'}>{dayjs(user.data.weekStatus?.hasBetRestriction).fromNow()}</span>
+          <span className={'text-red-light'}>{dayjs(user.data.weeklyStatus?.hasBetRestriction).fromNow()}</span>
         </Popup.Header>
       </Popup>)}
   </TableCell>);
