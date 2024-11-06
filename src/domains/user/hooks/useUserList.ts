@@ -68,7 +68,7 @@ const useUseUserList = () => {
           } else if (data.filter === 'earnings') {
             newList = orderBy(list, [(user) => {
               const { isNewWeek } = GetDatesUtil(user);
-              return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.betSummary.totalEarnings ?? 0;
+              return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
             }], ['asc']);
           }
           setList(newList);

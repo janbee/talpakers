@@ -97,9 +97,9 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isNewWeek } = GetDatesUtil(user);
 
-  let totalEarnings = user.data.weeklyStatus?.betSummary.totalEarnings || 0;
-  let winnings = user.data.weeklyStatus?.betSummary.winnings || 0;
-  let bonus = user.data.weeklyStatus?.betSummary.bonus || 0;
+  let totalEarnings = user.data.weeklyStatus?.betSummary?.totalEarnings || 0;
+  let winnings = user.data.weeklyStatus?.betSummary?.winnings || 0;
+  let bonus = user.data.weeklyStatus?.betSummary?.bonus || 0;
 
 
   return (<TableCell {...omit(props, ['user'])}>
@@ -140,7 +140,7 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isNewWeek } = GetDatesUtil(user);
 
-  let totalStaked = user.data?.weeklyStatus?.highestTotalStaked ?? user.data.weeklyStatus?.betSummary.totalStaked ?? 0;
+  let totalStaked = user.data?.weeklyStatus?.highestTotalStaked ?? user.data.weeklyStatus?.betSummary?.totalStaked ?? 0;
   if (isNewWeek) {
     totalStaked = 0;
   }
@@ -161,8 +161,8 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isNewWeek } = GetDatesUtil(user);
   const bets = {
-    open: user.data.weeklyStatus?.betSummary.openBets ?? 0,
-    settled: user.data.weeklyStatus?.betSummary.settledBets ?? 0
+    open: user.data.weeklyStatus?.betSummary?.openBets ?? 0,
+    settled: user.data.weeklyStatus?.betSummary?.settledBets ?? 0
   };
   if (isNewWeek) {
     bets.open = 0;

@@ -2,10 +2,10 @@ import { FC } from 'react';
 import { Dimmer, Loader } from 'semantic-ui-react';
 import { sumBy } from 'lodash';
 import classNames from 'classnames';
-import { MoneyUtil } from '@PlayAbWeb/common/utils';
 import { UserYearlySummary, WeeklyCard, WithdrawalPopup } from '../user-details/UserDetailsUI';
 import UserSettingsComponent from '../user-settings/UserSettings';
 import useUserDetails from '../../hooks/useUserDetails';
+import { MoneyUtil } from '../../../../common/utils';
 
 const UserDetailsComponent: FC = () => {
   const { list, loading, userDetails, totalWinnings, totalWithdrawals, emails } = useUserDetails();
@@ -24,8 +24,7 @@ const UserDetailsComponent: FC = () => {
               />
             )}
           </div>
-          {emails.length + '------'}
-          {emails.length === 1 && <UserSettingsComponent userDetails={userDetails} />}
+          {emails.length === 1 && <UserSettingsComponent userDetails={userDetails[0]} />}
         </div>
         <hr />
         <div className={'flex-1 overflow-auto mt-4'}>
