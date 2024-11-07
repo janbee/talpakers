@@ -4,7 +4,7 @@ import { Popup, Progress, TableCell } from 'semantic-ui-react';
 import classNames from 'classnames';
 import { GetColorUtil, GetDatesUtil, GetUserStatusUtil, MoneyUtil } from '@PlayAbWeb/common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
-import { omit } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import dayjs from 'dayjs';
 import { getDates, isDateWithin, UserModel } from '@PlayAb/shared';
 
@@ -254,7 +254,7 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   }
 
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
-    {!!bonus && (<Popup
+    {!isEmpty(bonus) && (<Popup
       position="top center"
       trigger={<span className={'text-green-dark'}>{MoneyUtil(bonus.Amount, { minimumFractionDigits: 0 })}</span>}
       flowing

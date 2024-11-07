@@ -1,4 +1,4 @@
-import { MoneyModel } from '@PlayAbWeb/api/index';
+import { MoneyModel } from '../../../api/rxjs-client/models/custom.models';
 import { merge } from 'lodash';
 
 const MoneyUtil = (money: string | number, config?: MoneyModel) => {
@@ -19,6 +19,7 @@ const MoneyUtil = (money: string | number, config?: MoneyModel) => {
     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
   });
 
+  console.log('gaga-------------------------money------------', money);
   return formatter.format(parseFloat(money.toString()));
 };
 
