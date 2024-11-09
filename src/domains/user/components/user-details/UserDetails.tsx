@@ -10,6 +10,7 @@ import { MoneyUtil } from '../../../../common/utils';
 const UserDetailsComponent: FC = () => {
   const { list, loading, userDetails, totalWinnings, totalWithdrawals, emails } = useUserDetails();
 
+
   return (
     <div data-testid="UserDetails" className={'w-full m-4 bg-neutral-800 rounded-lg relative'}>
       <div className={'flex flex-col p-4 h-full min-w-[370px]'}>

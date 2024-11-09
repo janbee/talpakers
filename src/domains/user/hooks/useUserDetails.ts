@@ -20,7 +20,7 @@ const useUserDetails = () => {
     const emailArr = pathname.split('/').pop()?.split(',') ?? [];
 
     setLoading(true);
-    const userDetails$ = forkJoin([SharedApi.getBetSummary({ email: { $in: emailArr } }), SharedApi.getBonuses({ email: { $in: emailArr } }), SharedApi.getWithdrawals({ email: { $in: emailArr } }), SharedApi.getUser({ email: { $in: emailArr } })]).subscribe({
+    const userDetails$ = forkJoin([SharedApi.getBetSummary({ email: { $in: emailArr } }), SharedApi.getBonuses({ email: { $in: emailArr } }), SharedApi.getWithdrawals({ email: { $in: emailArr } }), SharedApi.getUsers({ email: { $in: emailArr } })]).subscribe({
       next: ([betSummaryList, bonusList, withdrawalList, userDetails]) => {
         setLoading(false);
 

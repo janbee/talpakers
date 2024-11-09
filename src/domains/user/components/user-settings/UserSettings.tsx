@@ -16,6 +16,7 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
     form
   } = useUserSettings();
 
+  console.log('gaga--------------------------userDetailsuserDetailsuserDetails-----------', userDetails);
   if (!userDetails) return null;
 
   console.log('gaga-------------------------------------UserSettingsComponent', userDetails);
