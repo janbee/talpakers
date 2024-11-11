@@ -107,6 +107,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
     bonus = 0;
   }
 
+
   return (<TableCell {...omit(props, ['user'])}>
     <div className={'week-summary-wrap flex justify-evenly'}>
         <span
