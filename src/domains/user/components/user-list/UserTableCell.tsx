@@ -101,6 +101,11 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   let winnings = user.data.weeklyStatus?.betSummary?.winnings || 0;
   let bonus = user.data.weeklyStatus?.betSummary?.bonus || 0;
 
+  if(isNewWeek) {
+    totalEarnings = 0;
+    winnings = 0;
+    bonus = 0;
+  }
 
   return (<TableCell {...omit(props, ['user'])}>
     <div className={'week-summary-wrap flex justify-evenly'}>
