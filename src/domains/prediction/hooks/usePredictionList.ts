@@ -1,7 +1,7 @@
 import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import { tap } from 'rxjs';
-import { SharedApi } from '@PlayAb/shared';
-import { PredictionModel } from '@PlayAbWeb/api/index';
+import { getDates, SharedApi } from '@PlayAb/shared';
+import { PredictionModel } from '../../../api/rxjs-client/models/custom.models';
 
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
@@ -12,7 +12,9 @@ const usePredictionList = () => {
     setLoading(true);
     setError(false);
 
-    return SharedApi.getPredictions()
+    const { today } = getDates();
+
+    return SharedApi.getPredictions({ today: { $eq: today } })
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: (list: SetStateAction<PredictionModel[]>) => {
