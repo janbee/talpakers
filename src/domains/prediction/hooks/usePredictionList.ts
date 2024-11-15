@@ -12,9 +12,7 @@ const usePredictionList = () => {
     setLoading(true);
     setError(false);
 
-    const { today } = getDates();
-
-    return SharedApi.getPredictions({ today: { $eq: today } })
+    return SharedApi.getPredictions({ $limit: 100 })
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: (list: SetStateAction<PredictionModel[]>) => {

@@ -14,9 +14,12 @@ interface UserTableCellProps extends StrictTableCellProps {
 
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const withdrawal = user.data.weeklyStatus?.withdrawal
-  const TransactionDateTime = user.data.weeklyStatus?.withdrawal?.TransactionDateTime
-  const {weekStart, weekEnd} = getDates();
+  const withdrawal = user.data.weeklyStatus?.withdrawal;
+  const TransactionDateTime = user.data.weeklyStatus?.withdrawal?.TransactionDateTime;
+  const {
+    weekStart,
+    weekEnd
+  } = getDates();
   const isThisWeek = isDateWithin(TransactionDateTime, {
     starDate: weekStart.toISOString(),
     endDate: weekEnd.toISOString()
@@ -101,7 +104,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   let winnings = user.data.weeklyStatus?.betSummary?.winnings || 0;
   let bonus = user.data.weeklyStatus?.betSummary?.bonus || 0;
 
-  if(isNewWeek) {
+  if (isNewWeek) {
     totalEarnings = 0;
     winnings = 0;
     bonus = 0;
@@ -237,7 +240,7 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
 
   const { isNewWeek } = GetDatesUtil(user);
 
-  const hasBetRestriction = isNewWeek ? null : !!user.data.weeklyStatus?.hasBetRestriction;
+  const hasBetRestriction = isNewWeek ? null : !!user.data.weeklyStatus?.hasBetRestriction || user.data.weeklyStatus?.accountAccessible === false;
 
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
     {hasBetRestriction && (
@@ -249,14 +252,26 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
   </TableCell>);
 };
 
+export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  const { isNewWeek } = GetDatesUtil(user);
+
+  const hasFailedUpdates = isNewWeek ? null : user.data.weeklyStatus?.mongoUpdateFailed === true;
+
+  return (<TableCell className={'relative'} {...omit(props, ['user'])}>
+    {hasFailedUpdates && (<span className={'text-red-dark'}>true</span>)}
+  </TableCell>);
+};
+
 export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isNewWeek } = GetDatesUtil(user);
 
   let bonus = user.data.weeklyStatus?.bonus;
 
-  if(isNewWeek) {
-    bonus = undefined
+  if (isNewWeek) {
+    bonus = undefined;
   }
 
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>

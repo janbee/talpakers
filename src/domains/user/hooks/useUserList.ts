@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { tap } from 'rxjs';
+import { forkJoin, tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import { orderBy } from 'lodash';
-import { UserDetailModel, UserStatusModel } from '@PlayAbWeb/api/index';
+import { UserStatusModel } from '@PlayAbWeb/api/index';
 import { GetDatesUtil, GetUserStatusUtil } from '@PlayAbWeb/common/utils';
 import { SharedApi, UserModel } from '@PlayAb/shared';
 
@@ -12,17 +12,29 @@ const useUseUserList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  const updateUser = (users: UserModel[], listFailedUpdate: UserModel[]) => {
+    const fails = listFailedUpdate.map(user => user.build);
+    users.forEach(user => {
+      if (fails.includes(user.build) && user.data.weeklyStatus) {
+        user.data.weeklyStatus.mongoUpdateFailed = true;
+      }
+    });
+    return users;
+  };
+
   useEffect(() => {
     setLoading(true);
     setError(false);
 
 
-    const user$ = SharedApi.getUsers()
-      .pipe(tap(() => setLoading(false)))
+    const user$ = forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })]).pipe(tap(() => setLoading(false)))
       .subscribe({
-        next: (list) => setList(list),
+        next: ([list, listFailedUpdate]) => {
+          setList(updateUser(list, listFailedUpdate));
+        },
         error: () => setError(true)
       });
+
 
     return () => {
       user$.unsubscribe();
@@ -35,12 +47,11 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    console.log('gaga------------------------asd-------------handleOrderByStatus', data);
-    console.log('gaga------------------------asd-------------handleOrderByStatus', data.filter);
-    SharedApi.getUsers()
+
+    forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
-        next: (list) => {
+        next: ([list, listFailedUpdate]) => {
           let newList: UserModel[] = list;
 
           if (data.filter === UserStatusModel.IsDone) {
@@ -71,7 +82,7 @@ const useUseUserList = () => {
               return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
             }], ['asc']);
           }
-          setList(newList);
+          setList(updateUser(newList, listFailedUpdate));
         },
         error: () => setError(true)
       });
@@ -86,8 +97,13 @@ const useUseUserList = () => {
   }, [list]);
 
   const restrictedCount = useMemo(() => {
-    return list.filter((item) => item.data.weeklyStatus?.hasBetRestriction).length;
+    return list.filter((item) => {
+      const { isNewWeek } = GetDatesUtil(item);
+      const hasBetRestriction = isNewWeek ? null : !!item.data.weeklyStatus?.hasBetRestriction || item.data.weeklyStatus?.accountAccessible === false;
+      return hasBetRestriction;
+    }).length;
   }, [list]);
+
 
   return {
     list,

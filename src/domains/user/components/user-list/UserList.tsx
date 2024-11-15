@@ -26,7 +26,7 @@ import {
   BetRestrictedCell,
   BetsCell,
   BonusCell,
-  FreeBetCell,
+  FreeBetCell, MongoFailedUpdate,
   NextWithdrawalCell,
   StatusCell,
   WeeklyProgressCell,
@@ -155,6 +155,11 @@ const UserListComponent: FC = () => {
               </TableHeaderCell>)}
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+                Mongo <br />
+                Update
+              </TableHeaderCell>
+
+              <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                 Bonus
               </TableHeaderCell>
 
@@ -215,6 +220,7 @@ const UserListComponent: FC = () => {
 
                 {!!restrictedCount && <BetRestrictedCell textAlign={'center'} user={user} />}
 
+                <MongoFailedUpdate textAlign={'center'} user={user}/>
                 <BonusCell user={user} textAlign={'center'} />
                 <FreeBetCell user={user} textAlign={'center'} />
 
