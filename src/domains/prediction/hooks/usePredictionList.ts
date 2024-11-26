@@ -1,7 +1,6 @@
 import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import { tap } from 'rxjs';
-import { getDates, SharedApi } from '@PlayAb/shared';
-import { PredictionModel } from '../../../api/rxjs-client/models/custom.models';
+import { getDates, PredictionModel, SharedApi } from '@PlayAb/shared';
 
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
