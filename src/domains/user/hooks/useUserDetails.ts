@@ -5,6 +5,7 @@ import { EarningsModel } from '../../../api/rxjs-client/models/custom.models';
 import { groupBy, sumBy } from 'lodash';
 import dayjs from 'dayjs';
 import { BetSummaryModel, BonusModel, SharedApi, UserModel, WithdrawalModel } from '@PlayAb/shared';
+import GetWeeksOfYear from '../../../common/utils/get-weeks-of-year/GetWeeksOfYear';
 
 const useUserDetails = () => {
   const { pathname } = useLocation();
@@ -22,6 +23,9 @@ const useUserDetails = () => {
     setLoading(true);
     const userDetails$ = forkJoin([SharedApi.getBetSummary({ email: { $in: emailArr } }), SharedApi.getBonuses({ email: { $in: emailArr } }), SharedApi.getWithdrawals({ email: { $in: emailArr } }), SharedApi.getUsers({ email: { $in: emailArr } })]).subscribe({
       next: ([betSummaryList, bonusList, withdrawalList, userDetails]) => {
+
+
+        console.log('gaga----betSummaryList---------------------------------', betSummaryList);
         setLoading(false);
 
         const userBonusList = getUserBonusList(bonusList);
@@ -75,14 +79,14 @@ const useUserDetails = () => {
 
 const getUserBonusList = (bonusList: BonusModel[]) => {
   return (bonusList?.filter((item) => {
-      return (item.TransactionStatus === 'Approved' && item.TransactionType === 'Bonus' && ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) && item.Amount >= 10);
-    }) ?? []);
+    return (item.TransactionStatus === 'Approved' && item.TransactionType === 'Bonus' && ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) && item.Amount >= 10);
+  }) ?? []);
 };
 
 const getUserWithdrawalList = (withdrawalList: WithdrawalModel[]) => {
   return (withdrawalList?.filter((item) => {
-      return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
-    }) ?? []);
+    return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
+  }) ?? []);
 };
 
 const getWeeksForCurrentYear = ({
@@ -97,27 +101,22 @@ const getWeeksForCurrentYear = ({
   userWithdrawalList: WithdrawalModel[];
 }) => {
   const isoWeeksNumber = dayjs().isoWeeksInYear();
-  return Array.from({ length: isoWeeksNumber }, (_, i) => i).map((weekNumber) => {
-    const year = dayjs(Date.now()).year();
-    const firstMondayOfYear = dayjs().year(year).isoWeek(0).day(1);
+  const year = dayjs(Date.now()).year();
 
-    let monday = dayjs().year(year).isoWeek(weekNumber).day(1);
+  const weeks = GetWeeksOfYear(year);
 
-    if (firstMondayOfYear.year() !== year) {
-      monday = monday.add(7, 'days');
-    }
+  return weeks.map(({
+    mondayDate,
+    sundayDate,
+    weekNumber
+  }) => {
 
+    const monday = dayjs(mondayDate);
     const mon = monday.format('MMM');
     const monNumber = monday.format('M');
 
-    const startDate = monday;
-    const endDate = monday.endOf('week');
+    const betSummary = getBetSummaryByWeek(betSummaryList, mondayDate, sundayDate, year);
 
-    const weekStart = startDate.startOf('day').toDate();
-    const weekEnd = endDate.endOf('day').toDate();
-
-
-    const betSummary = getBetSummaryByWeek(betSummaryList, weekStart, weekEnd, year);
     const {
       betSummaryByWeek,
       bonus,
@@ -126,7 +125,7 @@ const getWeeksForCurrentYear = ({
     } = betSummary;
     let { approxWinnings } = betSummary;
 
-    const bonusByWeek = getBonusByWeek(userBonusList, weekStart, weekEnd, emailArr);
+    const bonusByWeek = getBonusByWeek(userBonusList, mondayDate, sundayDate, emailArr);
     let playAbBonus = sumBy(bonusByWeek, (foundBonus) => foundBonus?.Amount ?? 0);
     if (bonusByWeek?.length !== emailArr?.length) {
       playAbBonus = bonus;
@@ -138,14 +137,14 @@ const getWeeksForCurrentYear = ({
       winnings = playAbBonus + sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalEarnings ?? 0);
     }
 
-    const withdrawalByWeek = getWithdrawalByWeek(userWithdrawalList, weekStart, weekEnd);
+    const withdrawalByWeek = getWithdrawalByWeek(userWithdrawalList, mondayDate, sundayDate);
 
     return {
       _id: `${mon}-${weekNumber}`,
       mon: monNumber + '-' + mon,
       year,
-      startDate: weekStart.toISOString(),
-      endDate: weekEnd.toISOString(),
+      startDate: mondayDate.toISOString(),
+      endDate: sundayDate.toISOString(),
       bonus: playAbBonus || bonus || 0,
       bonusDateTime: bonusByWeek?.[0]?.TransactionDateTime,
       totalStaked,
