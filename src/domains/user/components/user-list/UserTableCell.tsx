@@ -152,19 +152,25 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { weekStart } = getUTCDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
-  let totalStaked = user.data?.weeklyStatus?.highestTotalStaked ?? user.data.weeklyStatus?.betSummary?.totalStaked ?? 0;
+  const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0
+  const totalStaked = user.data.weeklyStatus?.betSummary?.totalStaked || 0
+
+  let finalTotalStaked = Math.max(highestTotalStaked, totalStaked)
+
+
+
   if (isNewWeek) {
-    totalStaked = 0;
+    finalTotalStaked = 0;
   }
   return (<TableCell {...omit(props, ['user'])}>
     <Progress
       inverted
-      success={user.data?.weeklyStatus?.done === true && totalStaked !== 0}
+      success={user.data?.weeklyStatus?.done === true && finalTotalStaked !== 0}
       precision={0}
-      value={Math.floor(totalStaked)}
+      value={Math.floor(finalTotalStaked)}
       progress={'percent'}
       total={500}
-      label={MoneyUtil(totalStaked)}
+      label={MoneyUtil(finalTotalStaked)}
     />
   </TableCell>);
 };
