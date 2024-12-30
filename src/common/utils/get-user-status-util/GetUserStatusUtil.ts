@@ -1,9 +1,9 @@
-import { UserStatusModel } from '@PlayAbWeb/api/index';
+import { UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
-import { getUTCDates, UserModel } from '@PlayAb/shared';
+import { getMTDates, UserModel } from '@PlayAb/shared';
 
 const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
-  const { weekStart } = getUTCDates();
+  const { weekStart } = getMTDates();
   const isDone = user.data?.weeklyStatus?.done === true;
   const inProgress = user.data?.weeklyStatus?.done === false;
 

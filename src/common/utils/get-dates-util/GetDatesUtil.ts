@@ -1,6 +1,11 @@
 import { UserModel } from '@PlayAb/shared';
 
 const GetDatesUtil = (user?: UserModel) => {
+
+
+
+
+
   const tz = new Date().getTimezoneOffset() * 60000;
   const today = new Date(new Date().getTime() - tz);
   today.setUTCHours(0, 0, 0, 0);

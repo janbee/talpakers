@@ -6,7 +6,7 @@ import { GetColorUtil, GetDatesUtil, GetUserStatusUtil, MoneyUtil } from '@PlayA
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { isEmpty, omit } from 'lodash';
 import dayjs from 'dayjs';
-import { getDates, getUTCDates, isDateWithin, UserModel } from '@PlayAb/shared';
+import { getDates, getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
 import * as React from 'react';
 
 interface UserTableCellProps extends StrictTableCellProps {
@@ -99,7 +99,7 @@ export const StatusCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getUTCDates();
+  const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
   let totalEarnings = user.data.weeklyStatus?.betSummary?.totalEarnings || 0;
@@ -149,7 +149,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getUTCDates();
+  const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
   const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0
@@ -177,7 +177,7 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
 
 export const BetsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getUTCDates();
+  const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
   const bets = {
     open: user.data.weeklyStatus?.betSummary?.openBets ?? 0,
@@ -248,7 +248,7 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
 export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const { weekStart } = getUTCDates();
+  const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
   const hasBetRestriction = isNewWeek ? null : !!user.data.weeklyStatus?.hasBetRestriction || user.data.weeklyStatus?.accountAccessible === false;
@@ -266,7 +266,7 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
 export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const { weekStart } = getUTCDates();
+  const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
   const hasFailedUpdates = isNewWeek ? null : user.data.weeklyStatus?.mongoUpdateFailed === true;
@@ -278,7 +278,7 @@ export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
 
 export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getUTCDates();
+  const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
   let bonus = user.data.weeklyStatus?.bonus;
