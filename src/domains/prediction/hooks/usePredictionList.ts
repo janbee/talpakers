@@ -20,7 +20,6 @@ const usePredictionList = () => {
     return SharedApi.getPredictions({
       createdAt: {
         $gte: dayStart,
-        $lt: dayEnd
       }
     })
       .pipe(tap(() => setLoading(false)))
