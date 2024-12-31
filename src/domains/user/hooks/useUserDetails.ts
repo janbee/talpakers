@@ -100,10 +100,12 @@ const getWeeksForCurrentYear = ({
   emailArr: string[];
   userWithdrawalList: WithdrawalModel[];
 }) => {
-  const isoWeeksNumber = dayjs().isoWeeksInYear();
   const year = dayjs(Date.now()).year();
 
   const weeks = GetWeeksOfYear(year);
+
+
+  console.log('gaga-------------------1--------------weeks----', weeks, year);
 
   return weeks.map(({
     mondayDate,
@@ -114,6 +116,7 @@ const getWeeksForCurrentYear = ({
     const monday = dayjs(mondayDate);
     const mon = monday.format('MMM');
     const monNumber = monday.format('M');
+    const year = monday.format('YYYY');
 
     const betSummary = getBetSummaryByWeek(betSummaryList, mondayDate, sundayDate, year);
 
@@ -141,7 +144,7 @@ const getWeeksForCurrentYear = ({
 
     return {
       _id: `${mon}-${weekNumber}`,
-      mon: monNumber + '-' + mon,
+      mon: monNumber + '-' + mon  + ' ' + year,
       year,
       startDate: mondayDate.toISOString(),
       endDate: sundayDate.toISOString(),
@@ -153,7 +156,7 @@ const getWeeksForCurrentYear = ({
       approxWinnings,
       loading: false,
       fetch: 0,
-      title: mon,
+      title: `${mon}`,
 
       emails: emailArr,
       withdrawal: withdrawalByWeek

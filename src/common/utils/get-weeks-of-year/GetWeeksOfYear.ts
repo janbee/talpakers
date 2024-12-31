@@ -15,13 +15,18 @@ const GetWeeksOfYear = (year: number): Array<{
   const firstDayOfYear = new Date(Date.UTC(year, 0, 1));
   const firstMonday = new Date(firstDayOfYear);
 
+
   // Adjust to find the first Monday of the year
   const dayOfWeek = firstMonday.getUTCDay();
   const diffToMonday = (dayOfWeek === 0 ? 6 : dayOfWeek - 1); // If it's Sunday, move to the next Monday
   firstMonday.setUTCDate(firstMonday.getUTCDate() + (dayOfWeek === 0 ? 1 : -diffToMonday));
 
+console.log('gaga-------------------------------firstMonday------',firstMonday );
   // Iterate through the year to get each Monday and Sunday
-  for (let date = new Date(firstMonday); date.getUTCFullYear() === year; date.setUTCDate(date.getUTCDate() + 7)) {
+  for (let date = new Date(firstMonday); date.getUTCFullYear() <= year; date.setUTCDate(date.getUTCDate() + 7)) {
+
+    console.log('gaga------------------------------firstDayOfYear-------',date.getUTCFullYear() );
+
     const mondayStart = new Date(date);
     mondayStart.setUTCHours(0, 0, 0, 0); // Start of the day (Monday)
 
@@ -31,6 +36,7 @@ const GetWeeksOfYear = (year: number): Array<{
 
     // Check if Sunday is still within the current year
     if (sundayEnd.getUTCFullYear() !== year) {
+      console.log('gaga-------------------1111------------------', );
       break;
     }
 
