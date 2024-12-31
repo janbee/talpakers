@@ -37,9 +37,10 @@ const PredictionListComponent: FC = () => {
               key={_id + team1Name + team2Name}
 
               className={classNames({
-                'bg-neutral-950 rounded-lg mt-3 p-3 dark:text-white border border-transparent': true,
-                'border-red-light': status === 'Lost',
-                'border-green-light': status === 'Won',
+                'bg-neutral-950 rounded-lg mt-3 p-3 dark:text-white border': true,
+                'border-red-dark': status === 'Lost',
+                'border-green-dark': status === 'Won',
+                'border-transparent': !status,
               })}>
               <div className={'flex justify-between'}>
                 <span>Game</span>

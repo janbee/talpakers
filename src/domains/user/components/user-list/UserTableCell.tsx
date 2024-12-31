@@ -1,13 +1,13 @@
 import { UserStatusModel } from '@PlayAbWeb/api/index';
+import * as React from 'react';
 import { FC } from 'react';
 import { Popup, Progress, TableCell } from 'semantic-ui-react';
 import classNames from 'classnames';
-import { GetColorUtil, GetDatesUtil, GetUserStatusUtil, MoneyUtil } from '@PlayAbWeb/common/utils';
+import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '@PlayAbWeb/common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { isEmpty, omit } from 'lodash';
 import dayjs from 'dayjs';
-import { getDates, getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
-import * as React from 'react';
+import { getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserModel;
@@ -20,7 +20,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const {
     weekStart,
     weekEnd
-  } = getDates();
+  } = getMTDates();
   const isThisWeek = isDateWithin(TransactionDateTime, {
     starDate: weekStart.toISOString(),
     endDate: weekEnd.toISOString()
@@ -152,11 +152,10 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
-  const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0
-  const totalStaked = user.data.weeklyStatus?.betSummary?.totalStaked || 0
+  const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0;
+  const totalStaked = user.data.weeklyStatus?.betSummary?.totalStaked || 0;
 
-  let finalTotalStaked = Math.max(highestTotalStaked, totalStaked)
-
+  let finalTotalStaked = Math.max(highestTotalStaked, totalStaked);
 
 
   if (isNewWeek) {
@@ -268,6 +267,10 @@ export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
 
   const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+
+  if (user.build === 'BAJO') {
+    console.log('gaga------------------1111-------------------', user?.data?.weeklyStatus?.startDate, weekStart.toISOString());
+  }
 
   const hasFailedUpdates = isNewWeek ? null : user.data.weeklyStatus?.mongoUpdateFailed === true;
 

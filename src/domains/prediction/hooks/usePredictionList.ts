@@ -1,6 +1,6 @@
 import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import { tap } from 'rxjs';
-import { getDates, PredictionModel, SharedApi } from '@PlayAb/shared';
+import { getMTDates, PredictionModel, SharedApi } from '@PlayAb/shared';
 
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
@@ -11,7 +11,18 @@ const usePredictionList = () => {
     setLoading(true);
     setError(false);
 
-    return SharedApi.getPredictions({ $limit: 100 })
+
+    const {
+      dayStart,
+      dayEnd
+    } = getMTDates();
+
+    return SharedApi.getPredictions({
+      createdAt: {
+        $gte: dayStart,
+        $lt: dayEnd
+      }
+    })
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: (list: SetStateAction<PredictionModel[]>) => {

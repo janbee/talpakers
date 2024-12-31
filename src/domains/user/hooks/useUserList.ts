@@ -16,6 +16,7 @@ const useUseUserList = () => {
     const fails = listFailedUpdate.map(user => user.build);
     users.forEach(user => {
       if (fails.includes(user.build) && user.data.weeklyStatus) {
+        console.log('gaga---------------------------123123123----------', );
         user.data.weeklyStatus.mongoUpdateFailed = true;
       }
     });
@@ -99,8 +100,7 @@ const useUseUserList = () => {
   const restrictedCount = useMemo(() => {
     return list.filter((item) => {
       const { isNewWeek } = GetDatesUtil(item);
-      const hasBetRestriction = isNewWeek ? null : !!item.data.weeklyStatus?.hasBetRestriction || item.data.weeklyStatus?.accountAccessible === false;
-      return hasBetRestriction;
+      return isNewWeek ? null : !!item.data.weeklyStatus?.hasBetRestriction || item.data.weeklyStatus?.accountAccessible === false;
     }).length;
   }, [list]);
 
