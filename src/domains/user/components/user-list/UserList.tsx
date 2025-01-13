@@ -26,7 +26,8 @@ import {
   BetRestrictedCell,
   BetsCell,
   BonusCell,
-  FreeBetCell, MongoFailedUpdate,
+  FreeBetCell, LifetimeLoss,
+  MongoFailedUpdate,
   NextWithdrawalCell,
   StatusCell,
   WeeklyProgressCell,
@@ -42,7 +43,9 @@ const UserListComponent: FC = () => {
     loading,
     handleOrderByStatus,
     statusCount,
-    restrictedCount
+    restrictedCount,
+    hasFreeBet,
+    hasMongoUpdate
   } = useUserList();
   const navigate = useNavigate();
   const location = useLocation();
@@ -154,19 +157,30 @@ const UserListComponent: FC = () => {
                 Restricted
               </TableHeaderCell>)}
 
-              <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                Mongo <br />
-                Update
-              </TableHeaderCell>
+              {hasMongoUpdate && (
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+                  Mongo <br />
+                  Update
+                </TableHeaderCell>
+              )}
+
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                 Bonus
               </TableHeaderCell>
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                Free <br />
-                Bet
+                Lifetime <br />
+                Update
               </TableHeaderCell>
+
+              {hasFreeBet && (
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+                  Free <br />
+                  Bet
+                </TableHeaderCell>
+              )}
+
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[95px]'}>
                 Active <br />
                 Predictions
@@ -216,21 +230,30 @@ const UserListComponent: FC = () => {
                 <WeeklyProgressCell className={'md:w-full'} textAlign={'center'} user={user} />
 
                 <BetsCell className={'md:w-[60px]'} user={user} />
-                <NextWithdrawalCell className={'md:w-[100px]'} user={user} />
+                <NextWithdrawalCell className={'md:hidden'} user={user} />
 
-                {!!restrictedCount && <BetRestrictedCell textAlign={'center'} user={user} />}
+                {!!restrictedCount && <BetRestrictedCell className={'md:hidden'} textAlign={'center'} user={user} />}
 
-                <MongoFailedUpdate textAlign={'center'} user={user}/>
-                <BonusCell user={user} textAlign={'center'} />
-                <FreeBetCell user={user} textAlign={'center'} />
+                {hasMongoUpdate && (
+                  <MongoFailedUpdate className={'md:hidden'} textAlign={'center'} user={user}/>
+                )}
 
-                <TableCell collapsing textAlign={'center'}>
+
+                <BonusCell className={'md:hidden'} user={user} textAlign={'center'} />
+
+                <LifetimeLoss className={'md:hidden'} user={user} textAlign={'center'} />
+
+                {hasFreeBet && (
+                  <FreeBetCell className={'md:hidden'} user={user} textAlign={'center'} />
+                )}
+
+                <TableCell className={'md:hidden'} collapsing textAlign={'center'}>
                   {/*Predictions*/}
                   {user.data.weeklyStatus?.predictions ?? 0}
                 </TableCell>
                 <TableCell
                   className={classNames({
-                    'md:!min-w-[20%]': true,
+                    'md:hidden': true,
                     'text-green-dark': !!user.data?.settings?.electronAutoLogin,
                     'text-red-dark': !user.data?.settings?.electronAutoLogin
                   })}

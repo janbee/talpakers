@@ -16,7 +16,6 @@ const useUseUserList = () => {
     const fails = listFailedUpdate.map(user => user.build);
     users.forEach(user => {
       if (fails.includes(user.build) && user.data.weeklyStatus) {
-        console.log('gaga---------------------------123123123----------', );
         user.data.weeklyStatus.mongoUpdateFailed = true;
       }
     });
@@ -80,6 +79,7 @@ const useUseUserList = () => {
           } else if (data.filter === 'earnings') {
             newList = orderBy(list, [(user) => {
               const { isNewWeek } = GetDatesUtil(user);
+              console.log('gaga-------------------------------------', user.data?.weeklyStatus?.betSummary?.totalEarnings, user.build);
               return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
             }], ['asc']);
           }
@@ -104,6 +104,13 @@ const useUseUserList = () => {
     }).length;
   }, [list]);
 
+  const hasFreeBet = useMemo(() => {
+    return list.filter((item) => item.data.weeklyStatus?.freeBets.length).length !== 0
+  }, [list])
+
+  const hasMongoUpdate = useMemo(() => {
+    return list.filter((item) => item.data.weeklyStatus?.mongoUpdateFailed).length !== 0
+  }, [list])
 
   return {
     list,
@@ -111,7 +118,9 @@ const useUseUserList = () => {
     error,
     handleOrderByStatus,
     statusCount,
-    restrictedCount
+    restrictedCount,
+    hasFreeBet,
+    hasMongoUpdate
   };
 };
 

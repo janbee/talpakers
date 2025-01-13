@@ -267,11 +267,6 @@ export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
 
   const { weekStart } = getMTDates();
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
-
-  if (user.build === 'BAJO') {
-    console.log('gaga------------------1111-------------------', user?.data?.weeklyStatus?.startDate, weekStart.toISOString());
-  }
-
   const hasFailedUpdates = isNewWeek ? null : user.data.weeklyStatus?.mongoUpdateFailed === true;
 
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
@@ -302,6 +297,15 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
         <span>{dayjs(bonus.TransactionDateTime).fromNow()}</span>
       </Popup.Header>
     </Popup>)}
+  </TableCell>);
+};
+
+export const LifetimeLoss: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  const lifeTimeLoss = user.data.userSession?.GPD?.lifetimeWinAndLoss || '0.00'
+  return (<TableCell className={'relative'} {...omit(props, ['user'])}>
+    <span className={'text-red-dark'}>{MoneyUtil(lifeTimeLoss)}</span>
   </TableCell>);
 };
 

@@ -164,9 +164,9 @@ const getWeeksForCurrentYear = ({
   });
 };
 
-const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number) => {
+const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number | string) => {
   const betSummaryByWeek = betSummaryList?.filter((item) => {
-    return (item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() && item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() && item.year === year);
+    return (item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() && item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() && item.year.toString() === year.toString());
   }) ?? [];
 
   const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.bonus ?? 0);
