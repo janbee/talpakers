@@ -222,7 +222,7 @@ const UserListComponent: FC = () => {
                 <AppBuildCell className={'md:!min-w-[33%] md:!text-center'} user={user} />
                 <StatusCell className={'md:!min-w-[33%] md:!text-right'} textAlign={'center'} user={user} />
 
-                <TableCell className={'md:!min-w-[20%]'} collapsing>
+                <TableCell className={'md:hidden'} collapsing>
                   {user.data?.version}
                 </TableCell>
                 <WeeklySummaryCell className={'md:flex-1'} textAlign={'center'} user={user} />
