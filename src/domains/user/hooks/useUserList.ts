@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { forkJoin, tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import { orderBy } from 'lodash';
-import { UserStatusModel } from '@PlayAbWeb/api/index';
-import { GetDatesUtil, GetUserStatusUtil } from '@PlayAbWeb/common/utils';
-import { SharedApi, UserModel } from '@PlayAb/shared';
+import { UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
+import { GetDatesUtil, GetUserStatusUtil } from '../../../common/utils';
+import { MongodbCollection, SharedApi, UserModel } from '@PlayAb/shared';
 
 const useUseUserList = () => {
   const [list, setList] = useState<UserModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const watchedList = useRef<UserModel[]>([]);
 
   const updateUser = (users: UserModel[], listFailedUpdate: UserModel[]) => {
     const fails = listFailedUpdate.map(user => user.build);
@@ -22,15 +23,33 @@ const useUseUserList = () => {
     return users;
   };
 
+  const userWatcher = async () => {
+
+    const users = SharedApi.mongoService.collection(MongodbCollection.User);
+
+    for await (const change of users.watch()) {
+      const update = (change as { fullDocument: UserModel }).fullDocument;
+      console.log('gaga--------------------change-----------------', change);
+      const updatedList = watchedList.current?.map(item => item.build === update.build ? { ...item, ...update } : item);
+      const newList = getSort(updatedList, { filter: UserStatusModel.InProgress });
+      setList(newList);
+      watchedList.current = newList;
+
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
     setError(false);
-
+    userWatcher().finally();
 
     const user$ = forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })]).pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
-          setList(updateUser(list, listFailedUpdate));
+          const newList = getSort(list, { filter: UserStatusModel.InProgress });
+          watchedList.current = newList;
+          setList(updateUser(newList, listFailedUpdate));
+
         },
         error: () => setError(true)
       });
@@ -40,6 +59,42 @@ const useUseUserList = () => {
       user$.unsubscribe();
     };
   }, []);
+
+  const getSort = (list: UserModel[], data: ButtonProps) => {
+    let newList: UserModel[] = list;
+
+    if (data.filter === UserStatusModel.IsDone) {
+      newList = orderBy(list, [(user) => {
+        const userStatus = GetUserStatusUtil(user);
+        return userStatus === UserStatusModel.IsDone;
+      }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
+    } else if (data.filter === UserStatusModel.InProgress) {
+      newList = orderBy(list, [(user) => {
+        const userStatus = GetUserStatusUtil(user);
+        return userStatus === UserStatusModel.InProgress;
+      }, 'data.weeklyStatus.betSummary.betSummary.totalStaked'], ['desc', 'desc']);
+    } else if (data.filter === UserStatusModel.IsWaiting) {
+      newList = orderBy(list, [(user) => {
+        const userStatus = GetUserStatusUtil(user);
+        return userStatus === UserStatusModel.IsWaiting;
+      }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
+    } else if (data.filter === 'nextWithdrawal') {
+      newList = orderBy(list, [(user) => {
+        const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
+        const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
+        const cashout = user.data.userSession?.cashout ?? 0;
+        return (cashout / fixedAmount) * 30;
+      }], ['desc']);
+    } else if (data.filter === 'earnings') {
+      newList = orderBy(list, [(user) => {
+        const { isNewWeek } = GetDatesUtil(user);
+        console.log('gaga-------------------------------------', user.data?.weeklyStatus?.betSummary?.totalEarnings, user.build);
+        return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
+      }], ['asc']);
+    }
+
+    return newList;
+  };
 
   const handleOrderByStatus = useCallback((event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
     event.preventDefault();
@@ -52,37 +107,7 @@ const useUseUserList = () => {
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
-          let newList: UserModel[] = list;
-
-          if (data.filter === UserStatusModel.IsDone) {
-            newList = orderBy(list, [(user) => {
-              const userStatus = GetUserStatusUtil(user);
-              return userStatus === UserStatusModel.IsDone;
-            }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
-          } else if (data.filter === UserStatusModel.InProgress) {
-            newList = orderBy(list, [(user) => {
-              const userStatus = GetUserStatusUtil(user);
-              return userStatus === UserStatusModel.InProgress;
-            }, 'data.weeklyStatus.betSummary.betSummary.totalStaked'], ['desc', 'desc']);
-          } else if (data.filter === UserStatusModel.IsWaiting) {
-            newList = orderBy(list, [(user) => {
-              const userStatus = GetUserStatusUtil(user);
-              return userStatus === UserStatusModel.IsWaiting;
-            }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
-          } else if (data.filter === 'nextWithdrawal') {
-            newList = orderBy(list, [(user) => {
-              const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
-              const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
-              const cashout = user.data.userSession?.cashout ?? 0;
-              return (cashout / fixedAmount) * 30;
-            }], ['desc']);
-          } else if (data.filter === 'earnings') {
-            newList = orderBy(list, [(user) => {
-              const { isNewWeek } = GetDatesUtil(user);
-              console.log('gaga-------------------------------------', user.data?.weeklyStatus?.betSummary?.totalEarnings, user.build);
-              return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
-            }], ['asc']);
-          }
+          const newList = getSort(list, data);
           setList(updateUser(newList, listFailedUpdate));
         },
         error: () => setError(true)
@@ -105,12 +130,12 @@ const useUseUserList = () => {
   }, [list]);
 
   const hasFreeBet = useMemo(() => {
-    return list.filter((item) => item.data.weeklyStatus?.freeBets.length).length !== 0
-  }, [list])
+    return list.filter((item) => item.data.weeklyStatus?.freeBets.length).length !== 0;
+  }, [list]);
 
   const hasMongoUpdate = useMemo(() => {
-    return list.filter((item) => item.data.weeklyStatus?.mongoUpdateFailed).length !== 0
-  }, [list])
+    return list.filter((item) => item.data.weeklyStatus?.mongoUpdateFailed).length !== 0;
+  }, [list]);
 
   return {
     list,
