@@ -41,7 +41,6 @@ const useUseUserList = () => {
   useEffect(() => {
     setLoading(true);
     setError(false);
-    userWatcher().finally();
 
     const user$ = forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })]).pipe(tap(() => setLoading(false)))
       .subscribe({
