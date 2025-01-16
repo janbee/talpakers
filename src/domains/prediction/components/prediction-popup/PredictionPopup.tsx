@@ -15,7 +15,7 @@ const PredictionPopupComponent: FC = () => {
       className={'h-[calc(100vh-70px)] !p-4'}
       trigger={<Icon circular inverted className={'cursor-pointer !text-xl'} name="magic" />}
     >
-      <div className={'w-[500px] h-full'}>
+      <div className={'w-[320px] h-full'}>
         <PredictionList />
       </div>
     </Popup>);

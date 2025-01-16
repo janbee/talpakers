@@ -11,7 +11,6 @@ const usePredictionList = () => {
     setLoading(true);
     setError(false);
 
-
     const {
       dayStart,
       dayEnd
