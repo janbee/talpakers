@@ -34,7 +34,7 @@ import {
   WeeklySummaryCell
 } from './UserTableCell';
 import useUserList from '../../hooks/useUserList';
-import { UserStatusModel } from '../../../../api/rxjs-client/models/custom.models';
+import { UserColumnSortModel, UserStatusModel } from '../../../../api/rxjs-client/models/custom.models';
 import { UserModel } from '@PlayAb/shared';
 
 const UserListComponent: FC = () => {
@@ -131,15 +131,21 @@ const UserListComponent: FC = () => {
                   className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
                   inverted
                   onClick={handleOrderByStatus}
-                  filter={'earnings'}
+                  filter={UserColumnSortModel.Earnings}
                 />
               </TableHeaderCell>
               <TableHeaderCell textAlign={'center'} className={'min-w-[74px]'}>
                 Weekly <br />
                 Progress
               </TableHeaderCell>
-              <TableHeaderCell collapsing className={'min-w-[60px]'}>
+              <TableHeaderCell collapsing className={'min-w-[60px] relative'}>
                 Bets
+                <Button
+                  className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
+                  inverted
+                  onClick={handleOrderByStatus}
+                  filter={UserColumnSortModel.OpenBets}
+                />
               </TableHeaderCell>
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px] relative'}>
                 Next <br />
@@ -148,7 +154,7 @@ const UserListComponent: FC = () => {
                   className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
                   inverted
                   onClick={handleOrderByStatus}
-                  filter={'nextWithdrawal'}
+                  filter={UserColumnSortModel.NextWithdrawal}
                 />
               </TableHeaderCell>
 
@@ -170,8 +176,8 @@ const UserListComponent: FC = () => {
               </TableHeaderCell>
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                Lifetime <br />
-                Update
+                Total <br />
+                Loss
               </TableHeaderCell>
 
               {hasFreeBet && (

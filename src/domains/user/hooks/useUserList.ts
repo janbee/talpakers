@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { forkJoin, tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import { orderBy } from 'lodash';
-import { UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
+import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { GetDatesUtil, GetUserStatusUtil } from '../../../common/utils';
 import { MongodbCollection, SharedApi, UserModel } from '@PlayAb/shared';
 
@@ -77,21 +77,26 @@ const useUseUserList = () => {
         const userStatus = GetUserStatusUtil(user);
         return userStatus === UserStatusModel.IsWaiting;
       }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
-    } else if (data.filter === 'nextWithdrawal') {
+    } else if (data.filter === UserColumnSortModel.NextWithdrawal) {
       newList = orderBy(list, [(user) => {
         const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
         const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
         const cashout = user.data.userSession?.cashout ?? 0;
         return (cashout / fixedAmount) * 30;
       }], ['desc']);
-    } else if (data.filter === 'earnings') {
+    } else if (data.filter === UserColumnSortModel.Earnings) {
       newList = orderBy(list, [(user) => {
         const { isNewWeek } = GetDatesUtil(user);
-        console.log('gaga-------------------------------------', user.data?.weeklyStatus?.betSummary?.totalEarnings, user.build);
         return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
       }], ['asc']);
+    } else if (data.filter === UserColumnSortModel.OpenBets) {
+      newList = orderBy(list, [(user) => {
+        const { isNewWeek } = GetDatesUtil(user);
+        return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.openBets ?? 0;
+      }], ['desc']);
     }
 
+    console.log('data.filter-------------------------------------', data.filter);
     return newList;
   };
 
