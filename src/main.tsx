@@ -10,6 +10,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import utc from 'dayjs/plugin/utc';
 import duration from 'dayjs/plugin/duration';
+import timezone from 'dayjs/plugin/timezone';
 import App from './App';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -21,5 +22,6 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(utc);
 dayjs.extend(duration);
+dayjs.extend(timezone);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(<App />);

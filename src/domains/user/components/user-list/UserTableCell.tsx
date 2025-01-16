@@ -7,7 +7,7 @@ import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '@PlayAbWeb/common/ut
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { isEmpty, omit } from 'lodash';
 import dayjs from 'dayjs';
-import { getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
+import { convertToMT, getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserModel;
@@ -333,8 +333,20 @@ export const FreeBetCell: FC<UserTableCellProps> = (props) => {
 export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const lastUpdate = dayjs(user.updatedAt ?? user.createdAt ?? new Date());
-  const minutesPassed = dayjs.duration(-lastUpdate.diff(Date.now())).asMinutes();
+
+  /*
+  *
+  *
+gaga------------------------date------------- 2025-01-16T07:12:03.377Z
+*/
+
+  const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date()
+  const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
+  const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
+
+  if(user.build === 'SHAM') {
+    console.log('gaga-------------------------------user.updatedAt------', user.updatedAt?.toISOString(), lastUpdate.toISOString(), new Date().toISOString());
+  }
 
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
   let hasBetRestriction = false;
@@ -367,6 +379,6 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
             </span>
       </Popup.Header>))}
     </Popup>
-    <span style={{ color: bgColor }}>{dayjs(lastUpdate).fromNow(true)}</span>
+    <span style={{ color: bgColor }}>{getMTDates().fromNow(lastUpdate)} </span>
   </TableCell>);
 };

@@ -42,7 +42,7 @@ const PredictionListComponent: FC = () => {
             'border-green-dark': status === 'Won',
             'border-transparent': !status
           })}>
-          <div className={'flex justify-between mb-3 items-center'}>
+          <div className={'flex justify-between items-center'}>
             <span className={'text-xl font-bold'}>{game}({winningPercentage}%)</span>
 
             <span>
@@ -50,6 +50,11 @@ const PredictionListComponent: FC = () => {
                     .utc()
                     .fromNow()}
                 </span>
+          </div>
+          <div className={'flex justify-between mb-2 items-center'}>
+            <span className={'text-sm font-bold'}>{_id}</span>
+
+
           </div>
           <div className={'flex flex-1 flex-row'}>
             <span
