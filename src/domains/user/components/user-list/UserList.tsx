@@ -195,8 +195,14 @@ const UserListComponent: FC = () => {
                 Auto <br />
                 Login
               </TableHeaderCell>
-              <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px]'}>
+              <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px] relative'}>
                 Active
+                <Button
+                  className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
+                  inverted
+                  onClick={handleOrderByStatus}
+                  filter={UserColumnSortModel.Active}
+                />
               </TableHeaderCell>
             </TableRow>
           </TableHeader>

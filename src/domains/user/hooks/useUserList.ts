@@ -94,6 +94,10 @@ const useUseUserList = () => {
         const { isNewWeek } = GetDatesUtil(user);
         return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.openBets ?? 0;
       }], ['desc']);
+    } else if (data.filter === UserColumnSortModel.Active) {
+      newList = orderBy(list, [(user) => {
+        return user.updatedAt;
+      }], ['desc']);
     }
 
     console.log('data.filter-------------------------------------', data.filter);
