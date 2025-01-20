@@ -8,7 +8,8 @@ const PredictionListComponent: FC = () => {
   const {
     list,
     reload,
-    loading
+    loading,
+    status
   } = usePredictionList();
   console.log('gaga-------------------------------------PredictionListComponent render');
   return (<div data-testid="PredictionList" className={'flex flex-col h-full'}>
@@ -17,8 +18,12 @@ const PredictionListComponent: FC = () => {
       <Icon circular inverted className={'cursor-pointer !text-xl !mt-[-7px]'} name="refresh" onClick={reload} />
     </div>
     <hr />
-
-    <div className={'overflow-auto flex-1 mt-2'}>
+    <div className={'flex justify-between mt-2'}>
+      <span className={'text-green-dark'}>W (#{status.wins})</span>
+      <span className={'text-purple-dark text-center'}>P (#{status.placed})</span>
+      <span className={'text-red-dark'}>L (#{status.losses})</span>
+    </div>
+    <div className={'overflow-auto flex-1 '}>
       {list.map((item) => {
         const {
           _id,
@@ -40,6 +45,7 @@ const PredictionListComponent: FC = () => {
             'bg-neutral-950 rounded-lg mt-3 p-3 dark:text-white border': true,
             'border-red-dark': status === 'Lost',
             'border-green-dark': status === 'Won',
+            'border-purple-dark': status === 'Placed',
             'border-transparent': !status
           })}>
           <div className={'flex justify-between items-center'}>

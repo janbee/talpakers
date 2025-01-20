@@ -1,4 +1,4 @@
-import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { tap } from 'rxjs';
 import { getMTDates, PredictionModel, SharedApi } from '@PlayAb/shared';
 
@@ -37,11 +37,31 @@ const usePredictionList = () => {
     };
   }, [reload]);
 
+  const status = useMemo(() => {
+    let wins = 0;
+    let losses = 0;
+    let placed = 0;
+    list.forEach(item => {
+      if(item.status === 'Won'){
+        wins++
+      }else if (item.status === 'Placed'){
+        placed++
+      }else if (item.status === 'Lost'){
+        losses++
+      }
+    })
+
+    return {
+      wins, losses, placed
+    }
+  }, [list])
+
   return {
     list,
     loading,
     error,
-    reload
+    reload,
+    status
   };
 };
 

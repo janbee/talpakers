@@ -330,15 +330,29 @@ export const FreeBetCell: FC<UserTableCellProps> = (props) => {
   </TableCell>);
 };
 
-export const ActiveCell: FC<UserTableCellProps> = (props) => {
+export const LastLoginCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
 
-  /*
-  *
-  *
-gaga------------------------date------------- 2025-01-16T07:12:03.377Z
-*/
+  const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || new Date())
+  const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
+  const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
+
+  if(user.build === 'SHAM') {
+    console.log('gaga-------------------------------user.updatedAt------', user.updatedAt?.toISOString(), lastUpdate.toISOString(), new Date().toISOString());
+  }
+
+  const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
+
+
+
+  return (<TableCell className={'relative'} {...omit(props, ['user'])}>
+    <span style={{ color: bgColor }}>{getMTDates().fromNow(lastUpdate)} </span>
+  </TableCell>);
+};
+
+export const ActiveCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
 
   const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date()
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');

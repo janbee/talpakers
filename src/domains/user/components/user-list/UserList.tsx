@@ -26,7 +26,8 @@ import {
   BetRestrictedCell,
   BetsCell,
   BonusCell,
-  FreeBetCell, LifetimeLoss,
+  FreeBetCell, LastLoginCell,
+  LifetimeLoss,
   MongoFailedUpdate,
   NextWithdrawalCell,
   StatusCell,
@@ -195,6 +196,10 @@ const UserListComponent: FC = () => {
                 Auto <br />
                 Login
               </TableHeaderCell>
+              {/*<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px]'}>
+                Last
+                Login
+              </TableHeaderCell>*/}
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px] relative'}>
                 Active
                 <Button
@@ -275,6 +280,7 @@ const UserListComponent: FC = () => {
                   {`${!!user.data?.settings?.electronAutoLogin}`}
                 </TableCell>
 
+                {/*<LastLoginCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />*/}
                 <ActiveCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />
               </TableRow>);
             })}
