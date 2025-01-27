@@ -7,7 +7,7 @@ import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '@PlayAbWeb/common/ut
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { isEmpty, omit } from 'lodash';
 import dayjs from 'dayjs';
-import { convertToMT, getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
+import { getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserModel;
@@ -47,22 +47,22 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
       >
         <Popup.Header>
           <div className={'withdrawal-header'}>
-                  <span>
-                    Withdrawal (
-                    <span
-                      className={classNames({
-                        'text-yellow-light': status.Pending,
-                        'text-green-light': status.Approved,
-                        'text-blue-light': status.Processing
-                      })}
-                    >
-                      {user.data.weeklyStatus?.withdrawal?.TransactionStatus}
-                    </span>
-                    )
-                  </span>
+            <span>
+              Withdrawal (
+              <span
+                className={classNames({
+                  'text-yellow-light': status.Pending,
+                  'text-green-light': status.Approved,
+                  'text-blue-light': status.Processing
+                })}
+              >
+                {user.data.weeklyStatus?.withdrawal?.TransactionStatus}
+              </span>
+              )
+            </span>
             <span className={`transaction-wrap`}>
-                    {` ${user.data.weeklyStatus?.withdrawal?.TransactionDateTime && dayjs(user.data.weeklyStatus.withdrawal.TransactionDateTime).fromNow()}`}
-                  </span>
+              {` ${user.data.weeklyStatus?.withdrawal?.TransactionDateTime && dayjs(user.data.weeklyStatus.withdrawal.TransactionDateTime).fromNow()}`}
+            </span>
           </div>
         </Popup.Header>
         <Popup.Content>
@@ -303,7 +303,7 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
 export const LifetimeLoss: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const lifeTimeLoss = user.data.userSession?.GPD?.lifetimeWinAndLoss || '0.00'
+  const lifeTimeLoss = user.data.userSession?.GPD?.lifetimeWinAndLoss || '0.00';
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
     <span className={'text-red-dark'}>{MoneyUtil(lifeTimeLoss)}</span>
   </TableCell>);
@@ -334,16 +334,15 @@ export const LastLoginCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
 
-  const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || new Date())
+  const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || new Date());
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
 
-  if(user.build === 'SHAM') {
+  if (user.build === 'SHAM') {
     console.log('gaga-------------------------------user.updatedAt------', user.updatedAt?.toISOString(), lastUpdate.toISOString(), new Date().toISOString());
   }
 
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
-
 
 
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
@@ -354,11 +353,11 @@ export const LastLoginCell: FC<UserTableCellProps> = (props) => {
 export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date()
+  const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date();
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
 
-  if(user.build === 'SHAM') {
+  if (user.build === 'SHAM') {
     console.log('gaga-------------------------------user.updatedAt------', user.updatedAt?.toISOString(), lastUpdate.toISOString(), new Date().toISOString());
   }
 
