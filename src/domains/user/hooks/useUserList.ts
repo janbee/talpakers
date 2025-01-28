@@ -138,7 +138,7 @@ const useUseUserList = () => {
   }, [list]);
 
   const hasFreeBet = useMemo(() => {
-    return list.filter((item) => item.data.weeklyStatus?.freeBets.length).length !== 0;
+    return list.filter((item) => item.data.weeklyStatus?.freeBets?.length || 0).length !== 0;
   }, [list]);
 
   const hasMongoUpdate = useMemo(() => {
