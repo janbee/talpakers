@@ -2,18 +2,28 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 
 jobs:
   GH-DEPLOY:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy with gh-pages
-        run: |
-          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npm run deploy -- -u "github-actions-bot <support+actions@github.com>"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+      - name: Upload build output/Artifacts
+        uses: actions/upload-pages-artifacts@v3
+        with:
+          name: "ghp-react-build"
+          path: dist
+
+      - name: Deploy to gh-pages
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: "ghp-react-build"
