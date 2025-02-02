@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import UserSettings from './UserSettings';
-import { UserDetailModel } from '@api/index';
+import { UserDetailModel } from '@PlayAbWeb/api/index';
 
 const userDetails = [
   {

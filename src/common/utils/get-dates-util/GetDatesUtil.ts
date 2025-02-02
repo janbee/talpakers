@@ -1,6 +1,11 @@
-import { UserDetailModel } from '@api/index';
+import { UserModel } from '@PlayAb/shared';
 
-const GetDatesUtil = (user?: UserDetailModel) => {
+const GetDatesUtil = (user?: UserModel) => {
+
+
+
+
+
   const tz = new Date().getTimezoneOffset() * 60000;
   const today = new Date(new Date().getTime() - tz);
   today.setUTCHours(0, 0, 0, 0);
@@ -21,13 +26,13 @@ const GetDatesUtil = (user?: UserDetailModel) => {
   const weekEnd = new Date(forWeekEnd);
   weekEnd.setUTCHours(23, 59, 59, 999);
 
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weekStatus?.startDate;
+  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
 
   return {
     today,
     weekStart,
     weekEnd,
-    isNewWeek,
+    isNewWeek
   };
 };
 

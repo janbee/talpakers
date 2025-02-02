@@ -1,4 +1,4 @@
-import { MoneyModel } from '@api/index';
+import { MoneyModel } from '../../../api/rxjs-client/models/custom.models';
 import { merge } from 'lodash';
 
 const MoneyUtil = (money: string | number, config?: MoneyModel) => {

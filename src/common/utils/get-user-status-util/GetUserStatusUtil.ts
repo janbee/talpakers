@@ -1,11 +1,11 @@
-import { UserDetailModel, UserStatusModel } from '@api/index';
-import { GetDatesUtil } from '@common/utils';
+import { UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
+import { getMTDates, UserModel } from '@PlayAb/shared';
 
-const GetUserStatusUtilComponent = (user: UserDetailModel): UserStatusModel => {
-  const { weekStart } = GetDatesUtil();
-  const isDone = user.data?.weekStatus?.done === true;
-  const inProgress = user.data?.weekStatus?.done === false;
+const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
+  const { weekStart } = getMTDates();
+  const isDone = user.data?.weeklyStatus?.done === true;
+  const inProgress = user.data?.weeklyStatus?.done === false;
 
   const lastUpdate = dayjs(user.updatedAt ?? user.createdAt ?? new Date());
   const minutesPassed = dayjs.duration(-lastUpdate.diff(Date.now())).asMinutes();
@@ -16,8 +16,8 @@ const GetUserStatusUtilComponent = (user: UserDetailModel): UserStatusModel => {
     isIdle = true;
   }
 
-  const waiting = weekStart.toISOString() !== user.data?.weekStatus?.startDate;
-  const isWaiting = waiting || isIdle || user.data?.weekStatus?.done === undefined;
+  const waiting = weekStart.toISOString() !== user.data?.weeklyStatus?.startDate;
+  const isWaiting = waiting || isIdle || user.data?.weeklyStatus?.done === undefined;
 
   if (isWaiting) {
     return UserStatusModel.IsWaiting;

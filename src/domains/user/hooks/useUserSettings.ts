@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { API, UserDetailModel } from '@api/index';
 import { mergeMap } from 'rxjs';
 import { set } from 'lodash';
+import { SharedApi, UserModel } from '@PlayAb/shared';
+
+interface FormData {
+  entries(): IterableIterator<[string, FormDataEntryValue]>;
+}
 
 const useUseUserSettings = () => {
   const [active, setActive] = useState(false);
@@ -40,9 +44,12 @@ const useUseUserSettings = () => {
 
       formData.delete('password');
 
-      const userDetails: Partial<UserDetailModel> = {
+      const userDetails: Partial<UserModel> = {
         _id: email,
       };
+
+
+      // @ts-expect-error - yes
       for (const [key, val] of formData.entries()) {
         set(userDetails, key, val);
       }
@@ -54,12 +61,12 @@ const useUseUserSettings = () => {
 
       setLoading(true);
       setError('');
-      API.$RealmDB
+      SharedApi.mongoService
         .login(email, pword)
         .pipe(
           mergeMap(() => {
             console.log('gaga---------------------------------userDetails----', userDetails);
-            return API.upsertUserData(userDetails as UserDetailModel);
+            return SharedApi.upsertUserData(userDetails as UserModel);
           })
         )
         .subscribe({

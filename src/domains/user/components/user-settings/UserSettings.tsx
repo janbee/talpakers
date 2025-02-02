@@ -1,23 +1,26 @@
 import { ChangeEvent, FC } from 'react';
 import { Button, Dimmer, Form, Icon, Input, Message, MessageHeader } from 'semantic-ui-react';
-import { UserDetailModel } from '@api/index';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import useUserSettings from '../../hooks/useUserSettings';
 import DatePicker from 'react-datepicker';
+import { UserModel } from '@PlayAb/shared';
 
 interface UserSettingsProps {
-  userDetails: UserDetailModel[];
+  userDetails: UserModel;
 }
 
 const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
-  const { modal, form } = useUserSettings();
+  const {
+    modal,
+    form
+  } = useUserSettings();
 
-  if (!userDetails.length) return null;
+  console.log('gaga--------------------------userDetailsuserDetailsuserDetails-----------', userDetails);
+  if (!userDetails) return null;
 
-  console.log('gaga-------------------------------------UserSettingsComponent', userDetails[0]);
-  return (
-    <div data-testid="UserSettings">
+  console.log('gaga-------------------------------------UserSettingsComponent', userDetails);
+  return (<div data-testid="UserSettings">
       <Icon
         circular
         inverted
@@ -40,8 +43,8 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
           <hr />
 
           <Form className={'flex flex-col p-3 w-[360px]'} onSubmit={form.submit}>
-            <input hidden name={'email'} key={userDetails[0]._id} defaultValue={userDetails[0]._id} />
-            <div className={'text-xl mb-3 text-left'}>{userDetails[0].build}</div>
+            <input hidden name={'email'} key={userDetails._id} defaultValue={userDetails._id} />
+            <div className={'text-xl mb-3 text-left'}>{userDetails.build}</div>
 
             <div className={'form-values flex-1'}>
               <div className={'flex flex-col items-start mb-5 '}>
@@ -57,17 +60,13 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                     type={'button'}
                     active={!!form.formFieldState.get('createdAt')}
                     onClick={() => {
-                      form.patchValues(
-                        'createdAt',
-                        form.formFieldState.get('createdAt') ?? dayjs().subtract(1, 'h').toDate()
-                      );
+                      form.patchValues('createdAt', form.formFieldState.get('createdAt') ?? dayjs().subtract(1, 'h').toDate());
                     }}
                     onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
                   >
                     Yes
                   </Button>
-                  {!!form.formFieldState.get('createdAt') && (
-                    <DatePicker
+                  {!!form.formFieldState.get('createdAt') && (<DatePicker
                       className={'opacity-0 absolute'}
                       popperClassName={'relative !left-[-30px]'}
                       autoFocus={true}
@@ -78,8 +77,7 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                       onChange={(date) => {
                         form.patchValues('createdAt', date);
                       }}
-                    />
-                  )}
+                    />)}
                 </div>
               </div>
               <div className={'flex flex-col items-start mb-5'}>
@@ -94,10 +92,7 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                   type={'button'}
                   active={!!form.formFieldState.get('updatedAt')}
                   onClick={() => {
-                    form.patchValues(
-                      'updatedAt',
-                      form.formFieldState.get('updatedAt') ?? dayjs().subtract(4, 'd').toDate()
-                    );
+                    form.patchValues('updatedAt', form.formFieldState.get('updatedAt') ?? dayjs().subtract(4, 'd').toDate());
                   }}
                   onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
                 >
@@ -139,27 +134,27 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                 <span className={'text-md mb-2'}>Set Done</span>
                 <div className={'flex flex-row'}>
                   <Button
-                    name={'data.weekStatus.done'}
+                    name={'data.weeklyStatus.done'}
                     inverted
                     color="green"
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.weekStatus.done') === true}
-                    onClick={() => form.patchValues('data.weekStatus.done', true)}
+                    active={form.formFieldState.get('data.weeklyStatus.done') === true}
+                    onClick={() => form.patchValues('data.weeklyStatus.done', true)}
                     onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
                   >
                     True
                   </Button>
                   <Button
-                    name={'data.weekStatus.done'}
+                    name={'data.weeklyStatus.done'}
                     inverted
                     color="red"
                     size={'small'}
                     circular
                     type={'button'}
-                    active={form.formFieldState.get('data.weekStatus.done') === false}
-                    onClick={() => form.patchValues('data.weekStatus.done', false)}
+                    active={form.formFieldState.get('data.weeklyStatus.done') === false}
+                    onClick={() => form.patchValues('data.weeklyStatus.done', false)}
                     onMouseLeave={(e: ChangeEvent<HTMLButtonElement>) => e.target.blur()}
                   >
                     False
@@ -169,13 +164,13 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
               <div className={'flex flex-col items-start mb-5'}>
                 <span className={'text-md mb-2'}>Set Two Factor Auth</span>
                 <div className={'w-full'}>
-                  <div className={'mt-1 mb-2'}>{userDetails[0].data.userSession?.TWO_FACTOR_AUTH}</div>
+                  <div className={'mt-1 mb-2'}>{userDetails.data.userSession?.TWO_FACTOR_AUTH}</div>
 
                   <Input className={'w-full'} placeholder="Two factor auth">
                     <input
-                      key={userDetails[0].data.userSession?.TWO_FACTOR_AUTH}
+                      key={userDetails.data.userSession?.TWO_FACTOR_AUTH}
                       name={'data.userSession.TWO_FACTOR_AUTH'}
-                      defaultValue={userDetails[0].data.userSession?.TWO_FACTOR_AUTH}
+                      defaultValue={userDetails.data.userSession?.TWO_FACTOR_AUTH}
                     />
                   </Input>
                 </div>
@@ -197,8 +192,7 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
           </div>
         </div>
       </Dimmer>
-    </div>
-  );
+    </div>);
 };
 UserSettingsComponent.displayName = 'UserSettings';
 export default UserSettingsComponent;

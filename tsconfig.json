@@ -1,27 +1,22 @@
 {
-  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
-    /* Linting */
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "types": ["vite/client"]
   },
-  "include": ["src", "./tsconfig.paths.json"],
+  "files": [],
+  "include": [],
   "references": [
     {
-      "path": "./tsconfig.node.json"
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "extends": "../../tsconfig.base.json"
 }

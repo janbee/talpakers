@@ -1,9 +1,11 @@
 import { FC } from 'react';
-import { MoneyUtil } from '@common/utils';
+import { MoneyUtil } from '@PlayAbWeb/common/utils';
 import classNames from 'classnames';
-import { EarningsModel, UserDetailModel } from '@api/rxjs-client/models/custom.models';
+import { EarningsModel, UserDetailModel } from '@PlayAbWeb/api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
 import { Header, Icon, Label, Menu, Popup } from 'semantic-ui-react';
+import { UserModel } from '@PlayAb/shared';
+import * as React from 'react';
 
 export const WeeklyCard: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
   const startDate = dayjs(earnings.startDate).utc();
@@ -126,25 +128,26 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) =
                 className={classNames({
                   'text-yellow-light': status.Pending,
                   'text-green-light': status.Approved,
-                  'text-blue-light': status.Processing,
+                  'text-blue-light': status.Processing
                 })}
               >
                 {earnings.withdrawal?.TransactionStatus}
               </span>
               )
+              <span className={`transaction-wrap`}>
+                {` ${earnings.withdrawal?.TransactionDateTime && dayjs(earnings.withdrawal.TransactionDateTime).fromNow()}`}
+              </span>
             </Popup.Header>
             <Popup.Content>
               {`${earnings.withdrawal?.PaymentMethodInfo} ${MoneyUtil(earnings.withdrawal?.Amount ?? 0)}`}
             </Popup.Content>
-          </Popup>
-        );
+          </Popup>);
       })}
-    </>
-  );
+    </>);
 };
 
 export const UserYearlySummary: FC<{
-  userDetails: UserDetailModel[];
+  userDetails: UserModel[];
   totalWinnings: number;
   totalWithdrawals: number;
 }> = ({ userDetails, totalWinnings, totalWithdrawals }) => {

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import logo from '@assets/logo.png';
+import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom';
 import { Popup } from 'semantic-ui-react';
 import { version } from '../../package.json';

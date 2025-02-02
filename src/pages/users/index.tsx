@@ -1,7 +1,7 @@
-import MainLayoutComponent from '@layouts/main-layout/MainLayout';
 import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
-import { UserList } from '@domains/user';
+import MainLayoutComponent from "@PlayAbWeb/layouts/main-layout/MainLayout";
+import { UserList } from "@PlayAbWeb/domains/user";
 
 const Page: FC = () => (
   <MainLayoutComponent>

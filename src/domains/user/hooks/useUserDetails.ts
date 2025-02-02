@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { forkJoin } from 'rxjs';
 import { useLocation } from 'react-router-dom';
-import { API, BetSummaryModel, BonusModel, EarningsModel, UserDetailModel, WithdrawalModel } from '@api/index';
+import { EarningsModel } from '../../../api/rxjs-client/models/custom.models';
 import { groupBy, sumBy } from 'lodash';
 import dayjs from 'dayjs';
+import { BetSummaryModel, BonusModel, SharedApi, UserModel, WithdrawalModel } from '@PlayAb/shared';
+import GetWeeksOfYear from '../../../common/utils/get-weeks-of-year/GetWeeksOfYear';
 
 const useUserDetails = () => {
   const { pathname } = useLocation();
   const [list, setList] = useState<{ title: string; data: EarningsModel[] }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [userDetails, setUserDetails] = useState<UserDetailModel[]>([]);
+  const [userDetails, setUserDetails] = useState<UserModel[]>([]);
   const [totalWinnings, setTotalWinnings] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
   const [emails, setEmails] = useState<string[]>([]);
@@ -19,13 +21,11 @@ const useUserDetails = () => {
     const emailArr = pathname.split('/').pop()?.split(',') ?? [];
 
     setLoading(true);
-    const userDetails$ = forkJoin([
-      API.getBetSummary({ email: { $in: emailArr } }),
-      API.getBonuses({ email: { $in: emailArr } }),
-      API.getWithdrawals({ email: { $in: emailArr } }),
-      API.getUser({ email: { $in: emailArr } }),
-    ]).subscribe({
+    const userDetails$ = forkJoin([SharedApi.getBetSummary({ email: { $in: emailArr } }), SharedApi.getBonuses({ email: { $in: emailArr } }), SharedApi.getWithdrawals({ email: { $in: emailArr } }), SharedApi.getUsers({ email: { $in: emailArr } })]).subscribe({
       next: ([betSummaryList, bonusList, withdrawalList, userDetails]) => {
+
+
+        console.log('gaga----betSummaryList---------------------------------', betSummaryList);
         setLoading(false);
 
         const userBonusList = getUserBonusList(bonusList);
@@ -34,14 +34,14 @@ const useUserDetails = () => {
           betSummaryList,
           userBonusList,
           emailArr,
-          userWithdrawalList,
+          userWithdrawalList
         });
 
         const weeksGroupedByMon = groupBy(weeksForCurrentYear, 'mon');
         const weeksGroupedByMonKeys = Object.keys(weeksGroupedByMon).map((key) => {
           return {
             title: key.split('-')[1],
-            data: weeksGroupedByMon[key] as unknown as EarningsModel[],
+            data: weeksGroupedByMon[key] as unknown as EarningsModel[]
           };
         });
 
@@ -59,77 +59,76 @@ const useUserDetails = () => {
         setUserDetails(userDetails);
         setEmails(emailArr);
       },
-      error: () => setError(true),
+      error: () => setError(true)
     });
     return () => {
       userDetails$.unsubscribe();
     };
   }, [pathname]);
 
-  return { list, loading, error, userDetails, emails, totalWinnings, totalWithdrawals };
+  return {
+    list,
+    loading,
+    error,
+    userDetails,
+    emails,
+    totalWinnings,
+    totalWithdrawals
+  };
 };
 
 const getUserBonusList = (bonusList: BonusModel[]) => {
-  return (
-    bonusList?.filter((item) => {
-      return (
-        item.TransactionStatus === 'Approved' &&
-        item.TransactionType === 'Bonus' &&
-        ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) &&
-        item.Amount >= 10
-      );
-    }) ?? []
-  );
+  return (bonusList?.filter((item) => {
+    return (item.TransactionStatus === 'Approved' && item.TransactionType === 'Bonus' && ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) && item.Amount >= 10);
+  }) ?? []);
 };
 
 const getUserWithdrawalList = (withdrawalList: WithdrawalModel[]) => {
-  return (
-    withdrawalList?.filter((item) => {
-      return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
-    }) ?? []
-  );
+  return (withdrawalList?.filter((item) => {
+    return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
+  }) ?? []);
 };
 
 const getWeeksForCurrentYear = ({
   betSummaryList,
   userBonusList,
   emailArr,
-  userWithdrawalList,
+  userWithdrawalList
 }: {
   betSummaryList: BetSummaryModel[];
   userBonusList: BonusModel[];
   emailArr: string[];
   userWithdrawalList: WithdrawalModel[];
 }) => {
-  const isoWeeksNumber = dayjs().isoWeeksInYear();
-  return Array.from({ length: isoWeeksNumber }, (_, i) => i).map((weekNumber) => {
-    const year = dayjs(Date.now()).year();
-    const firstMondayOfYear = dayjs().year(year).isoWeek(0).day(1);
+  const year = dayjs(Date.now()).year();
 
-    let monday = dayjs().year(year).isoWeek(weekNumber).day(1);
-    console.log('Monday 1:', monday.format('dddd, DD MMM YYYY'));
+  const weeks = GetWeeksOfYear(year);
 
-    if (firstMondayOfYear.year() !== year) {
-      monday = monday.add(7, 'days');
-      console.log('Monday 2:', monday.format('dddd, DD MMM YYYY'));
-    }
 
+  console.log('gaga-------------------1--------------weeks----', weeks, year);
+
+  return weeks.map(({
+    mondayDate,
+    sundayDate,
+    weekNumber
+  }) => {
+
+    const monday = dayjs(mondayDate);
     const mon = monday.format('MMM');
     const monNumber = monday.format('M');
+    const year = monday.format('YYYY');
 
-    const startDate = monday;
-    const endDate = monday.endOf('week');
+    const betSummary = getBetSummaryByWeek(betSummaryList, mondayDate, sundayDate, year);
 
-    const weekStart = startDate.startOf('day').toDate();
-    const weekEnd = endDate.endOf('day').toDate();
-
-    console.log('Monday 3:', dayjs(endDate).utc().endOf('day').toISOString());
-
-    const betSummary = getBetSummaryByWeek(betSummaryList, weekStart, weekEnd, year);
-    const { betSummaryByWeek, bonus, totalStaked, totalEarnings } = betSummary;
+    const {
+      betSummaryByWeek,
+      bonus,
+      totalStaked,
+      totalEarnings
+    } = betSummary;
     let { approxWinnings } = betSummary;
 
-    const bonusByWeek = getBonusByWeek(userBonusList, weekStart, weekEnd, emailArr);
+    const bonusByWeek = getBonusByWeek(userBonusList, mondayDate, sundayDate, emailArr);
     let playAbBonus = sumBy(bonusByWeek, (foundBonus) => foundBonus?.Amount ?? 0);
     if (bonusByWeek?.length !== emailArr?.length) {
       playAbBonus = bonus;
@@ -141,14 +140,14 @@ const getWeeksForCurrentYear = ({
       winnings = playAbBonus + sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalEarnings ?? 0);
     }
 
-    const withdrawalByWeek = getWithdrawalByWeek(userWithdrawalList, weekStart, weekEnd);
+    const withdrawalByWeek = getWithdrawalByWeek(userWithdrawalList, mondayDate, sundayDate);
 
     return {
       _id: `${mon}-${weekNumber}`,
-      mon: monNumber + '-' + mon,
+      mon: monNumber + '-' + mon  + ' ' + year,
       year,
-      startDate: weekStart.toISOString(),
-      endDate: weekEnd.toISOString(),
+      startDate: mondayDate.toISOString(),
+      endDate: sundayDate.toISOString(),
       bonus: playAbBonus || bonus || 0,
       bonusDateTime: bonusByWeek?.[0]?.TransactionDateTime,
       totalStaked,
@@ -157,23 +156,18 @@ const getWeeksForCurrentYear = ({
       approxWinnings,
       loading: false,
       fetch: 0,
-      title: mon,
+      title: `${mon}`,
 
       emails: emailArr,
-      withdrawal: withdrawalByWeek,
+      withdrawal: withdrawalByWeek
     };
   });
 };
 
-const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number) => {
-  const betSummaryByWeek =
-    betSummaryList?.filter((item) => {
-      return (
-        item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
-        item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
-        item.year === year
-      );
-    }) ?? [];
+const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number | string) => {
+  const betSummaryByWeek = betSummaryList?.filter((item) => {
+    return (item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() && item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() && item.year.toString() === year.toString());
+  }) ?? [];
 
   const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.bonus ?? 0);
   const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalStaked ?? 0);
@@ -185,7 +179,7 @@ const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date,
     bonus,
     totalStaked,
     totalEarnings,
-    approxWinnings,
+    approxWinnings
   };
 };
 

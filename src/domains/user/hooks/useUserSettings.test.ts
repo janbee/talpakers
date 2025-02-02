@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import useUserList from '@domains/user/hooks/useUserList';
+import useUserList from '@PlayAbWeb/domains/user/hooks/useUserList';
 import { renderHook } from '@testing-library/react';
 
 describe('useUserSettings', () => {
