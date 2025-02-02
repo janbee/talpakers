@@ -28,7 +28,6 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: actions/configure-pages@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           target-branch: gh-pages
           subdirectory: build
 
