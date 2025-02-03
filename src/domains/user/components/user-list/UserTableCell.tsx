@@ -1,9 +1,9 @@
-import { UserStatusModel } from '@PlayAbWeb/api/index';
+import { UserStatusModel } from '../../../../api/index';
 import * as React from 'react';
 import { FC } from 'react';
 import { Popup, Progress, TableCell } from 'semantic-ui-react';
 import classNames from 'classnames';
-import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '@PlayAbWeb/common/utils';
+import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '../../../../common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { isEmpty, omit } from 'lodash';
 import dayjs from 'dayjs';
@@ -36,6 +36,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
         key={index}
         position="right center"
         trigger={<div
+          onClick={event => event.stopPropagation()}
           className={classNames({
             'has-withdrawal rounded-full h-2 w-2 top-2 right-2 absolute cursor-pointer': true,
             'bg-yellow-dark': status.Pending,
@@ -180,11 +181,16 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
   const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
   const bets = {
     open: user.data.weeklyStatus?.betSummary?.openBets ?? 0,
-    settled: user.data.weeklyStatus?.betSummary?.settledBets ?? 0
+    openDetails: user.data.weeklyStatus?.betSummary?.openBetsDetails ?? [],
+    settled: user.data.weeklyStatus?.betSummary?.settledBets ?? 0,
+    settledDetails: user.data.weeklyStatus?.betSummary?.settledBetsDetails ?? []
   };
+
   if (isNewWeek) {
     bets.open = 0;
+    bets.openDetails = [];
     bets.settled = 0;
+    bets.settledDetails = [];
   }
 
   const lastBets = user.data.weeklyStatus?.lastBet
@@ -195,17 +201,149 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
   return (<TableCell {...omit(props, ['user'])}>
     {[bets].map(({
       open,
-      settled
+      settled,
+      openDetails,
+      settledDetails
     }, betsIndex) => {
-      return (<div key={betsIndex} className={'flex justify-between'}>
-        <Popup position="left center" trigger={<span>{open}</span>} flowing>
-          <Popup.Header>
-            <span className={'text-green-light'}>Prev Bets: [{lastBets}]</span>
-          </Popup.Header>
-        </Popup>
+      const settledBets = {
+        lost: 0,
+        won: 0
+      };
+      settledDetails.forEach(item => {
+        if (item.prediction?.status === 'Lost') {
+          settledBets.lost++;
+        } else if (item.prediction?.status === 'Won') {
+          settledBets.won++;
+        }
+      });
 
+      return (<div key={betsIndex} className={'flex justify-between'}>
+        <Popup
+          disabled={!bets.open} position="left center"
+          trigger={
+
+            <span
+              className={'cursor-pointer'}
+              onClick={(event) => event.stopPropagation()}>
+                {open}
+            </span>
+
+          }
+          flowing on="click">
+          <Popup.Header className={'w-[250px]'}>
+            <div className={'flex justify-between text-sm'}>
+              <span className={'text-green-purple'}>Placed (#{open})</span>
+            </div>
+          </Popup.Header>
+          {!!openDetails.length && (<Popup.Content className={'max-h-[300px] overflow-auto mt-2'}>
+            {openDetails.map(item => {
+              return (<div
+                className={classNames({
+                  border: true,
+                  rounded: true,
+                  'mb-2': true,
+                  'p-1': true,
+                  'border-gray-300': true
+                })} key={item.prediction?._id}>
+                <div className={'text-[10px]/3 font-bold text-end'}>
+                  <span>{item.prediction?.game}</span>
+                </div>
+                <div className={'text-[10px]/3 flex flex-col mb-2'}>
+                  <span
+                    className={classNames({
+                      'text-green-light': item.team === item.prediction?.team1Name
+                    })}>{item.prediction?.team1Name}({item.prediction?.bet1Rate})</span>
+                  <span className={'text-center'}>vs</span>
+                  <span
+                    className={classNames({
+                      'text-green-light': item.team === item.prediction?.team2Name,
+                      'text-end': true
+                    })}>{item.prediction?.team2Name}({item.prediction?.bet2Rate})</span>
+                </div>
+                <div className={'flex justify-between gap-1'}>
+                  <div className={'border rounded border-gray-300 items-center py-1 flex flex-1 flex-col'}>
+                    <span className={'text-[8px]/3'}>Odds</span>
+                    <span className={'text-[10px]/3'}>{item.odds}</span>
+                  </div>
+                  <div className={'border rounded border-gray-300 items-center py-1 flex flex-1 flex-col'}>
+                    <span className={'text-[8px]/3'}>Staked</span>
+                    <span className={'text-[10px]/3'}>{MoneyUtil(item.staked)}</span>
+                  </div>
+                </div>
+              </div>);
+            })}
+          </Popup.Content>)}
+
+        </Popup>
         <span>-</span>
-        <span>{settled}</span>
+        <Popup
+          disabled={!bets.settled} position="right center"
+          trigger={
+
+            <span
+              className={'cursor-pointer'}
+              onClick={(event) => event.stopPropagation()}>
+                {settled}
+            </span>
+
+          }
+          flowing on="click">
+          <Popup.Header className={'w-[250px]'}>
+            <div className={'flex justify-between text-sm'}>
+              <span className={'text-green-light'}>Won (#{settledBets.won})</span>
+              <span className={'text-red-light'}>Lost (#{settledBets.lost})</span>
+            </div>
+          </Popup.Header>
+          {!!settledDetails.length && (<Popup.Content className={'max-h-[300px] overflow-auto mt-2'}>
+            {settledDetails.map(item => {
+              return (<div
+                className={classNames({
+                  border: true,
+                  rounded: true,
+                  'mb-2': true,
+                  'p-1': true,
+                  'border-gray-300': true
+                })} key={item.prediction?._id}>
+                <div className={'text-[10px]/3 font-bold text-end'}>
+                  <span>{item.prediction?.game}</span>
+                </div>
+                <div className={'text-[10px]/3 flex flex-col mb-2'}>
+                  <span
+                    className={classNames({
+                      'text-green-light': item.team === item.prediction?.team1Name
+                    })}>{item.prediction?.team1Name}({item.prediction?.bet1Rate})</span>
+                  <span className={'text-center'}>vs</span>
+                  <span
+                    className={classNames({
+                      'text-green-light': item.team === item.prediction?.team2Name,
+                      'text-end': true
+                    })}>{item.prediction?.team2Name}({item.prediction?.bet2Rate})</span>
+                </div>
+                <div className={'flex justify-between gap-1'}>
+                  <div className={'border rounded border-gray-300 items-center py-1 flex flex-1 flex-col'}>
+                    <span className={'text-[8px]/3'}>Odds</span>
+                    <span className={'text-[10px]/3'}>{item.odds}</span>
+                  </div>
+                  <div className={'border rounded border-gray-300 items-center py-1 flex flex-1 flex-col'}>
+                    <span className={'text-[8px]/3'}>Staked</span>
+                    <span className={'text-[10px]/3'}>{MoneyUtil(item.staked)}</span>
+                  </div>
+                  <div className={'border rounded border-gray-300 items-center py-1 flex flex-1 flex-col'}>
+                    <span className={'text-[8px]/3'}>Status</span>
+                    <span
+                      className={classNames({
+                        'font-bold': true,
+                        'text-[10px]/3': true,
+                        'text-red-light': item.prediction?.status === 'Lost',
+                        'text-green-light': item.prediction?.status === 'Won'
+                      })}>{item.prediction?.status}</span>
+                  </div>
+                </div>
+              </div>);
+            })}
+          </Popup.Content>)}
+
+        </Popup>
       </div>);
     })}
   </TableCell>);
@@ -288,13 +426,13 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
     {!isEmpty(bonus) && (<Popup
       position="top center"
-      trigger={<span className={'text-green-dark'}>{MoneyUtil(bonus.Amount, { minimumFractionDigits: 0 })}</span>}
+      trigger={<span className={'text-green-dark'}>{MoneyUtil(bonus?.Amount || 0, { minimumFractionDigits: 0 })}</span>}
       flowing
     >
       <Popup.Header className={'text-green-light'}>
-        <span>Total Balance :{MoneyUtil(bonus.Balance)}</span>
+        <span>Total Balance :{MoneyUtil(bonus?.Balance)}</span>
         <span> - </span>
-        <span>{dayjs(bonus.TransactionDateTime).fromNow()}</span>
+        <span>{dayjs(bonus?.TransactionDateTime).fromNow()}</span>
       </Popup.Header>
     </Popup>)}
   </TableCell>);
@@ -382,7 +520,9 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
       />}
       flowing
     >
-      {txt.map((t) => (<Popup.Header key={t}>
+      {txt.map((t) => (
+
+        <Popup.Header key={t}>
             <span
               className={classNames({
                 'text-red-light': true
@@ -390,7 +530,9 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
             >
               {t}
             </span>
-      </Popup.Header>))}
+        </Popup.Header>
+
+      ))}
     </Popup>
     <span style={{ color: bgColor }}>{getMTDates().fromNow(lastUpdate)} </span>
   </TableCell>);
