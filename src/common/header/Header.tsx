@@ -7,8 +7,8 @@ import dayjs from 'dayjs';
 import { PredictionPopup } from '../../domains/prediction';
 import { getMTDates } from '@PlayAb/shared';
 
-const HeaderComponent: FC = () => (
-  <div data-testid="Header" className={'h-20 bg-black p-3 flex justify-between items-center'}>
+const HeaderComponent: FC = () => {
+  return (<div data-testid="Header" className={'h-20 bg-black p-3 flex justify-between items-center'}>
     <Popup
       size={'mini'}
       position="right center"
@@ -28,5 +28,7 @@ const HeaderComponent: FC = () => (
 
     <PredictionPopup />
   </div>);
+};
+
 HeaderComponent.displayName = 'Header';
 export default HeaderComponent;

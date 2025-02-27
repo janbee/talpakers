@@ -144,7 +144,7 @@ const getWeeksForCurrentYear = ({
 
     return {
       _id: `${mon}-${weekNumber}`,
-      mon: monNumber + '-' + mon  + ' ' + year,
+      mon: monNumber + '-' + mon + ' ' + year,
       year,
       startDate: mondayDate.toISOString(),
       endDate: sundayDate.toISOString(),

@@ -1,3 +1,4 @@
+import { WithdrawalModel } from '@PlayAb/shared';
 
 export interface MoneyModel {
   currency?: 'USD' | 'CAD';
@@ -15,4 +16,23 @@ export enum UserColumnSortModel {
   OpenBets = 'openBets',
   NextWithdrawal = 'nextWithdrawal',
   Active = 'active',
+}
+
+
+export interface EarningsModel {
+  _id: string;
+  year: number;
+  startDate: string;
+  title: string;
+  endDate: string;
+  bonus: number;
+  bonusDateTime: Date;
+  totalStaked: number;
+  winnings: number;
+  approxWinnings: number;
+  totalEarnings: number;
+  loading: boolean;
+  fetch: number;
+  withdrawal?: WithdrawalModel;
+  emails: string[];
 }
