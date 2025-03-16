@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import { getMTDates, UserModel } from '@PlayAb/shared';
 
 const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
-  const { weekStart } = getMTDates();
   const isDone = user.data?.weeklyStatus?.done === true;
   const inProgress = user.data?.weeklyStatus?.done === false;
 
@@ -16,7 +15,8 @@ const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
     isIdle = true;
   }
 
-  const waiting = weekStart.toISOString() !== user.data?.weeklyStatus?.startDate;
+
+  const waiting = !getMTDates().isWithinThisWeek(user.data?.weeklyStatus?.startDate);
   const isWaiting = waiting || isIdle || user.data?.weeklyStatus?.done === undefined;
 
   if (isWaiting) {

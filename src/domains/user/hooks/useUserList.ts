@@ -4,8 +4,8 @@ import { forkJoin, tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import { orderBy } from 'lodash';
 import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
-import { GetDatesUtil, GetUserStatusUtil } from '../../../common/utils';
-import { MongodbCollection, SharedApi, UserModel } from '@PlayAb/shared';
+import { GetUserStatusUtil } from '../../../common/utils';
+import { getMTDates, MongodbCollection, SharedApi, UserModel } from '@PlayAb/shared';
 
 const useUseUserList = () => {
   const [list, setList] = useState<UserModel[]>([]);
@@ -61,6 +61,7 @@ const useUseUserList = () => {
 
   const getSort = (list: UserModel[], data: ButtonProps) => {
     let newList: UserModel[] = list;
+    const { isWithinThisWeek } = getMTDates();
 
     if (data.filter === UserStatusModel.IsDone) {
       newList = orderBy(list, [(user) => {
@@ -79,19 +80,16 @@ const useUseUserList = () => {
       }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
     } else if (data.filter === UserColumnSortModel.NextWithdrawal) {
       newList = orderBy(list, [(user) => {
-        const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
-        const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
-        const cashout = user.data.userSession?.cashout ?? 0;
-        return (cashout / fixedAmount) * 30;
+        return user.data.userSession?.cashout ?? 0;
       }], ['desc']);
     } else if (data.filter === UserColumnSortModel.Earnings) {
       newList = orderBy(list, [(user) => {
-        const { isNewWeek } = GetDatesUtil(user);
+        const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
         return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
       }], ['asc']);
     } else if (data.filter === UserColumnSortModel.OpenBets) {
       newList = orderBy(list, [(user) => {
-        const { isNewWeek } = GetDatesUtil(user);
+        const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
         return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.openBets ?? 0;
       }], ['desc']);
     } else if (data.filter === UserColumnSortModel.Active) {
@@ -131,8 +129,9 @@ const useUseUserList = () => {
   }, [list]);
 
   const restrictedCount = useMemo(() => {
+    const { isWithinThisWeek } = getMTDates();
     return list.filter((item) => {
-      const { isNewWeek } = GetDatesUtil(item);
+      const isNewWeek = !isWithinThisWeek(item?.data?.weeklyStatus?.startDate);
       return isNewWeek ? null : !!item.data.weeklyStatus?.hasBetRestriction || item.data.weeklyStatus?.accountAccessible === false;
     }).length;
   }, [list]);

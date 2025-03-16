@@ -7,7 +7,7 @@ import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '../../../../common/u
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { isEmpty, omit } from 'lodash';
 import dayjs from 'dayjs';
-import { getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
+import { convertToMT, getMTDates, isDateWithin, UserModel } from '@PlayAb/shared';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserModel;
@@ -100,8 +100,8 @@ export const StatusCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getMTDates();
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+  const {  isWithinThisWeek } = getMTDates();
+  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
 
   let totalEarnings = user.data.weeklyStatus?.betSummary?.totalEarnings || 0;
   let winnings = user.data.weeklyStatus?.betSummary?.winnings || 0;
@@ -150,8 +150,8 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getMTDates();
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+  const { isWithinThisWeek } = getMTDates();
+  const isNewWeek =!isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
 
   const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0;
   const totalStaked = user.data.weeklyStatus?.betSummary?.totalStaked || 0;
@@ -177,8 +177,8 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
 
 export const BetsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getMTDates();
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+  const { isWithinThisWeek } = getMTDates();
+  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
   const bets = {
     open: user.data.weeklyStatus?.betSummary?.openBets ?? 0,
     settled: user.data.weeklyStatus?.betSummary?.settledBets ?? 0
@@ -248,8 +248,8 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
 export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const { weekStart } = getMTDates();
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+  const { isWithinThisWeek } = getMTDates();
+  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
 
   const hasBetRestriction = isNewWeek ? null : !!user.data.weeklyStatus?.hasBetRestriction || user.data.weeklyStatus?.accountAccessible === false;
 
@@ -266,8 +266,8 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
 export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const { weekStart } = getMTDates();
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+  const { isWithinThisWeek } = getMTDates();
+  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
   const hasFailedUpdates = isNewWeek ? null : user.data.weeklyStatus?.mongoUpdateFailed === true;
 
   return (<TableCell className={'relative'} {...omit(props, ['user'])}>
@@ -277,8 +277,8 @@ export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
 
 export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart } = getMTDates();
-  const isNewWeek = weekStart.toISOString() !== user?.data?.weeklyStatus?.startDate;
+  const { isWithinThisWeek } = getMTDates();
+  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
 
   let bonus = user.data.weeklyStatus?.bonus;
 
@@ -397,6 +397,6 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
 
       ))}
     </Popup>
-    <span style={{ color: bgColor }}>{getMTDates().fromNow(lastUpdate)} </span>
+    <span style={{ color: bgColor }}>{getMTDates().fromNow(convertToMT(lastUpdate))} </span>
   </TableCell>);
 };
