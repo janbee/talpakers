@@ -35,7 +35,8 @@ const PredictionListComponent: FC = () => {
           predictedWinner,
           status,
           bet1Rate,
-          bet2Rate
+          bet2Rate,
+          from
         } = item;
 
         return (<div
@@ -52,15 +53,14 @@ const PredictionListComponent: FC = () => {
             <span className={'text-xl font-bold'}>{game}({winningPercentage}%)</span>
 
             <span>
-                  {dayjs(createdAt || new Date())
-                    .utc()
-                    .fromNow()}
-                </span>
+              {dayjs(createdAt || new Date())
+                .utc()
+                .fromNow()}
+            </span>
           </div>
           <div className={'flex justify-between mb-2 items-center'}>
             <span className={'text-sm font-bold'}>{_id}</span>
-
-
+            <span className={'text-sm'}>{from}</span>
           </div>
           <div className={'flex flex-1 flex-row'}>
             <span
