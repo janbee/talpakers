@@ -26,8 +26,9 @@ import {
   BetRestrictedCell,
   BetsCell,
   BonusCell,
-  FreeBetCell, LastLoginCell,
-  LifetimeLoss,
+  FreeBetCell,
+  LifetimeLossCell,
+  LottoTicketsCell,
   MongoFailedUpdate,
   NextWithdrawalCell,
   StatusCell,
@@ -164,16 +165,17 @@ const UserListComponent: FC = () => {
                 Restricted
               </TableHeaderCell>)}
 
-              {hasMongoUpdate && (
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+              {hasMongoUpdate && (<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                   Mongo <br />
                   Update
-                </TableHeaderCell>
-              )}
+                </TableHeaderCell>)}
 
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                 Bonus
+              </TableHeaderCell>
+              <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[60px]'}>
+                Tickets
               </TableHeaderCell>
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
@@ -181,12 +183,10 @@ const UserListComponent: FC = () => {
                 Loss
               </TableHeaderCell>
 
-              {hasFreeBet && (
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+              {hasFreeBet && (<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                   Free <br />
                   Bet
-                </TableHeaderCell>
-              )}
+                </TableHeaderCell>)}
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[95px]'}>
                 Active <br />
@@ -251,18 +251,16 @@ const UserListComponent: FC = () => {
 
                 {!!restrictedCount && <BetRestrictedCell className={'md:hidden'} textAlign={'center'} user={user} />}
 
-                {hasMongoUpdate && (
-                  <MongoFailedUpdate className={'md:hidden'} textAlign={'center'} user={user}/>
-                )}
+                {hasMongoUpdate && (<MongoFailedUpdate className={'md:hidden'} textAlign={'center'} user={user} />)}
 
 
                 <BonusCell className={'md:hidden'} user={user} textAlign={'center'} />
 
-                <LifetimeLoss className={'md:hidden'} user={user} textAlign={'center'} />
+                <LottoTicketsCell className={'md:hidden'} user={user} textAlign={'center'} />
 
-                {hasFreeBet && (
-                  <FreeBetCell className={'md:hidden'} user={user} textAlign={'center'} />
-                )}
+                <LifetimeLossCell className={'md:hidden'} user={user} textAlign={'center'} />
+
+                {hasFreeBet && (<FreeBetCell className={'md:hidden'} user={user} textAlign={'center'} />)}
 
                 <TableCell className={'md:hidden'} collapsing textAlign={'center'}>
                   {/*Predictions*/}

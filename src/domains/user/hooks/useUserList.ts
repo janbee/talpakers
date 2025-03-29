@@ -80,10 +80,7 @@ const useUseUserList = () => {
       }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
     } else if (data.filter === UserColumnSortModel.NextWithdrawal) {
       newList = orderBy(list, [(user) => {
-        const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
-        const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
-        const cashout = user.data.userSession?.cashout ?? 0;
-        return (cashout / fixedAmount) * 30;
+        return user.data.userSession?.cashout ?? 0;
       }], ['desc']);
     } else if (data.filter === UserColumnSortModel.Earnings) {
       newList = orderBy(list, [(user) => {

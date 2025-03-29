@@ -301,7 +301,15 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   </TableCell>);
 };
 
-export const LifetimeLoss: FC<UserTableCellProps> = (props) => {
+export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  return (<TableCell className={'relative'} {...omit(props, ['user'])}>
+    <span>{user.data.lottoTickets?.length}</span>
+  </TableCell>);
+};
+
+export const LifetimeLossCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
   const lifeTimeLoss = user.data.userSession?.GPD?.lifetimeWinAndLoss || '0.00';
