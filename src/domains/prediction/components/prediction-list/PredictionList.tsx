@@ -60,7 +60,7 @@ const PredictionListComponent: FC = () => {
           </div>
           <div className={'flex justify-between mb-2 items-center'}>
             <span className={'text-sm font-bold'}>{_id}</span>
-            <span className={'text-sm'}>{from}</span>
+            <span className={'text-s'}>{from}</span>
           </div>
           <div className={'flex flex-1 flex-row'}>
             <span
