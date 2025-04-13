@@ -60,7 +60,6 @@ const PredictionListComponent: FC = () => {
           </div>
           <div className={'flex justify-between mb-2 items-center'}>
             <span className={'text-sm font-bold'}>{_id}</span>
-            <span className={'text-s'}>{from}</span>
           </div>
           <div className={'flex flex-1 flex-row'}>
             <span
@@ -106,8 +105,13 @@ const PredictionListComponent: FC = () => {
             </span>
           </div>
 
-          <div className={'flex justify-start'}>
-
+          <div className={'mt-2'}>
+            {from.map(item => {
+              return (<div className={'flex justify-between text-sm'}>
+                <span>{item.name}</span>
+                <span>{item.percentage}%</span>
+              </div>);
+            })}
           </div>
 
 
