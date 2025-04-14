@@ -1,10 +1,11 @@
-import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { forkJoin, tap } from 'rxjs';
 import { getMTDates, PredictionModel, SharedApi } from '@PlayAb/shared';
+import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
 
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
-  const [statuses, setStatuses] = useState([]);
+  const [listStatus, setListStatus] = useState<PredictionStatusModel>({} as PredictionStatusModel);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -20,7 +21,7 @@ const usePredictionList = () => {
 
 
     return forkJoin([SharedApi.getPredictions({
-      createdAt: {
+      today: {
         $gte: {
           $date: { $numberLong: dayStart.getTime().toString() }
         }
@@ -28,28 +29,32 @@ const usePredictionList = () => {
     }), SharedApi.getPredictions([{
       $match: {
         status: { $in: ['Won', 'Lost', 'Placed'] },
-        createdAt: {
+        weekStart: {
           $gte: {
             $date: { $numberLong: weekStart.getTime().toString() }
           },
 
-          $lt: {
+          $lte: {
             $date: { $numberLong: weekEnd.getTime().toString() }
           }
         }
 
       }
-    }, {
-      $group: {
-        _id: '$status',
-        count: { $sum: 1 }
-      }
     }])])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
-        next: ([list, statuses]: [SetStateAction<PredictionModel[]>, []]) => {
+        next: ([list, listWithStatuses]) => {
           setList(list);
-          setStatuses(statuses);
+
+          const status = listWithStatuses.reduce((acc, item) => {
+            const key = item.status;
+            if (key) {
+              acc[key] = (acc[key] || 0) + 1;
+            }
+            return acc;
+          }, {} as PredictionStatusModel);
+
+          setListStatus(status);
         },
         error: () => setError(true)
       });
@@ -62,25 +67,12 @@ const usePredictionList = () => {
     };
   }, [reload]);
 
-  const status = useMemo(() => {
-    const wins = statuses.find(item => item._id === 'Won')?.count ?? 0;
-    const losses = statuses.find(item => item._id === 'Lost')?.count ?? 0;
-    const placed = statuses.find(item => item._id === 'Placed')?.count ?? 0;
-
-
-    return {
-      wins,
-      losses,
-      placed
-    };
-  }, [statuses]);
-
   return {
     list,
     loading,
     error,
     reload,
-    status
+    listStatus
   };
 };
 
