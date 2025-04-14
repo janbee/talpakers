@@ -3,13 +3,14 @@ import usePredictionList from '../../hooks/usePredictionList';
 import { Dimmer, Icon, Loader } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';
+import { SemanticICONS } from 'semantic-ui-react/dist/commonjs/generic';
 
 const PredictionListComponent: FC = () => {
   const {
     list,
     reload,
     loading,
-    status
+    listStatus
   } = usePredictionList();
   console.log('gaga-------------------------------------PredictionListComponent render');
   return (<div data-testid="PredictionList" className={'flex flex-col h-full'}>
@@ -19,11 +20,11 @@ const PredictionListComponent: FC = () => {
     </div>
     <hr />
     <div className={'flex justify-between mt-2'}>
-      <span className={'text-green-dark'}>W (#{status.wins})</span>
-      <span className={'text-purple-dark text-center'}>P (#{status.placed})</span>
-      <span className={'text-red-dark'}>L (#{status.losses})</span>
+      <span className={'text-green-dark'}>W (#{listStatus.Won || 0})</span>
+      <span className={'text-purple-dark text-center'}>P (#{listStatus.Placed || 0})</span>
+      <span className={'text-red-dark'}>L (#{listStatus.Lost || 0})</span>
     </div>
-    <div className={'overflow-auto flex-1 '}>
+    <div className={'overflow-auto flex-1'}>
       {list.map((item) => {
         const {
           _id,
@@ -43,6 +44,7 @@ const PredictionListComponent: FC = () => {
           key={_id + team1Name + team2Name}
 
           className={classNames({
+            'group': true,
             'bg-neutral-950 rounded-lg mt-3 p-3 dark:text-white border': true,
             'border-red-dark': status === 'Lost',
             'border-green-dark': status === 'Won',
@@ -51,15 +53,19 @@ const PredictionListComponent: FC = () => {
           })}>
           <div className={'flex justify-between items-center'}>
             <span className={'text-xl font-bold'}>{game}({winningPercentage}%)</span>
-
             <span>
               {dayjs(createdAt || new Date())
                 .utc()
-                .fromNow()}
+                .fromNow(true)}
             </span>
           </div>
-          <div className={'flex justify-between mb-2 items-center'}>
+          <div className={'flex justify-between mb-2 items-center h-5'}>
             <span className={'text-sm font-bold'}>{_id}</span>
+            <button className={classNames({
+              'text-sm cursor-pointer py-[1px] px-[5px]': true,
+              'hidden': true,
+              'group-hover:flex':dayjs(new Date()).diff(createdAt, 'minutes') >= 180 && !status
+            })}>Ask AI for Result</button>
           </div>
           <div className={'flex flex-1 flex-row'}>
             <span
@@ -107,7 +113,7 @@ const PredictionListComponent: FC = () => {
 
           <div className={'mt-2'}>
             {from.map(item => {
-              return (<div className={'flex justify-between text-sm'}>
+              return (<div key={item.name} className={'flex justify-between text-sm'}>
                 <span>{item.name}</span>
                 <span>{item.percentage}%</span>
               </div>);
