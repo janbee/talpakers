@@ -1,9 +1,10 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vite';
+import { defineConfig, PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import mkcert from 'vite-plugin-mkcert';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   root: __dirname,
@@ -23,7 +24,13 @@ export default defineConfig({
     host: 'localhost',
   },
 
-  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md']), mkcert()],
+  plugins: [
+    react() as PluginOption,
+    tsconfigPaths() as unknown as PluginOption,
+    nxViteTsPaths() as unknown as PluginOption,
+    nxCopyAssetsPlugin(['*.md']) as unknown as PluginOption,
+    mkcert() as PluginOption,
+  ],
 
   // Uncomment this if you are using workers.
   // worker: {
@@ -32,8 +39,8 @@ export default defineConfig({
 
   optimizeDeps: {
     esbuildOptions: {
-      target: 'esnext'
-    }
+      target: 'esnext',
+    },
   },
   build: {
     target: 'esnext',
