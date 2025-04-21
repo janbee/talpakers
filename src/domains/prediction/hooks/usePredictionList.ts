@@ -12,39 +12,13 @@ const usePredictionList = () => {
   const reload = useCallback(() => {
     setLoading(true);
     setError(false);
-
-    const {
-      weekStart,
-      weekEnd,
-      dayStart
-    } = getMTDates();
-
-
-    return forkJoin([SharedApi.getPredictions({
-      today: {
-        $gte: {
-          $date: { $numberLong: dayStart.getTime().toString() }
-        }
-      }
-    }), SharedApi.getPredictions([{
-      $match: {
-        status: { $in: ['Won', 'Lost', 'Placed'] },
-        weekStart: {
-          $gte: {
-            $date: { $numberLong: weekStart.getTime().toString() }
-          },
-
-          $lte: {
-            $date: { $numberLong: weekEnd.getTime().toString() }
-          }
-        }
-
-      }
-    }])])
+    return forkJoin([SharedApi.getCurrentDayPredictions(), SharedApi.getWeeklyPredictions()])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listWithStatuses]) => {
           setList(list);
+
+          console.log('gaga--------sadasdasd-----------------------------', list.filter(item => !!item.usersBetInfo.length));
 
           const status = listWithStatuses.reduce((acc, item) => {
             const key = item.status;

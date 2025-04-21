@@ -98,9 +98,25 @@ export const StatusCell: FC<UserTableCellProps> = (props) => {
   </TableCell>);
 };
 
+export const VersionCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+  return (<TableCell {...omit(props, ['user'])}>
+    <Popup
+      position="right center"
+      trigger={<span>{user.data.version}</span>}
+      flowing
+      disabled={!user.data.codePushVersion}
+    >
+      <Popup.Content>
+        <span className={'text-green-light'}>{user.data.codePushVersion}</span>
+      </Popup.Content>
+    </Popup>
+  </TableCell>);
+};
+
 export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const {  isWithinThisWeek } = getMTDates();
+  const { isWithinThisWeek } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
 
   let totalEarnings = user.data.weeklyStatus?.betSummary?.totalEarnings || 0;
@@ -151,7 +167,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
 export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isWithinThisWeek } = getMTDates();
-  const isNewWeek =!isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
 
   const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0;
   const totalStaked = user.data.weeklyStatus?.betSummary?.totalStaked || 0;
@@ -365,10 +381,6 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date();
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
-
-  if (user.build === 'SHAM') {
-    console.log('gaga-------------------------------user.updatedAt------', user.updatedAt?.toISOString(), lastUpdate.toISOString(), new Date().toISOString());
-  }
 
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
   let hasBetRestriction = false;

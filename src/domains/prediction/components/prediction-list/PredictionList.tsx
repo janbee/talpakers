@@ -1,8 +1,9 @@
 import { FC } from 'react';
 import usePredictionList from '../../hooks/usePredictionList';
-import { Dimmer, Icon, Loader } from 'semantic-ui-react';
+import { Accordion, Dimmer, Icon, Loader } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';
+import { FromAIModel, toMoney } from '@PlayAb/shared';
 
 const PredictionListComponent: FC = () => {
   const { list, reload, loading, listStatus } = usePredictionList();
@@ -29,13 +30,13 @@ const PredictionListComponent: FC = () => {
             team1Name,
             team2Name,
             status,
-            bet1Rate,
-            bet2Rate,
+            bet1Rate = 0,
+            bet2Rate = 0,
             from,
             prediction,
+            usersBetInfo,
           } = item;
 
-          console.log('gaga-------------------------------------', from);
           return (
             <div
               key={_id + team1Name + team2Name}
@@ -105,33 +106,76 @@ const PredictionListComponent: FC = () => {
                 </span>
               </div>
 
+              {/* AI Models */}
               <div className={'mt-2'}>
                 {Object.values(
-                  from.reduce((acc, player) => {
-                    if (!acc[player.team]) {
-                      acc[player.team] = [];
-                    }
-                    acc[player.team].push(player);
-                    return acc;
-                  }, {})
-                ).sort((a, b) => b.length - a.length).map((group) => {
-                  return group.map((item) => {
-                    return (
-                      <div
-                        key={item.name}
-                        className={classNames({
-                          'flex justify-between text-sm': true,
-                          'text-blue-light': group.length >= 2,
-                          'text-yellow-light': group.length < 2
-                        })}
-                      >
-                        <span>{item.name}</span>
-                        <span>{item.percentage}%</span>
-                      </div>
-                    );
-                  });
-                })}
+                  from.reduce(
+                    (acc, player) => {
+                      if (!acc[player.team]) {
+                        acc[player.team] = [];
+                      }
+                      acc[player.team].push(player);
+                      return acc;
+                    },
+                    {} as { [key: string]: FromAIModel[] }
+                  )
+                )
+                  .sort((a, b) => b.length - a.length)
+                  .map((group) => {
+                    return group.map((item) => {
+                      return (
+                        <div
+                          key={item.name}
+                          className={classNames({
+                            'flex justify-between text-sm': true,
+                            'text-blue-light': group.length >= 2,
+                            'text-yellow-light': group.length < 2,
+                          })}
+                        >
+                          <span>{item.name}</span>
+                          <span>{item.percentage}%</span>
+                        </div>
+                      );
+                    });
+                  })}
               </div>
+
+              {/* Users Bets */}
+              {!!usersBetInfo && !!usersBetInfo.length && (
+                <div className={'mt-2 text-sm'}>
+                  <Accordion
+                    panels={[
+                      {
+                        key: `panel-${0}`,
+                        title: (
+                          <Accordion.Title className={'flex justify-between !m-0 !p-0'}>
+                            <span className={'text-white'}>{usersBetInfo.length}</span>
+                            <i className="dropdown icon text-white" />
+                          </Accordion.Title>
+                        ),
+                        content: {
+                          content: (
+                            <>
+                              {usersBetInfo.map((bet) => {
+                                return (
+                                  <div key={bet.build} className={'flex gap-1 justify-between'}>
+                                    <div className={'flex-1'}>{bet.build}</div>
+                                    <div className={'flex-1 text-center'}>{toMoney(bet.staked)}</div>
+                                    <div className={'flex-1 text-center'}>{bet.odds}</div>
+                                    <div className={'flex-[0.7] text-end'}>
+                                      {toMoney(bet.staked * bet.odds - bet.staked)}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </>
+                          ),
+                        },
+                      },
+                    ]}
+                  />
+                </div>
+              )}
             </div>
           );
         })}

@@ -26,7 +26,7 @@ export default defineConfig({
 
   plugins: [
     react() as PluginOption,
-    tsconfigPaths() as unknown as PluginOption,
+    tsconfigPaths(),
     nxViteTsPaths() as unknown as PluginOption,
     nxCopyAssetsPlugin(['*.md']) as unknown as PluginOption,
     mkcert() as PluginOption,

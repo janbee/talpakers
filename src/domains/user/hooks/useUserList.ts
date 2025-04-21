@@ -11,6 +11,7 @@ const useUseUserList = () => {
   const [list, setList] = useState<UserModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
   const watchedList = useRef<UserModel[]>([]);
 
   const updateUser = (users: UserModel[], listFailedUpdate: UserModel[]) => {
@@ -42,9 +43,12 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    const user$ = forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })]).pipe(tap(() => setLoading(false)))
+    const user$ = forkJoin([SharedApi.getUsersWithBetSummary(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })]).pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
+
+          console.log('gaga------listlist-------------------------------', list);
+
           const newList = getSort(list, { filter: UserStatusModel.InProgress });
           watchedList.current = newList;
           setList(updateUser(newList, listFailedUpdate));
@@ -58,6 +62,7 @@ const useUseUserList = () => {
       user$.unsubscribe();
     };
   }, []);
+
 
   const getSort = (list: UserModel[], data: ButtonProps) => {
     let newList: UserModel[] = list;
@@ -109,7 +114,7 @@ const useUseUserList = () => {
     setError(false);
 
 
-    forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })])
+    forkJoin([SharedApi.getUsersWithBetSummary(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
@@ -143,6 +148,7 @@ const useUseUserList = () => {
   const hasMongoUpdate = useMemo(() => {
     return list.filter((item) => item.data.weeklyStatus?.mongoUpdateFailed).length !== 0;
   }, [list]);
+
 
   return {
     list,

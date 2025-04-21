@@ -31,7 +31,7 @@ import {
   LottoTicketsCell,
   MongoFailedUpdate,
   NextWithdrawalCell,
-  StatusCell,
+  StatusCell, VersionCell,
   WeeklyProgressCell,
   WeeklySummaryCell
 } from './UserTableCell';
@@ -47,7 +47,7 @@ const UserListComponent: FC = () => {
     statusCount,
     restrictedCount,
     hasFreeBet,
-    hasMongoUpdate
+    hasMongoUpdate,
   } = useUserList();
   const navigate = useNavigate();
   const location = useLocation();
@@ -166,9 +166,9 @@ const UserListComponent: FC = () => {
               </TableHeaderCell>)}
 
               {hasMongoUpdate && (<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                  Mongo <br />
-                  Update
-                </TableHeaderCell>)}
+                Mongo <br />
+                Update
+              </TableHeaderCell>)}
 
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
@@ -184,9 +184,9 @@ const UserListComponent: FC = () => {
               </TableHeaderCell>
 
               {hasFreeBet && (<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                  Free <br />
-                  Bet
-                </TableHeaderCell>)}
+                Free <br />
+                Bet
+              </TableHeaderCell>)}
 
               <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[95px]'}>
                 Active <br />
@@ -239,9 +239,8 @@ const UserListComponent: FC = () => {
                 <AppBuildCell className={'md:!min-w-[33%] md:!text-center'} user={user} />
                 <StatusCell className={'md:!min-w-[33%] md:!text-right'} textAlign={'center'} user={user} />
 
-                <TableCell className={'md:hidden'} collapsing>
-                  {user.data?.version}
-                </TableCell>
+                <VersionCell className={'md:hidden'} user={user} collapsing/>
+
                 <WeeklySummaryCell className={'md:flex-1'} textAlign={'center'} user={user} />
 
                 <WeeklyProgressCell className={'md:w-full'} textAlign={'center'} user={user} />
