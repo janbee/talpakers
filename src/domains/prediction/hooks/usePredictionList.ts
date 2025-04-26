@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { forkJoin, tap } from 'rxjs';
-import { getMTDates, PredictionModel, SharedApi } from '@PlayAb/shared';
+import { PredictionModel } from '@PlayAb/shared';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
+import { PredictionStore } from '../store/PredictionStore';
 
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
@@ -10,34 +10,20 @@ const usePredictionList = () => {
   const [error, setError] = useState(false);
 
   const reload = useCallback(() => {
-    setLoading(true);
-    setError(false);
-    return forkJoin([SharedApi.getCurrentDayPredictions(), SharedApi.getWeeklyPredictions()])
-      .pipe(tap(() => setLoading(false)))
-      .subscribe({
-        next: ([list, listWithStatuses]) => {
-          setList(list);
-
-          console.log('gaga--------sadasdasd-----------------------------', list.filter(item => !!item.usersBetInfo.length));
-
-          const status = listWithStatuses.reduce((acc, item) => {
-            const key = item.status;
-            if (key) {
-              acc[key] = (acc[key] || 0) + 1;
-            }
-            return acc;
-          }, {} as PredictionStatusModel);
-
-          setListStatus(status);
-        },
-        error: () => setError(true)
-      });
+    PredictionStore.reload();
   }, []);
 
   useEffect(() => {
-    const predictions$ = reload();
+    const loading$ = PredictionStore.loading$.subscribe(setLoading);
+    const listSubs$ = PredictionStore.list$.subscribe(setList);
+    const listWithStatuses$ = PredictionStore.listWithStatuses$.subscribe(setListStatus);
+    const error$ = PredictionStore.error$.subscribe(setError);
+    reload();
     return () => {
-      predictions$.unsubscribe();
+      loading$.unsubscribe();
+      listSubs$.unsubscribe();
+      listWithStatuses$.unsubscribe();
+      error$.unsubscribe();
     };
   }, [reload]);
 
@@ -46,7 +32,7 @@ const usePredictionList = () => {
     loading,
     error,
     reload,
-    listStatus
+    listStatus,
   };
 };
 

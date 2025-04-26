@@ -9,8 +9,8 @@ const PredictionListComponent: FC = () => {
   const { list, reload, loading, listStatus } = usePredictionList();
   console.log('gaga-------------------------------------PredictionListComponent render');
   return (
-    <div data-testid="PredictionList" className={'flex flex-col h-full'}>
-      <div className={'flex flex-row items-start justify-between h-10  sticky top-0'}>
+    <div data-testid="PredictionList" className={'flex flex-1 flex-col overflow-hidden'}>
+      <div className={'flex flex-row items-start justify-between h-10'}>
         <span className={'dark:text-white text-2xl'}>Predictions (#{list.length})</span>
         <Icon circular inverted className={'cursor-pointer !text-xl !mt-[-7px]'} name="refresh" onClick={reload} />
       </div>
@@ -20,7 +20,7 @@ const PredictionListComponent: FC = () => {
         <span className={'text-purple-dark text-center'}>P (#{listStatus.Placed || 0})</span>
         <span className={'text-red-dark'}>L (#{listStatus.Lost || 0})</span>
       </div>
-      <div className={'overflow-auto flex-1'}>
+      <div className={'flex flex-col overflow-auto flex-1 my-3 gap-y-3'}>
         {list.map((item) => {
           const {
             _id,
@@ -42,7 +42,7 @@ const PredictionListComponent: FC = () => {
               key={_id + team1Name + team2Name}
               className={classNames({
                 group: true,
-                'bg-neutral-950 rounded-lg mt-3 p-3 dark:text-white border': true,
+                'bg-neutral-950 rounded-lg p-3 dark:text-white border': true,
                 'border-red-dark': status === 'Lost',
                 'border-green-dark': status === 'Won',
                 'border-purple-dark': status === 'Placed',

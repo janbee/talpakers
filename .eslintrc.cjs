@@ -24,8 +24,8 @@ module.exports = {
     'generate-react-templates/*',
 
     /*
-    * ignore api
-    * */
+     * ignore api
+     * */
     'src/api/*',
   ],
   parser: '@typescript-eslint/parser',
@@ -37,16 +37,17 @@ module.exports = {
   },
   plugins: ['react-refresh'],
   rules: {
-
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    '@nx/enforce-module-boundaries': [
+      'error',
+      {
+        allow: ['@PlayAbWeb/*'],
+      },
     ],
-
   },
   settings: {
-    'react': {
-      'version': 'detect',
+    react: {
+      version: 'detect',
     },
   },
 };
