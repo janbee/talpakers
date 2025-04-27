@@ -13,6 +13,7 @@ export enum UserColumnSortModel {
   Earnings = 'earnings', OpenBets = 'openBets', NextWithdrawal = 'nextWithdrawal', Active = 'active',
 }
 
+
 export interface EarningsModel {
   _id: string;
   year: number;

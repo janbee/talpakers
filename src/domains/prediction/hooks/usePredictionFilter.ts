@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getMTDates } from '@PlayAb/shared';
+import { getMTDates, ISODateString } from '@PlayAb/shared';
 import { PredictionStore } from '../store/PredictionStore';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
 
@@ -31,7 +31,7 @@ const usePredictionFilter = () => {
       const getDay = selectedDay === day ? '' : day;
       const dayStartOfWeek = dayStartOfWeekDay(getDay)?.toISOString() || '';
       setSelectedDay(getDay);
-      PredictionStore.reload(dayStartOfWeek);
+      PredictionStore.reload(dayStartOfWeek as ISODateString);
     },
     [selectedDay]
   );

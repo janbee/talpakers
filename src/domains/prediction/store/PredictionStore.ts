@@ -1,8 +1,9 @@
 import { BehaviorSubject, forkJoin, tap } from 'rxjs';
-import { SharedApi } from '@PlayAb/shared';
+import { ISODateString, PredictionModel, SharedApi } from '@PlayAb/shared';
+import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
 
 class PredictionStoreClass {
-  readonly list$ = new BehaviorSubject<PredictionList>([]);
+  readonly list$ = new BehaviorSubject<PredictionModel[]>([]);
   readonly listWithStatuses$ = new BehaviorSubject<PredictionStatusModel>({} as PredictionStatusModel);
   readonly loading$ = new BehaviorSubject<boolean>(false);
   readonly error$ = new BehaviorSubject<boolean>(false);

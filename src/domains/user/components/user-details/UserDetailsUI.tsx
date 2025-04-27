@@ -1,11 +1,10 @@
+import * as React from 'react';
 import { FC } from 'react';
-import { MoneyUtil } from '@PlayAbWeb/common/utils';
 import classNames from 'classnames';
-import { EarningsModel, UserDetailModel } from '@PlayAbWeb/api/rxjs-client/models/custom.models';
+import { EarningsModel } from '../../../../api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
 import { Header, Icon, Label, Menu, Popup } from 'semantic-ui-react';
-import { UserModel } from '@PlayAb/shared';
-import * as React from 'react';
+import { toMoney, UserModel } from '@PlayAb/shared';
 
 export const WeeklyCard: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
   const startDate = dayjs(earnings.startDate).utc();
@@ -25,15 +24,15 @@ export const WeeklyCard: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
         </div>
         <div className={'flex flex-1 justify-between'}>
           <span>Staked</span>
-          <span>{MoneyUtil(earnings.totalStaked)}</span>
+          <span>{toMoney(earnings.totalStaked)}</span>
         </div>
         <div className={'flex flex-1 justify-between'}>
           <span>Earnings</span>
-          <span>{MoneyUtil(earnings.totalEarnings)}</span>
+          <span>{toMoney(earnings.totalEarnings)}</span>
         </div>
         <div className={'flex flex-1 justify-between'}>
           <span>Bonus</span>
-          <span>{MoneyUtil(earnings.bonus)}</span>
+          <span>{toMoney(earnings.bonus)}</span>
         </div>
         {(earnings.approxWinnings > 0 && <ApproxWinnings earnings={earnings} />) || <Winnings earnings={earnings} />}
       </div>
@@ -55,7 +54,7 @@ export const ApproxWinnings: FC<{ earnings: EarningsModel }> = ({ earnings }) =>
               'cursor-pointer': true,
             })}
           >
-            {MoneyUtil(earnings.approxWinnings)}
+            {toMoney(earnings.approxWinnings)}
           </span>
         }
       />
@@ -79,7 +78,7 @@ export const Winnings: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
               'text-red-dark': earnings.winnings < 0,
             })}
           >
-            {MoneyUtil(earnings.winnings)}
+            {toMoney(earnings.winnings)}
           </span>
         }
       />
@@ -128,7 +127,7 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) =
                 className={classNames({
                   'text-yellow-light': status.Pending,
                   'text-green-light': status.Approved,
-                  'text-blue-light': status.Processing
+                  'text-blue-light': status.Processing,
                 })}
               >
                 {earnings.withdrawal?.TransactionStatus}
@@ -139,11 +138,13 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) =
               </span>
             </Popup.Header>
             <Popup.Content>
-              {`${earnings.withdrawal?.PaymentMethodInfo} ${MoneyUtil(earnings.withdrawal?.Amount ?? 0)}`}
+              {`${earnings.withdrawal?.PaymentMethodInfo} ${toMoney(earnings.withdrawal?.Amount ?? 0)}`}
             </Popup.Content>
-          </Popup>);
+          </Popup>
+        );
       })}
-    </>);
+    </>
+  );
 };
 
 export const UserYearlySummary: FC<{
@@ -166,26 +167,26 @@ export const UserYearlySummary: FC<{
         <Menu.Item>
           <Header as="h4">Current Balance</Header>
           <Label className={'!float-none !ml-0'} color="green">
-            {MoneyUtil(userDetails?.[0]?.data?.userSession?.cash ?? 0)}
+            {toMoney(userDetails?.[0]?.data?.userSession?.cash ?? 0)}
           </Label>
         </Menu.Item>
         <Menu.Item>
           <Header as="h4">Available Cashout</Header>
           <Label className={'!float-none !ml-0'} color="orange">
-            {MoneyUtil(userDetails?.[0]?.data?.userSession?.cashout ?? 0)}
+            {toMoney(userDetails?.[0]?.data?.userSession?.cashout ?? 0)}
           </Label>
         </Menu.Item>
         <Menu.Item>
           <Header as="h4">Total Earnings this year</Header>
           <Label className={'!float-none !ml-0'} color="purple">
-            {MoneyUtil(totalWinnings)}
+            {toMoney(totalWinnings)}
           </Label>
         </Menu.Item>
         <Menu.Item>
           <Header as="h4">Total Cashout this year</Header>
           <Label className={'!float-none !ml-0'} color="red">
             {' '}
-            {MoneyUtil(Math.abs(totalWithdrawals ?? 0))}
+            {toMoney(Math.abs(totalWithdrawals ?? 0))}
           </Label>
         </Menu.Item>
       </Menu>
