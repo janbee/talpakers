@@ -7,7 +7,7 @@ import { FromAIModel, toMoney } from '@PlayAb/shared';
 
 const PredictionListComponent: FC = () => {
   const { list, reload, loading, listStatus } = usePredictionList();
-  console.log('gaga-------------------------------------PredictionListComponent render');
+  console.log('gaga-------------------------------------PredictionListComponent render', loading);
   return (
     <div data-testid="PredictionList" className={'flex flex-1 flex-col overflow-hidden'}>
       <div className={'flex flex-row items-start justify-between h-10'}>

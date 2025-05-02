@@ -6,7 +6,7 @@ import { PredictionStore } from '../store/PredictionStore';
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
   const [listStatus, setListStatus] = useState<PredictionStatusModel>({} as PredictionStatusModel);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const reload = useCallback(() => {

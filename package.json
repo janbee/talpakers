@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.0.131",
+  "version": "0.0.133",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
@@ -20,8 +20,5 @@
   },
   "dependencies": {
     "gh-pages": "^6.2.0"
-  },
-  "devDependencies": {
-    "husky": "^9.1.6"
   }
 }
