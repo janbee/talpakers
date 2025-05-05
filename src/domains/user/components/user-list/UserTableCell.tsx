@@ -17,7 +17,6 @@ interface UserTableCellProps extends StrictTableCellProps {
 
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const withdrawal = user.data.weeklyStatus?.withdrawal;
   const TransactionDateTime = user.data.weeklyStatus?.withdrawal?.TransactionDateTime;
   const {
     weekStart,
@@ -234,7 +233,7 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
 export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 50;
+  const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 100;
   const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
   const cashout = user.data.userSession?.cashout ?? 0;
   const cash = user.data.userSession?.cash ?? 0;
@@ -364,10 +363,6 @@ export const LastLoginCell: FC<UserTableCellProps> = (props) => {
   const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || new Date());
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
-
-  if (user.build === 'SHAM') {
-    console.log('gaga-------------------------------user.updatedAt------', user.updatedAt?.toISOString(), lastUpdate.toISOString(), new Date().toISOString());
-  }
 
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
 

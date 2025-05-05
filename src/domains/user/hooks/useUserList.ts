@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { forkJoin, tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
@@ -106,7 +107,10 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            return user.data.userSession?.cashout ?? 0;
+            const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 100;
+            const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
+            const cashout = user.data.userSession?.cashout ?? 0;
+            return Math.floor((cashout / fixedAmount) * 100);
           },
         ],
         ['desc']
@@ -149,7 +153,7 @@ const useUseUserList = () => {
     return newList;
   };
 
-  const handleOrderByStatus = useCallback((event: MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
+  const handleOrderByStatus = useCallback((event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
     event.preventDefault();
 
     setLoading(true);
