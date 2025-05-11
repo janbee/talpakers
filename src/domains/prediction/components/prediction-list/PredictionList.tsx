@@ -1,9 +1,11 @@
 import { FC } from 'react';
 import usePredictionList from '../../hooks/usePredictionList';
-import { Accordion, Dimmer, Icon, Loader } from 'semantic-ui-react';
+import { Dimmer, Icon, Loader } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';
-import { FromAIModel, toMoney } from '@PlayAb/shared';
+import { FromAIModel } from '@PlayAb/shared';
+import PredictionBetsInfoComponent from '../prediction-bets-info/PredictionBetsInfo';
+import PredictionBetHistoryComponent from '../prediction-bet-history/PredictionBetHistory';
 
 const PredictionListComponent: FC = () => {
   const { list, reload, loading, listStatus } = usePredictionList();
@@ -35,6 +37,7 @@ const PredictionListComponent: FC = () => {
             from,
             prediction,
             usersBetInfo,
+            predictionHistory,
           } = item;
 
           return (
@@ -140,42 +143,9 @@ const PredictionListComponent: FC = () => {
                   })}
               </div>
 
-              {/* Users Bets */}
-              {!!usersBetInfo && !!usersBetInfo.length && (
-                <div className={'mt-2 text-sm'}>
-                  <Accordion
-                    panels={[
-                      {
-                        key: `panel-${0}`,
-                        title: (
-                          <Accordion.Title className={'flex justify-between !m-0 !p-0'}>
-                            <span className={'text-white'}>{usersBetInfo.length}</span>
-                            <i className="dropdown icon text-white" />
-                          </Accordion.Title>
-                        ),
-                        content: {
-                          content: (
-                            <>
-                              {usersBetInfo.map((bet) => {
-                                return (
-                                  <div key={bet.build} className={'flex gap-1 justify-between'}>
-                                    <div className={'flex-1'}>{bet.build}</div>
-                                    <div className={'flex-1 text-center'}>{toMoney(bet.staked)}</div>
-                                    <div className={'flex-1 text-center'}>{bet.odds}</div>
-                                    <div className={'flex-[0.7] text-end'}>
-                                      {toMoney(bet.staked * bet.odds - bet.staked)}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </>
-                          ),
-                        },
-                      },
-                    ]}
-                  />
-                </div>
-              )}
+              <PredictionBetsInfoComponent usersBetInfo={usersBetInfo} />
+
+              <PredictionBetHistoryComponent predictionHistory={predictionHistory} />
             </div>
           );
         })}
