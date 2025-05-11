@@ -26,7 +26,9 @@
           "npm run git:add",
           "npm run git:commit",
           "npm run git:push",
-          "npm run deploy"
+          "npm run deploy",
+          "rm -rf dist",
+          "rm -rf node_modules"
         ],
         "cwd": "apps/PlayAbWeb",
         "parallel": false
