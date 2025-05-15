@@ -14,7 +14,7 @@ const PredictionPopupComponent: FC = () => {
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      className={'flex h-[calc(100vh-90px)] !p-4'}
+      className={'flex h-[calc(100dvh-75px)] !p-4'}
       trigger={<Icon circular inverted className={'cursor-pointer !text-xl'} name="magic" />}
     >
       <div className={'w-[320px] h-full flex flex-col'}>
@@ -26,3 +26,5 @@ const PredictionPopupComponent: FC = () => {
 };
 PredictionPopupComponent.displayName = 'PredictionPopup';
 export default PredictionPopupComponent;
+
+
