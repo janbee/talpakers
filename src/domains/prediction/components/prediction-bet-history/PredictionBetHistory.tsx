@@ -2,12 +2,15 @@ import { FC } from 'react';
 import { PredictionHistoryModel } from '@PlayAb/shared';
 import { Accordion } from 'semantic-ui-react';
 import classNames from 'classnames';
+import usePredictionBetHistory from '../../hooks/usePredictionBetHistory';
 
 interface PredictionBetHistoryProps {
   predictionHistory: PredictionHistoryModel[];
 }
 
 const PredictionBetHistoryComponent: FC<PredictionBetHistoryProps> = ({ predictionHistory }) => {
+  const {winPercentage} = usePredictionBetHistory(predictionHistory)
+
   if (!predictionHistory || predictionHistory.length === 0) {
     return null;
   }
@@ -19,7 +22,7 @@ const PredictionBetHistoryComponent: FC<PredictionBetHistoryProps> = ({ predicti
             key: `panel-${0}`,
             title: (
               <Accordion.Title className={'flex justify-between !m-0 !p-0'}>
-                <span className={'text-white'}>H#({predictionHistory.length})</span>
+                <span className={'text-white'}>H#({predictionHistory.length}/{winPercentage}%)</span>
                 <i className="dropdown icon text-white" />
               </Accordion.Title>
             ),
