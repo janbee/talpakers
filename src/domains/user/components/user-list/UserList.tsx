@@ -277,12 +277,16 @@ const UserListComponent: FC = () => {
                     {hasMongoUpdate && <MongoFailedUpdate className={'md:hidden'} textAlign={'center'} user={user} />}
 
                     {hasEmailUpdate && (
-                      <TableCell className={classNames({
-                        'md:hidden': true,
-                        'text-green-dark': !user.data.weeklyStatus?.emailUpdate,
-                        'text-red-dark': !!user.data.weeklyStatus?.emailUpdate,
-                      })} collapsing textAlign={'center'}>
-                        {(user.data.weeklyStatus?.emailUpdate ?? false).toString() }
+                      <TableCell
+                        className={classNames({
+                          'md:hidden': true,
+                          'text-green-dark': !user.data.weeklyStatus?.emailUpdate,
+                          'text-red-dark': !!user.data.weeklyStatus?.emailUpdate,
+                        })}
+                        collapsing
+                        textAlign={'center'}
+                      >
+                        {user.data.weeklyStatus?.emailUpdate ? 'true' : false}
                       </TableCell>
                     )}
 
