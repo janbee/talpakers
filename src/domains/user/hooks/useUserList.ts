@@ -196,6 +196,10 @@ const useUseUserList = () => {
     return list.filter((item) => item.data.weeklyStatus?.mongoUpdateFailed).length !== 0;
   }, [list]);
 
+  const hasEmailUpdate = useMemo(() => {
+    return list.filter((item) => item.data.weeklyStatus?.emailUpdate === true).length !== 0;
+  }, [list]);
+
   return {
     list,
     loading,
@@ -205,6 +209,7 @@ const useUseUserList = () => {
     restrictedCount,
     hasFreeBet,
     hasMongoUpdate,
+    hasEmailUpdate
   };
 };
 
