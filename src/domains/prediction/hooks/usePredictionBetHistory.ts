@@ -19,7 +19,7 @@ const usePredictionBetHistory = (predictionHistory: PredictionHistoryModel[]) =>
     });
 
     // Find the team with the highest win percentage
-    const topTeam = Object.keys(winPercentages).reduce((a, b) => (winPercentages[a] > winPercentages[b] ? a : b));
+    const topTeam = Object.keys(winPercentages).reduce((a, b) => (winPercentages[a] > winPercentages[b] ? a : b), undefined);
 
     setWinPercentage(winPercentages[topTeam] || 0);
   }, [predictionHistory]);
