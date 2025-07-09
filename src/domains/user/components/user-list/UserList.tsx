@@ -197,6 +197,10 @@ const UserListComponent: FC = () => {
                   Tickets
                 </TableHeaderCell>
 
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[60px]'}>
+                  CanBetLow
+                </TableHeaderCell>
+
                 <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                   Total <br />
                   Loss
@@ -294,6 +298,18 @@ const UserListComponent: FC = () => {
 
                     <LottoTicketsCell className={'md:hidden'} user={user} textAlign={'center'} />
 
+                    <TableCell
+                      className={classNames({
+                        'md:hidden': true,
+                        'text-green-dark': !!user.data?.weeklyStatus?.canBetLow,
+                        'text-red-dark': !user.data?.weeklyStatus?.canBetLow,
+                      })}
+                      collapsing
+                      textAlign={'center'}
+                    >
+                      {`${!!user.data?.weeklyStatus?.canBetLow}`}
+                    </TableCell>
+
                     <LifetimeLossCell className={'md:hidden'} user={user} textAlign={'center'} />
 
                     {hasFreeBet && <FreeBetCell className={'md:hidden'} user={user} textAlign={'center'} />}
@@ -302,6 +318,7 @@ const UserListComponent: FC = () => {
                       {/*Predictions*/}
                       {user.data.weeklyStatus?.predictions ?? 0}
                     </TableCell>
+
                     <TableCell
                       className={classNames({
                         'md:hidden': true,
