@@ -50,7 +50,7 @@ const useUseUserList = () => {
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
-          const newList = getSort(list, { filter: UserStatusModel.InProgress });
+          const newList = getSort(list, { filter: UserColumnSortModel.Earnings });
           watchedList.current = newList;
           setList(updateUser(newList, listFailedUpdate));
         },
