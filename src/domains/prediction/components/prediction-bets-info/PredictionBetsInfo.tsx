@@ -36,7 +36,8 @@ const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo
                         className={classNames({
                           'flex gap-1 justify-between': true,
                           'text-green-dark': winnings > 0,
-                          'text-red-dark': winnings < 0,
+                          'text-red-dark': winnings < 0 && bet.status !== 'Placed',
+                          'text-white': bet.status === 'Placed',
                         })}
                       >
                         <div className={'flex-1'}>{bet.build}</div>
