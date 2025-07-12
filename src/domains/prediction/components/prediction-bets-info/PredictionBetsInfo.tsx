@@ -41,7 +41,7 @@ const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo
                         })}
                       >
                         <div className={'flex-1'}>{bet.build}</div>
-                        <div className={'flex-1 text-center'}>{toMoney(staked)}</div>
+                        <div className={'flex-1 text-center'}>{staked}</div>
                         <div className={'flex-1 text-center'}>{bet.odds}</div>
                         <div className={'flex-[0.7] text-end'}>{toMoney(winnings)}</div>
                       </div>

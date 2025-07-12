@@ -251,7 +251,7 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
         return (
           <div key={betsIndex}>
             <Popup
-              className={'w-96 max-h-96 !p-0 h-96'}
+              className={'w-[500px] max-h-96 !p-0 h-96'}
               position="bottom center"
               on={'click'}
               trigger={
