@@ -1,6 +1,7 @@
+import * as React from 'react';
 import { FC } from 'react';
 import usePredictionList from '../../hooks/usePredictionList';
-import { Dimmer, Icon, Loader } from 'semantic-ui-react';
+import { Dimmer, Icon, Loader, Popup } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';
 import { FromAIModel } from '@PlayAb/shared';
@@ -29,6 +30,7 @@ const PredictionListComponent: FC = () => {
             winningPercentage,
             game,
             createdAt,
+            updatedAt,
             team1Name,
             team2Name,
             status,
@@ -56,11 +58,13 @@ const PredictionListComponent: FC = () => {
                 <span className={'text-xl font-bold'}>
                   {game}({winningPercentage}%)
                 </span>
-                <span>
-                  {dayjs(createdAt || new Date())
-                    .utc()
-                    .fromNow(true)}
-                </span>
+                <Popup
+                  position="left center"
+                  trigger={<span>{createdAt ? dayjs(createdAt).utc().fromNow(true) : ' N/A'}</span>}
+                  flowing
+                >
+                  <span>Last update: {updatedAt ? dayjs(updatedAt).utc().fromNow() : ' N/A'}</span>
+                </Popup>
               </div>
               <div className={'flex justify-between mb-2 items-center h-5'}>
                 <span className={'text-sm font-bold'}>{_id}</span>
