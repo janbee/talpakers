@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Accordion } from 'semantic-ui-react';
+import { Accordion, Popup } from 'semantic-ui-react';
 import { BetInfoModel, toMoney } from '@PlayAb/shared';
 import classNames from 'classnames';
 
@@ -28,6 +28,7 @@ const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo
                 <>
                   {usersBetInfo.map((bet) => {
                     const staked = bet.staked || 0;
+                    const teams = bet.teams || '';
                     const winnings = bet.winnings || 0;
 
                     return (
@@ -41,7 +42,11 @@ const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo
                         })}
                       >
                         <div className={'flex-1'}>{bet.build}</div>
-                        <div className={'flex-1 text-center'}>{staked}</div>
+                        <Popup position={'left center'} trigger={<div className={'flex-1 text-center'}>{staked}</div>}>
+                          <Popup.Content>
+                            <div className={'flex-1 text-center'}>{teams}</div>
+                          </Popup.Content>
+                        </Popup>
                         <div className={'flex-1 text-center'}>{bet.odds}</div>
                         <div className={'flex-[0.7] text-end'}>{toMoney(winnings)}</div>
                       </div>
