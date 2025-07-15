@@ -29,13 +29,14 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
             const prediction = predictionDictionary[id];
 
             if (!prediction) return null;
+
             return (
               <div
                 key={id}
                 className={classNames({
                   'flex flex-row gap-x-1 justify-between text-sm border-2 rounded-md p-2': true,
-                  'border-green-light': prediction.status === 'Won',
-                  'border-red-light': prediction.status === 'Lost',
+                  'border-green-light': betInfo.winnings > 0,
+                  'border-red-light': betInfo.winnings < 0,
                   'border-purple-light': prediction.status === 'Placed',
                 })}
               >
