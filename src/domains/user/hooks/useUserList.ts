@@ -44,7 +44,7 @@ const useUseUserList = () => {
     setError(false);
 
     const user$ = forkJoin([
-      SharedApi.getUsersWithBetSummary(),
+      SharedApi.getUsers(),
       SharedApi.getUsers({ _id__baas_transaction: { $exists: true } }),
     ])
       .pipe(tap(() => setLoading(false)))
@@ -159,7 +159,7 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    forkJoin([SharedApi.getUsersWithBetSummary(), SharedApi.getUsers({ _id__baas_transaction: { $exists: true } })])
+    forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ _id__baas_transaction: { $exists: true } })])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
