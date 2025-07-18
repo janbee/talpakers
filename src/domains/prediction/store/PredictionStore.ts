@@ -16,7 +16,7 @@ class PredictionStoreClass {
       .pipe(tap(() => this.loading$.next(false)))
       .subscribe({
         next: ([list, listWithStatuses]) => {
-          this.list$.next(list);
+          this.list$.next(list.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
 
           const status = listWithStatuses.reduce((acc, item) => {
             const key = item.status;

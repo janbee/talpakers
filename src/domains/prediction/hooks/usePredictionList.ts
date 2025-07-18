@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { PredictionModel } from '@PlayAb/shared';
+import { ActiveGameModel, ISODateString, PredictionModel } from '@PlayAb/shared';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { PredictionStore } from '../store/PredictionStore';
+import { InitializePubnub } from '../utils/Pubnub';
+import { orderBy } from 'lodash';
 
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
@@ -26,6 +28,36 @@ const usePredictionList = () => {
       error$.unsubscribe();
     };
   }, [reload]);
+
+  useEffect(() => {
+    const pnCleanup = InitializePubnub((msg: { data: ActiveGameModel[]; date: ISODateString }) => {
+      const listByGameId = msg.data.reduce((acc, match) => {
+        acc[match.gameId] = match;
+        return acc;
+      }, {});
+
+      console.log('gaga---------------------------------listByGameId----', listByGameId);
+      const updatedList = list
+        .map((item) => {
+          const updatedGame = listByGameId[item._id];
+
+          if (updatedGame) {
+            item.updatedBet1Rate = updatedGame.bet1Rate;
+            item.updatedBet2Rate = updatedGame.bet2Rate;
+            item.updatedAt = new Date(msg.date);
+          }
+
+          return item;
+        })
+
+      const sortedList = orderBy(updatedList, ['updatedAt','status'], ['desc']);
+      setList(sortedList);
+    });
+
+    return () => {
+      pnCleanup();
+    };
+  }, [list]);
 
   return {
     list,

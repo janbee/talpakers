@@ -9,7 +9,7 @@ import PredictionBetsInfoComponent from '../prediction-bets-info/PredictionBetsI
 import PredictionBetHistoryComponent from '../prediction-bet-history/PredictionBetHistory';
 
 const PredictionListComponent: FC = () => {
-  const { list, reload, loading, listStatus } = usePredictionList();
+  const { list, reload, loading, listStatus, gameListByGameId } = usePredictionList();
   console.log('gaga-------------------------------------PredictionListComponent render', loading);
   return (
     <div data-testid="PredictionList" className={'flex flex-1 flex-col overflow-hidden'}>
@@ -40,6 +40,8 @@ const PredictionListComponent: FC = () => {
             prediction,
             usersBetInfo,
             predictionHistory,
+            updatedBet1Rate,
+            updatedBet2Rate,
           } = item;
 
           return (
@@ -85,7 +87,7 @@ const PredictionListComponent: FC = () => {
                     'text-red-dark': bet1Rate > bet2Rate,
                   })}
                 >
-                  ({bet1Rate})
+                  ({bet1Rate}){updatedBet1Rate && ` - ${updatedBet1Rate}`}
                 </span>
               </div>
 
@@ -100,7 +102,7 @@ const PredictionListComponent: FC = () => {
                     'text-red-dark': bet2Rate > bet1Rate,
                   })}
                 >
-                  ({bet2Rate})
+                  {updatedBet2Rate && `${updatedBet2Rate} - `}({bet2Rate})
                 </span>
                 &nbsp;
                 <span
