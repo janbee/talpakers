@@ -12,10 +12,6 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
   const { user } = props;
   const { predictionDictionary, loading, listStatus } = useUserBetDetails(user);
 
-  console.log(
-    'gaga-------------------------------user.data.weeklyStatus?.betSummary.betsInfo------',
-    user.data.weeklyStatus?.betSummary.betsInfo
-  );
   return (
     <div data-testid="UserBetDetails" className={'flex flex-col h-full p-1 pt-0 gap-y-1'}>
       <div className={'flex justify-between mt-2 text-sm'}>
