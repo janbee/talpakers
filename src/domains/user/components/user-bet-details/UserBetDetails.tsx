@@ -29,6 +29,7 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
             return (
               <div
                 key={id}
+                data-id={id}
                 className={classNames({
                   'flex flex-row gap-x-1 justify-between text-sm border-2 rounded-md p-2': true,
                   'border-green-light': betInfo.winnings > 0,
