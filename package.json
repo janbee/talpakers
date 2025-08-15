@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.0.156",
+  "version": "0.0.157",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "git:commit": "node -e 'const version = require(\"./package.json\").version; require(\"child_process\").execSync(`git commit -m \\\"Version ${version}\\\"`) '",
     "git:push": "git push origin main --force --no-verify",
     "git:deployToGHPages": "npm run git:setup & npm --no-git-tag-version version patch && npm run build && npm run git:add && npm run git:commit && npm run git:push && npm run deploy",
-    "build": "tsc && vite build",
+    "build": "tsc && nx vite:build",
     "----------- COMPONENT GENERATOR ----------": "",
     "gen:domain": "echo 'Enter Domain name in PascalCase' && read cmpName && npx generate-react-cli component $cmpName",
     "gen:common:component": "echo 'Enter Page name in PascalCase' && read cmpName && npx generate-react-cli component $cmpName --type=common",
