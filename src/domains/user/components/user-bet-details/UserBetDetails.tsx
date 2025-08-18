@@ -33,7 +33,7 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
                 className={classNames({
                   'flex flex-row gap-x-1 justify-between text-sm border-2 rounded-md p-2': true,
                   'border-green-light': betInfo.winnings > 0,
-                  'border-red-light': betInfo.winnings < 0,
+                  'border-red-light': betInfo.winnings < 0 && prediction.status !== 'Placed',
                   'border-purple-light': prediction.status === 'Placed',
                 })}
               >
