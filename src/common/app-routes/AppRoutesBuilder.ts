@@ -1,4 +1,4 @@
-import { RouteObject } from 'react-router/dist/lib/context';
+import { RouteObject } from 'react-router-dom';
 
 //https://stackoverflow.com/questions/71434311/create-nested-object-from-array-of-objects-based-on-path-property
 export function convertPathToTreeView(pages: RouteObject[]): RouteObject {

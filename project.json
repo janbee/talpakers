@@ -6,6 +6,33 @@
   "tags": [],
   "// targets": "to see all targets run: nx show project PlayAbWeb --web",
   "targets": {
-
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "vite"
+        ],
+        "cwd": "apps/PlayAbWeb",
+        "parallel": false
+      }
+    },
+    "git:deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npm run git:setup || true",
+          "npm --no-git-tag-version version patch",
+          "npm run build",
+          "npm run git:add",
+          "npm run git:commit",
+          "npm run git:push",
+          "npm run deploy",
+          "rm -rf dist",
+          "rm -rf node_modules"
+        ],
+        "cwd": "apps/PlayAbWeb",
+        "parallel": false
+      }
+    }
   }
 }

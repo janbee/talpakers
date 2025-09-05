@@ -11,11 +11,12 @@ const useUseUserList = () => {
   const [list, setList] = useState<UserModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
   const watchedList = useRef<UserModel[]>([]);
 
   const updateUser = (users: UserModel[], listFailedUpdate: UserModel[]) => {
-    const fails = listFailedUpdate.map(user => user.build);
-    users.forEach(user => {
+    const fails = listFailedUpdate.map((user) => user.build);
+    users.forEach((user) => {
       if (fails.includes(user.build) && user.data.weeklyStatus) {
         user.data.weeklyStatus.mongoUpdateFailed = true;
       }
@@ -24,17 +25,17 @@ const useUseUserList = () => {
   };
 
   const userWatcher = async () => {
-
     const users = SharedApi.mongoService.collection(MongodbCollection.User);
 
     for await (const change of users.watch()) {
       const update = (change as { fullDocument: UserModel }).fullDocument;
       console.log('gaga--------------------change-----------------', change);
-      const updatedList = watchedList.current?.map(item => item.build === update.build ? { ...item, ...update } : item);
+      const updatedList = watchedList.current?.map((item) =>
+        item.build === update.build ? { ...item, ...update } : item
+      );
       const newList = getSort(updatedList, { filter: UserStatusModel.InProgress });
       setList(newList);
       watchedList.current = newList;
-
     }
   };
 
@@ -42,17 +43,19 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    const user$ = forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })]).pipe(tap(() => setLoading(false)))
+    const user$ = forkJoin([
+      SharedApi.getUsersWithBetSummary(),
+      SharedApi.getUsers({ _id__baas_transaction: { $exists: true } }),
+    ])
+      .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
-          const newList = getSort(list, { filter: UserStatusModel.InProgress });
+          const newList = getSort(list, { filter: UserColumnSortModel.Earnings });
           watchedList.current = newList;
           setList(updateUser(newList, listFailedUpdate));
-
         },
-        error: () => setError(true)
+        error: () => setError(true),
       });
-
 
     return () => {
       user$.unsubscribe();
@@ -64,38 +67,86 @@ const useUseUserList = () => {
     const { isWithinThisWeek } = getMTDates();
 
     if (data.filter === UserStatusModel.IsDone) {
-      newList = orderBy(list, [(user) => {
-        const userStatus = GetUserStatusUtil(user);
-        return userStatus === UserStatusModel.IsDone;
-      }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
+      newList = orderBy(
+        list,
+        [
+          (user) => {
+            const userStatus = GetUserStatusUtil(user);
+            return userStatus === UserStatusModel.IsDone;
+          },
+          (user) => user.updatedAt ?? user.createdAt,
+        ],
+        ['desc', 'desc']
+      );
     } else if (data.filter === UserStatusModel.InProgress) {
-      newList = orderBy(list, [(user) => {
-        const userStatus = GetUserStatusUtil(user);
-        return userStatus === UserStatusModel.InProgress;
-      }, 'data.weeklyStatus.betSummary.betSummary.totalStaked'], ['desc', 'desc']);
+      newList = orderBy(
+        list,
+        [
+          (user) => {
+            const userStatus = GetUserStatusUtil(user);
+            return userStatus === UserStatusModel.InProgress;
+          },
+          'data.weeklyStatus.betSummary.betSummary.totalStaked',
+        ],
+        ['desc', 'desc']
+      );
     } else if (data.filter === UserStatusModel.IsWaiting) {
-      newList = orderBy(list, [(user) => {
-        const userStatus = GetUserStatusUtil(user);
-        return userStatus === UserStatusModel.IsWaiting;
-      }, (user) => user.updatedAt ?? user.createdAt], ['desc', 'desc']);
+      newList = orderBy(
+        list,
+        [
+          (user) => {
+            const userStatus = GetUserStatusUtil(user);
+            return userStatus === UserStatusModel.IsWaiting;
+          },
+          (user) => user.updatedAt ?? user.createdAt,
+        ],
+        ['desc', 'desc']
+      );
     } else if (data.filter === UserColumnSortModel.NextWithdrawal) {
-      newList = orderBy(list, [(user) => {
-        return user.data.userSession?.cashout ?? 0;
-      }], ['desc']);
+      newList = orderBy(
+        list,
+        [
+          (user) => {
+            const maintainCash = user.data.userSession?.autoCashout?.maintainCash ?? 100;
+            const fixedAmount = (user.data.userSession?.autoCashout?.fixedAmount ?? 900) + maintainCash;
+            const cashout = user.data.userSession?.cashout ?? 0;
+            return Math.floor((cashout / fixedAmount) * 100);
+          },
+        ],
+        ['desc']
+      );
     } else if (data.filter === UserColumnSortModel.Earnings) {
-      newList = orderBy(list, [(user) => {
-        const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-        return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0;
-      }], ['asc']);
+      newList = orderBy(
+        list,
+        [
+          (user) => {
+            const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+            return isNewWeek ? 0 : (user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0);
+          },
+        ],
+        ['asc']
+      );
     } else if (data.filter === UserColumnSortModel.OpenBets) {
-      newList = orderBy(list, [(user) => {
-        const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-        return isNewWeek ? 0 : user.data?.weeklyStatus?.betSummary?.openBets ?? 0;
-      }], ['desc']);
+      newList = orderBy(
+        list,
+        [
+          (user) => {
+            const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+            return isNewWeek ? 0 : (user.data?.weeklyStatus?.betSummary?.openBets ?? 0);
+          },
+        ],
+        ['desc']
+      );
     } else if (data.filter === UserColumnSortModel.Active) {
-      newList = orderBy(list, [(user) => {
-        return user.updatedAt;
-      }], ['desc']);
+      newList = orderBy(
+        list,
+        [
+          (user) => {
+            return user.updatedAt;
+          },
+        ],
+        ['desc']
+      );
     }
 
     console.log('data.filter-------------------------------------', data.filter);
@@ -108,15 +159,14 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-
-    forkJoin([SharedApi.getUsers(), SharedApi.getUsers({ '_id__baas_transaction': { $exists: true } })])
+    forkJoin([SharedApi.getUsersWithBetSummary(), SharedApi.getUsers({ _id__baas_transaction: { $exists: true } })])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
           const newList = getSort(list, data);
           setList(updateUser(newList, listFailedUpdate));
         },
-        error: () => setError(true)
+        error: () => setError(true),
       });
   }, []);
 
@@ -124,7 +174,7 @@ const useUseUserList = () => {
     return {
       [UserStatusModel.IsDone]: userListFilterByStatus(list, UserStatusModel.IsDone).length,
       [UserStatusModel.InProgress]: userListFilterByStatus(list, UserStatusModel.InProgress).length,
-      [UserStatusModel.IsWaiting]: userListFilterByStatus(list, UserStatusModel.IsWaiting).length
+      [UserStatusModel.IsWaiting]: userListFilterByStatus(list, UserStatusModel.IsWaiting).length,
     };
   }, [list]);
 
@@ -132,7 +182,9 @@ const useUseUserList = () => {
     const { isWithinThisWeek } = getMTDates();
     return list.filter((item) => {
       const isNewWeek = !isWithinThisWeek(item?.data?.weeklyStatus?.startDate);
-      return isNewWeek ? null : !!item.data.weeklyStatus?.hasBetRestriction || item.data.weeklyStatus?.accountAccessible === false;
+      return isNewWeek
+        ? null
+        : !!item.data.weeklyStatus?.hasBetRestriction || item.data.weeklyStatus?.accountAccessible === false;
     }).length;
   }, [list]);
 
@@ -144,6 +196,10 @@ const useUseUserList = () => {
     return list.filter((item) => item.data.weeklyStatus?.mongoUpdateFailed).length !== 0;
   }, [list]);
 
+  const hasEmailUpdate = useMemo(() => {
+    return list.filter((item) => item.data.weeklyStatus?.emailUpdate === true).length !== 0;
+  }, [list]);
+
   return {
     list,
     loading,
@@ -152,7 +208,8 @@ const useUseUserList = () => {
     statusCount,
     restrictedCount,
     hasFreeBet,
-    hasMongoUpdate
+    hasMongoUpdate,
+    hasEmailUpdate,
   };
 };
 

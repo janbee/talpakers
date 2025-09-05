@@ -1,78 +1,70 @@
 import { useCallback, useEffect, useState } from 'react';
-import { forkJoin, tap } from 'rxjs';
-import { getMTDates, PredictionModel, SharedApi } from '@PlayAb/shared';
+import { ActiveGameModel, ISODateString, PredictionModel } from '@PlayAb/shared';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
+import { PredictionStore } from '../store/PredictionStore';
+import { InitializePubnub } from '../utils/Pubnub';
+import { orderBy } from 'lodash';
 
 const usePredictionList = () => {
   const [list, setList] = useState<PredictionModel[]>([]);
   const [listStatus, setListStatus] = useState<PredictionStatusModel>({} as PredictionStatusModel);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const reload = useCallback(() => {
-    setLoading(true);
-    setError(false);
-
-    const {
-      weekStart,
-      weekEnd,
-      dayStart
-    } = getMTDates();
-
-
-    return forkJoin([SharedApi.getPredictions({
-      today: {
-        $gte: {
-          $date: { $numberLong: dayStart.getTime().toString() }
-        }
-      }
-    }), SharedApi.getPredictions([{
-      $match: {
-        status: { $in: ['Won', 'Lost', 'Placed'] },
-        weekStart: {
-          $gte: {
-            $date: { $numberLong: weekStart.getTime().toString() }
-          },
-
-          $lte: {
-            $date: { $numberLong: weekEnd.getTime().toString() }
-          }
-        }
-
-      }
-    }])])
-      .pipe(tap(() => setLoading(false)))
-      .subscribe({
-        next: ([list, listWithStatuses]) => {
-          setList(list);
-
-          const status = listWithStatuses.reduce((acc, item) => {
-            const key = item.status;
-            if (key) {
-              acc[key] = (acc[key] || 0) + 1;
-            }
-            return acc;
-          }, {} as PredictionStatusModel);
-
-          setListStatus(status);
-        },
-        error: () => setError(true)
-      });
+    PredictionStore.reload();
   }, []);
 
   useEffect(() => {
-    const predictions$ = reload();
+    const loading$ = PredictionStore.loading$.subscribe(setLoading);
+    const listSubs$ = PredictionStore.list$.subscribe(setList);
+    const listWithStatuses$ = PredictionStore.listWithStatuses$.subscribe(setListStatus);
+    const error$ = PredictionStore.error$.subscribe(setError);
+    reload();
     return () => {
-      predictions$.unsubscribe();
+      loading$.unsubscribe();
+      listSubs$.unsubscribe();
+      listWithStatuses$.unsubscribe();
+      error$.unsubscribe();
     };
   }, [reload]);
+
+  useEffect(() => {
+    const pnCleanup = InitializePubnub((msg: { data: ActiveGameModel[]; date: ISODateString }) => {
+      const listByGameId = msg.data.reduce((acc, match) => {
+        acc[match.gameId] = match;
+        return acc;
+      }, {});
+
+      console.log('gaga---------------------------------listByGameId----', listByGameId);
+      const updatedList = list
+        .map((item) => {
+          const updatedGame = listByGameId[item._id];
+
+          if (updatedGame) {
+            item.updatedBet1Rate = updatedGame.bet1Rate;
+            item.updatedBet2Rate = updatedGame.bet2Rate;
+            item.updatedAt = new Date(msg.date);
+          }
+
+          return item;
+        })
+
+      const sortedList = orderBy(updatedList, ['updatedAt','status'], ['desc']);
+      setList(sortedList);
+    });
+
+    return () => {
+      pnCleanup();
+    };
+  }, [list]);
 
   return {
     list,
     loading,
     error,
     reload,
-    listStatus
+    listStatus,
   };
 };
 
