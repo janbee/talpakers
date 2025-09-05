@@ -3,14 +3,13 @@ import usePredictionList from '../../hooks/usePredictionList';
 import { Dimmer, Icon, Loader } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';
-import { SemanticICONS } from 'semantic-ui-react/dist/commonjs/generic';
 
 const PredictionListComponent: FC = () => {
   const {
     list,
     reload,
     loading,
-    listStatus
+    listStatus,
   } = usePredictionList();
   console.log('gaga-------------------------------------PredictionListComponent render');
   return (<div data-testid="PredictionList" className={'flex flex-col h-full'}>
@@ -37,7 +36,7 @@ const PredictionListComponent: FC = () => {
           status,
           bet1Rate,
           bet2Rate,
-          from
+          from,
         } = item;
 
         return (<div
@@ -49,7 +48,7 @@ const PredictionListComponent: FC = () => {
             'border-red-dark': status === 'Lost',
             'border-green-dark': status === 'Won',
             'border-purple-dark': status === 'Placed',
-            'border-transparent': !status
+            'border-transparent': !status,
           })}>
           <div className={'flex justify-between items-center'}>
             <span className={'text-xl font-bold'}>{game}({winningPercentage}%)</span>
@@ -61,17 +60,19 @@ const PredictionListComponent: FC = () => {
           </div>
           <div className={'flex justify-between mb-2 items-center h-5'}>
             <span className={'text-sm font-bold'}>{_id}</span>
-            <button className={classNames({
-              'text-sm cursor-pointer py-[1px] px-[5px]': true,
-              'hidden': true,
-              'group-hover:flex':dayjs(new Date()).diff(createdAt, 'minutes') >= 180 && !status
-            })}>Ask AI for Result</button>
+            <button
+              className={classNames({
+                'text-sm cursor-pointer py-[1px] px-[5px]': true,
+                'hidden': true,
+                'group-hover:flex': dayjs(new Date()).diff(createdAt, 'minutes') >= 180 && !status,
+              })}>Ask AI for Result
+            </button>
           </div>
           <div className={'flex flex-1 flex-row'}>
             <span
               className={classNames({
                 'truncate': true,
-                'text-green-dark': team1Name === predictedWinner
+                'text-green-dark': team1Name === predictedWinner,
               })}>
               {team1Name}
             </span>
@@ -81,7 +82,7 @@ const PredictionListComponent: FC = () => {
             <span
               className={classNames({
                 'text-green-dark': bet1Rate < bet2Rate,
-                'text-red-dark': bet1Rate > bet2Rate
+                'text-red-dark': bet1Rate > bet2Rate,
               })}>
               ({bet1Rate})
             </span>
@@ -95,7 +96,7 @@ const PredictionListComponent: FC = () => {
             <span
               className={classNames({
                 'text-green-dark': bet2Rate < bet1Rate,
-                'text-red-dark': bet2Rate > bet1Rate
+                'text-red-dark': bet2Rate > bet1Rate,
               })}>
               ({bet2Rate})
             </span>
@@ -105,7 +106,7 @@ const PredictionListComponent: FC = () => {
             <span
               className={classNames({
                 'truncate': true,
-                'text-green-dark': team2Name === predictedWinner
+                'text-green-dark': team2Name === predictedWinner,
               })}>
               {team2Name}
             </span>
