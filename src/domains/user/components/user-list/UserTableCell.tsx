@@ -404,6 +404,35 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   );
 };
 
+export const LastWeekWinnings: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+  const { isWithinThisWeek, weekStart, weekEnd } = getMTDates();
+  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+
+  let bonus = user.data.weeklyStatus?.bonus;
+  const totalEarnings = user.data.lastWeekStatus?.betSummary?.totalEarnings || 0;
+
+  if (isNewWeek) {
+    bonus = undefined;
+  }
+
+  const weeklyBonus = bonus?.Amount || 0;
+  const lastWeekWinnings = totalEarnings + weeklyBonus;
+
+  return (
+    <TableCell onClick={(event) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
+      <span
+        className={classNames({
+          'text-green-dark': lastWeekWinnings > 0,
+          'text-red-dark': lastWeekWinnings < 0,
+        })}
+      >
+        {toMoney(lastWeekWinnings, 0)}
+      </span>
+    </TableCell>
+  );
+};
+
 export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 

@@ -24,32 +24,18 @@ const useUseUserList = () => {
     return users;
   };
 
-  const userWatcher = async () => {
-    const users = SharedApi.mongoService.collection(MongodbCollection.User);
-
-    for await (const change of users.watch()) {
-      const update = (change as { fullDocument: UserModel }).fullDocument;
-      console.log('gaga--------------------change-----------------', change);
-      const updatedList = watchedList.current?.map((item) =>
-        item.build === update.build ? { ...item, ...update } : item
-      );
-      const newList = getSort(updatedList, { filter: UserStatusModel.InProgress });
-      setList(newList);
-      watchedList.current = newList;
-    }
-  };
-
   useEffect(() => {
     setLoading(true);
     setError(false);
 
     const user$ = forkJoin([
-      SharedApi.getUsersWithBetSummary(),
+      SharedApi.getUsersWithLastAndCurrentBetSummary(),
       SharedApi.getUsers({ _id__baas_transaction: { $exists: true } }),
     ])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {
+          console.log('gaga---------listlist----------------------------', list);
           const newList = getSort(list, { filter: UserColumnSortModel.Earnings });
           watchedList.current = newList;
           setList(updateUser(newList, listFailedUpdate));

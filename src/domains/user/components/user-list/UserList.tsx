@@ -27,6 +27,7 @@ import {
   BetsCell,
   BonusCell,
   FreeBetCell,
+  LastWeekWinnings,
   LifetimeLossCell,
   LottoTicketsCell,
   MongoFailedUpdate,
@@ -193,13 +194,18 @@ const UserListComponent: FC = () => {
                 <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                   Bonus
                 </TableHeaderCell>
+
+                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
+                  LastWeek <br />
+                  Winnings
+                </TableHeaderCell>
                 <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[60px]'}>
                   Tickets
                 </TableHeaderCell>
 
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[60px]'}>
+                {/*<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[60px]'}>
                   CanBetLow
-                </TableHeaderCell>
+                </TableHeaderCell>*/}
 
                 <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
                   Total <br />
@@ -296,9 +302,11 @@ const UserListComponent: FC = () => {
 
                     <BonusCell className={'md:hidden'} user={user} textAlign={'center'} />
 
+                    <LastWeekWinnings className={'md:hidden'} user={user} textAlign={'center'} />
+
                     <LottoTicketsCell className={'md:hidden'} user={user} textAlign={'center'} />
 
-                    <TableCell
+                    {/*<TableCell
                       className={classNames({
                         'md:hidden': true,
                         'text-green-dark': !!user.data?.weeklyStatus?.canBetLow,
@@ -308,7 +316,7 @@ const UserListComponent: FC = () => {
                       textAlign={'center'}
                     >
                       {`${!!user.data?.weeklyStatus?.canBetLow}`}
-                    </TableCell>
+                    </TableCell>*/}
 
                     <LifetimeLossCell className={'md:hidden'} user={user} textAlign={'center'} />
 
