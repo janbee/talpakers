@@ -377,7 +377,7 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   })}'`;
 
   return (
-    <TableCell onClick={(event) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
+    <TableCell onClick={(event: any) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
       <Popup
         position="top center"
         disabled={!bonus?.Amount}
@@ -420,7 +420,7 @@ export const LastWeekWinnings: FC<UserTableCellProps> = (props) => {
   const lastWeekWinnings = weeklyBonus === 0 ? 0 : totalEarnings + weeklyBonus;
 
   return (
-    <TableCell onClick={(event) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
+    <TableCell onClick={(event: any) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
       <span
         className={classNames({
           'text-green-dark': lastWeekWinnings > 0,

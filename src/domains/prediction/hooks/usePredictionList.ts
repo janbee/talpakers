@@ -34,7 +34,7 @@ const usePredictionList = () => {
       const listByGameId = msg.data.reduce((acc, match) => {
         acc[match.gameId] = match;
         return acc;
-      }, {});
+      }, {} as any);
 
       console.log('gaga---------------------------------listByGameId----', listByGameId);
       const updatedList = list
