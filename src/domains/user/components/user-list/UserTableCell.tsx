@@ -417,7 +417,7 @@ export const LastWeekWinnings: FC<UserTableCellProps> = (props) => {
   }
 
   const weeklyBonus = bonus?.Amount || 0;
-  const lastWeekWinnings = totalEarnings + weeklyBonus;
+  const lastWeekWinnings = weeklyBonus === 0 ? 0 : totalEarnings + weeklyBonus;
 
   return (
     <TableCell onClick={(event) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
