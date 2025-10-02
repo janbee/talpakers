@@ -6,6 +6,6 @@ import useUserBetDetails from './useUserBetDetails';
 describe('useUserBetDetails', () => {
   test('it should load init state', () => {
     const { result } = renderHook(useUserBetDetails);
-    expect(result.current.data).toBeTruthy();
+    expect(result.current.listStatus).toBeTruthy();
   });
 });

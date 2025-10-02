@@ -417,7 +417,7 @@ export const LastWeekWinnings: FC<UserTableCellProps> = (props) => {
   }
 
   const weeklyBonus = bonus?.Amount || 0;
-  const lastWeekWinnings = weeklyBonus === 0 ? 0 : totalEarnings + weeklyBonus;
+  const lastWeekWinnings = totalEarnings + weeklyBonus
 
   return (
     <TableCell onClick={(event: any) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
@@ -518,6 +518,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
     }
   });
 
+  console.log('gaga------------------lastUpdatelastUpdatelastUpdatelastUpdatelastUpdate-------------------', lastUpdate);
   return (
     <TableCell className={'relative'} {...omit(props, ['user'])}>
       <Popup

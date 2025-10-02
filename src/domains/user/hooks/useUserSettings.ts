@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { mergeMap } from 'rxjs';
+import { mergeMap, of } from 'rxjs';
 import { set } from 'lodash';
-import { SharedApi, UserModel } from '@PlayAb/shared';
+import { UserModel } from '@PlayAb/shared';
+import { SharedApiX } from '@PlayAb/uiServices';
 
 interface FormData {
   entries(): IterableIterator<[string, FormDataEntryValue]>;
@@ -61,12 +62,11 @@ const useUseUserSettings = () => {
 
       setLoading(true);
       setError('');
-      SharedApi.mongoService
-        .login(email, pword)
+      of(true)
         .pipe(
           mergeMap(() => {
             console.log('gaga---------------------------------userDetails----', userDetails);
-            return SharedApi.upsertUserData(userDetails as UserModel);
+            return SharedApiX.upsertUserData(userDetails as UserModel);
           })
         )
         .subscribe({

@@ -1,6 +1,7 @@
 import { BehaviorSubject, forkJoin, tap } from 'rxjs';
-import { ISODateString, PredictionModel, SharedApi } from '@PlayAb/shared';
+import { ISODateString, PredictionModel } from '@PlayAb/shared';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
+import { SharedApiX } from '@PlayAb/uiServices';
 
 class PredictionStoreClass {
   readonly list$ = new BehaviorSubject<PredictionModel[]>([]);
@@ -12,12 +13,17 @@ class PredictionStoreClass {
     this.loading$.next(true);
     this.error$.next(false);
 
-    forkJoin([SharedApi.getDayPredictions(day), SharedApi.getWeeklyPredictions()])
+    console.log('gaga-------daydaydaydaydayday------------------------------', day);
+    forkJoin([SharedApiX.getDayPredictions(day), SharedApiX.getWeeklyPredictions()])
       .pipe(tap(() => this.loading$.next(false)))
       .subscribe({
         next: ([list, listWithStatuses]) => {
           console.log('gaga-------------------listlist------------------', list);
-          this.list$.next(list.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
+          this.list$.next(
+            list.sort(
+              (a, b) => new Date(b.updatedAt || new Date()).getTime() - new Date(a.updatedAt || new Date()).getTime()
+            )
+          );
 
           const status = listWithStatuses.reduce((acc, item) => {
             const key = item.status;

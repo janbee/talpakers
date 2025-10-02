@@ -8,7 +8,7 @@ import { FromAIModel } from '@PlayAb/shared';
 import PredictionBetsInfoComponent from '../prediction-bets-info/PredictionBetsInfo';
 
 const PredictionListComponent: FC = () => {
-  const { list, reload, loading, listStatus, gameListByGameId } = usePredictionList();
+  const { list, reload, loading, listStatus } = usePredictionList();
   console.log('gaga-------------------------------------PredictionListComponent render', loading);
   return (
     <div data-testid="PredictionList" className={'flex flex-1 flex-col overflow-hidden'}>

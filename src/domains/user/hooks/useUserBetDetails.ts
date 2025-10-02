@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { PredictionModel, SharedApi, UserModel } from '@PlayAb/shared';
+import { PredictionModel, UserModel } from '@PlayAb/shared';
 import { Dictionary } from 'lodash';
+import { SharedApiX } from '@PlayAb/uiServices';
 
 const useUserBetDetails = (user: UserModel) => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -11,7 +12,7 @@ const useUserBetDetails = (user: UserModel) => {
 
     console.log('gaga---------------betsInfo----------------------', betsInfo);
     const gameIds = betsInfo.map((bet) => bet.gameId);
-    const subs = SharedApi.getPredictionByGameIds(gameIds).subscribe((list) => {
+    const subs = SharedApiX.getPredictionByGameIds(gameIds).subscribe((list) => {
       setLoading(false);
 
       const dictionaryPredictions = list.reduce((acc, item) => {

@@ -5,7 +5,8 @@ import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/But
 import { orderBy } from 'lodash';
 import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { GetUserStatusUtil } from '../../../common/utils';
-import { getMTDates, MongodbCollection, SharedApi, UserModel } from '@PlayAb/shared';
+import { getMTDates, UserModel } from '@PlayAb/shared';
+import { SharedApiX } from '@PlayAb/uiServices';
 
 const useUseUserList = () => {
   const [list, setList] = useState<UserModel[]>([]);
@@ -29,8 +30,8 @@ const useUseUserList = () => {
     setError(false);
 
     const user$ = forkJoin([
-      SharedApi.getUsersWithLastAndCurrentBetSummary(),
-      SharedApi.getUsers({ _id__baas_transaction: { $exists: true } }),
+      SharedApiX.getUsersWithLastAndCurrentBetSummary(),
+      SharedApiX.getUsers({ _id__baas_transaction: { $exists: true } }),
     ])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
@@ -145,7 +146,10 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    forkJoin([SharedApi.getUsersWithLastAndCurrentBetSummary(), SharedApi.getUsers({ _id__baas_transaction: { $exists: true } })])
+    forkJoin([
+      SharedApiX.getUsersWithLastAndCurrentBetSummary(),
+      SharedApiX.getUsers({ _id__baas_transaction: { $exists: true } }),
+    ])
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: ([list, listFailedUpdate]) => {

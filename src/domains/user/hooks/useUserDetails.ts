@@ -4,8 +4,9 @@ import { useLocation } from 'react-router-dom';
 import { EarningsModel } from '../../../api/rxjs-client/models/custom.models';
 import { groupBy, sumBy } from 'lodash';
 import dayjs from 'dayjs';
-import { BetSummaryModel, BonusModel, SharedApi, UserModel, WithdrawalModel } from '@PlayAb/shared';
+import { BetSummaryModel, BonusModel, UserModel, WithdrawalModel } from '@PlayAb/shared';
 import GetWeeksOfYear from '../../../common/utils/get-weeks-of-year/GetWeeksOfYear';
+import { SharedApiX } from '@PlayAb/uiServices';
 
 const useUserDetails = () => {
   const { pathname } = useLocation();
@@ -21,10 +22,13 @@ const useUserDetails = () => {
     const emailArr = pathname.split('/').pop()?.split(',') ?? [];
 
     setLoading(true);
-    const userDetails$ = forkJoin([SharedApi.getBetSummary({ email: { $in: emailArr } }), SharedApi.getBonuses({ email: { $in: emailArr } }), SharedApi.getWithdrawals({ email: { $in: emailArr } }), SharedApi.getUsers({ email: { $in: emailArr } })]).subscribe({
+    const userDetails$ = forkJoin([
+      SharedApiX.getBetSummary({ email: { $in: emailArr } }),
+      SharedApiX.getBonuses({ email: { $in: emailArr } }),
+      SharedApiX.getWithdrawals({ email: { $in: emailArr } }),
+      SharedApiX.getUsers({ email: { $in: emailArr } }),
+    ]).subscribe({
       next: ([betSummaryList, bonusList, withdrawalList, userDetails]) => {
-
-
         console.log('gaga----betSummaryList---------------------------------', betSummaryList);
         setLoading(false);
 
@@ -34,14 +38,14 @@ const useUserDetails = () => {
           betSummaryList,
           userBonusList,
           emailArr,
-          userWithdrawalList
+          userWithdrawalList,
         });
 
         const weeksGroupedByMon = groupBy(weeksForCurrentYear, 'mon');
         const weeksGroupedByMonKeys = Object.keys(weeksGroupedByMon).map((key) => {
           return {
             title: key.split('-')[1],
-            data: weeksGroupedByMon[key] as unknown as EarningsModel[]
+            data: weeksGroupedByMon[key] as unknown as EarningsModel[],
           };
         });
 
@@ -59,7 +63,7 @@ const useUserDetails = () => {
         setUserDetails(userDetails);
         setEmails(emailArr);
       },
-      error: () => setError(true)
+      error: () => setError(true),
     });
     return () => {
       userDetails$.unsubscribe();
@@ -73,27 +77,36 @@ const useUserDetails = () => {
     userDetails,
     emails,
     totalWinnings,
-    totalWithdrawals
+    totalWithdrawals,
   };
 };
 
 const getUserBonusList = (bonusList: BonusModel[]) => {
-  return (bonusList?.filter((item) => {
-    return (item.TransactionStatus === 'Approved' && item.TransactionType === 'Bonus' && ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) && item.Amount >= 10);
-  }) ?? []);
+  return (
+    bonusList?.filter((item) => {
+      return (
+        item.TransactionStatus === 'Approved' &&
+        item.TransactionType === 'Bonus' &&
+        ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) &&
+        item.Amount >= 10
+      );
+    }) ?? []
+  );
 };
 
 const getUserWithdrawalList = (withdrawalList: WithdrawalModel[]) => {
-  return (withdrawalList?.filter((item) => {
-    return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
-  }) ?? []);
+  return (
+    withdrawalList?.filter((item) => {
+      return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
+    }) ?? []
+  );
 };
 
 const getWeeksForCurrentYear = ({
   betSummaryList,
   userBonusList,
   emailArr,
-  userWithdrawalList
+  userWithdrawalList,
 }: {
   betSummaryList: BetSummaryModel[];
   userBonusList: BonusModel[];
@@ -104,15 +117,9 @@ const getWeeksForCurrentYear = ({
 
   const weeks = GetWeeksOfYear(year);
 
-
   console.log('gaga-------------------1--------------weeks----', weeks, year);
 
-  return weeks.map(({
-    mondayDate,
-    sundayDate,
-    weekNumber
-  }) => {
-
+  return weeks.map(({ mondayDate, sundayDate, weekNumber }) => {
     const monday = dayjs(mondayDate);
     const mon = monday.format('MMM');
     const monNumber = monday.format('M');
@@ -120,12 +127,7 @@ const getWeeksForCurrentYear = ({
 
     const betSummary = getBetSummaryByWeek(betSummaryList, mondayDate, sundayDate, year);
 
-    const {
-      betSummaryByWeek,
-      bonus,
-      totalStaked,
-      totalEarnings
-    } = betSummary;
+    const { betSummaryByWeek, bonus, totalStaked, totalEarnings } = betSummary;
     let { approxWinnings } = betSummary;
 
     const bonusByWeek = getBonusByWeek(userBonusList, mondayDate, sundayDate, emailArr);
@@ -159,15 +161,25 @@ const getWeeksForCurrentYear = ({
       title: `${mon}`,
 
       emails: emailArr,
-      withdrawal: withdrawalByWeek
+      withdrawal: withdrawalByWeek,
     };
   });
 };
 
-const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date, weekEnd: Date, year: number | string) => {
-  const betSummaryByWeek = betSummaryList?.filter((item) => {
-    return (item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() && item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() && item.year.toString() === year.toString());
-  }) ?? [];
+const getBetSummaryByWeek = (
+  betSummaryList: BetSummaryModel[],
+  weekStart: Date,
+  weekEnd: Date,
+  year: number | string
+) => {
+  const betSummaryByWeek =
+    betSummaryList?.filter((item) => {
+      return (
+        item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
+        item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
+        item.year.toString() === year.toString()
+      );
+    }) ?? [];
 
   const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.bonus ?? 0);
   const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalStaked ?? 0);
@@ -179,7 +191,7 @@ const getBetSummaryByWeek = (betSummaryList: BetSummaryModel[], weekStart: Date,
     bonus,
     totalStaked,
     totalEarnings,
-    approxWinnings
+    approxWinnings,
   };
 };
 
