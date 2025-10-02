@@ -518,7 +518,6 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
     }
   });
 
-  console.log('gaga------------------lastUpdatelastUpdatelastUpdatelastUpdatelastUpdate-------------------', lastUpdate);
   return (
     <TableCell className={'relative'} {...omit(props, ['user'])}>
       <Popup
