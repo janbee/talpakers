@@ -14,7 +14,7 @@ class PredictionStoreClass {
     this.loading$.next(true);
     this.error$.next(false);
 
-    forkJoin([SharedApiSupabase.getPredictionsByDay(day), SharedApiSupabase.getPredictionsByWeek()])
+    forkJoin([SharedApiSupabase.getPredictionsByDayWithUserBetInfo(day), SharedApiSupabase.getPredictionsByWeekWithUserBetInfo()])
       .pipe(tap(() => this.loading$.next(false)))
       .subscribe({
         next: ([resPredictionsByDay, resPredictionsByWeek]) => {

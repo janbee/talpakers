@@ -8,6 +8,7 @@ interface PredictionBetsInfoProps {
 }
 
 const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo }) => {
+
   if (!usersBetInfo || usersBetInfo.length === 0) {
     return null;
   }

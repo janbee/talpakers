@@ -34,8 +34,8 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
                 className={classNames({
                   'flex flex-row gap-x-1 justify-between text-sm border-2 rounded-md p-2': true,
                   'border-green-light': betInfo.winnings > 0,
-                  'border-red-light': betInfo.winnings < 0 && prediction.status !== 'Placed',
-                  'border-purple-light': prediction.status === 'Placed',
+                  'border-red-light': betInfo.winnings < 0 && prediction.data.status !== 'Placed',
+                  'border-purple-light': prediction.data.status === 'Placed',
                 })}
               >
                 <div className={'w-[200px] justify-evenly flex bg-gray-100 gap-2'}>
@@ -44,9 +44,9 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
                   <span className={'flex items-center flex-[0.5]'}>{toMoney(betInfo.winnings)}</span>
                 </div>
                 <div className={'flex flex-1 justify-between items-center gap-x-4 w-full'}>
-                  <span className={'flex-1'}>{prediction.team1Name}</span>
+                  <span className={'flex-1'}>{prediction.data.team1Name}</span>
                   <span>vs</span>
-                  <span className={'flex-1 text-right'}>{prediction.team2Name}</span>
+                  <span className={'flex-1 text-right'}>{prediction.data.team2Name}</span>
                 </div>
               </div>
             );

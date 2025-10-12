@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { PredictionModel, UserSupabaseModel } from '@PlayAb/shared';
+import { PredictionSupabaseModel, UserSupabaseModel } from '@PlayAb/shared';
 import { Dictionary } from 'lodash';
-import { SharedApiX } from '@PlayAb/uiServices';
+import { SharedApiSupabase } from '@PlayAb/services';
 
 const useUserBetDetails = (user: UserSupabaseModel) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [predictionDictionary, setPredictionDictionary] = useState<Dictionary<PredictionModel> | undefined>(undefined);
+  const [predictionDictionary, setPredictionDictionary] = useState<Dictionary<PredictionSupabaseModel> | undefined>(
+    undefined
+  );
 
   const betsInfo = useMemo(() => {
     const betSummary = user.data.betsSummary?.[0];
@@ -14,13 +16,16 @@ const useUserBetDetails = (user: UserSupabaseModel) => {
 
   useEffect(() => {
     const gameIds = betsInfo.map((bet) => bet.gameId);
-    const subs = SharedApiX.getPredictionByGameIds(gameIds).subscribe((list) => {
+
+    console.log('gameIds-------------------------------------', gameIds);
+    const subs = SharedApiSupabase.getPredictionsByGameIds(gameIds).subscribe((res) => {
+      const list = res.data || [];
       setLoading(false);
 
       const dictionaryPredictions = list.reduce((acc, item) => {
         acc[item._id] = item;
         return acc;
-      }, {} as Dictionary<PredictionModel>);
+      }, {} as Dictionary<PredictionSupabaseModel>);
 
       setPredictionDictionary(dictionaryPredictions);
     });
