@@ -7,12 +7,12 @@ import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '../../../../common/u
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import { omit } from 'lodash';
 import dayjs from 'dayjs';
-import { convertToMT, getMTDates, isDateWithin, toMoney, UserModel } from '@PlayAb/shared';
+import { convertToMT, getMTDates, isDateWithin, toMoney, UserSupabaseModel } from '@PlayAb/shared';
 import UserBetDetails from '../user-bet-details/UserBetDetails';
 import { toPascalCase } from '@react-native-community/cli-platform-android/build/commands/runAndroid/toPascalCase';
 
 interface UserTableCellProps extends StrictTableCellProps {
-  user: UserModel;
+  user: UserSupabaseModel;
 }
 
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
@@ -44,7 +44,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   })}'`;
 
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'md:!min-w-[33%] md:!text-center'}>
       {!!user.data.weeklyStatus?.withdrawal && isThisWeek && (
         <>
           {[
@@ -104,7 +104,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
           ))}
         </>
       )}
-      <span>{user.build}</span>
+      <span>{user.data.build}</span>
     </TableCell>
   );
 };
@@ -113,7 +113,7 @@ export const StatusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const userStatus = GetUserStatusUtil(user);
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'md:!min-w-[33%] md:!text-right'} textAlign={'center'}>
       {[userStatus].map((s, statusInd) => {
         let className = 'text-green-light cursor-pointer';
         let FIcon = <i key={statusInd} className="fa-solid fa-circle-check  text-green-dark cursor-pointer" />;
@@ -137,7 +137,7 @@ export const StatusCell: FC<UserTableCellProps> = (props) => {
 export const VersionCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'md:hidden'} user={user} collapsing>
       <Popup
         position="right center"
         trigger={<span>{user.data.version}</span>}
@@ -156,10 +156,11 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isWithinThisWeek } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+  const betSummary = user.data?.betsSummary?.[0];
 
-  let totalEarnings = user.data.weeklyStatus?.betSummary?.totalEarnings || 0;
-  let winnings = user.data.weeklyStatus?.betSummary?.winnings || 0;
-  let bonus = user.data.weeklyStatus?.betSummary?.bonus || 0;
+  let totalEarnings = betSummary?.data.totalEarnings || 0;
+  let winnings = betSummary?.data.winnings || 0;
+  let bonus = betSummary?.data.bonus || 0;
 
   if (isNewWeek) {
     totalEarnings = 0;
@@ -168,7 +169,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   }
 
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'md:flex-1'} textAlign={'center'}>
       <div className={'week-summary-wrap flex justify-evenly'}>
         <span
           className={classNames({
@@ -207,9 +208,9 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isWithinThisWeek } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-
+  const betSummary = user.data?.betsSummary?.[0];
   const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0;
-  const totalStaked = user.data.weeklyStatus?.betSummary?.totalStaked || 0;
+  const totalStaked = betSummary?.data.totalStaked || 0;
 
   let finalTotalStaked = Math.max(highestTotalStaked, totalStaked);
 
@@ -217,7 +218,7 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
     finalTotalStaked = 0;
   }
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'md:w-full'} textAlign={'center'}>
       <Progress
         inverted
         success={user.data?.weeklyStatus?.done === true && finalTotalStaked !== 0}
@@ -235,9 +236,10 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isWithinThisWeek } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+  const betSummary = user.data?.betsSummary?.[0];
   const bets = {
-    open: user.data.weeklyStatus?.betSummary?.openBets ?? 0,
-    settled: user.data.weeklyStatus?.betSummary?.settledBets ?? 0,
+    open: betSummary?.data.openBets ?? 0,
+    settled: betSummary?.data.settledBets ?? 0,
   };
 
   if (isNewWeek) {
@@ -246,7 +248,7 @@ export const BetsCell: FC<UserTableCellProps> = (props) => {
   }
 
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'md:w-[60px]'}>
       {[bets].map(({ open, settled }, betsIndex) => {
         return (
           <div key={betsIndex}>
@@ -285,7 +287,7 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   const bgColor = nextCashOutPercent > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(nextCashOutPercent));
 
   return (
-    <TableCell {...omit(props, ['user'])}>
+    <TableCell className={'md:hidden'}>
       <div className={'flex justify-between'}>
         <Popup
           position="left center"
@@ -319,7 +321,7 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
     : !!user.data.weeklyStatus?.hasBetRestriction || user.data.weeklyStatus?.accountAccessible === false;
 
   return (
-    <TableCell className={'relative'} {...omit(props, ['user'])}>
+    <TableCell className={'md:hidden relative'} textAlign={'center'}>
       {hasBetRestriction && (
         <Popup position="left center" trigger={<span className={'text-red-dark'}>true</span>} flowing>
           <Popup.Header>
@@ -331,7 +333,7 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
   );
 };
 
-export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
+/*export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
   const { isWithinThisWeek } = getMTDates();
@@ -343,7 +345,7 @@ export const MongoFailedUpdate: FC<UserTableCellProps> = (props) => {
       {hasFailedUpdates && <span className={'text-red-dark'}>true</span>}
     </TableCell>
   );
-};
+};*/
 
 export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
@@ -377,7 +379,7 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   })}'`;
 
   return (
-    <TableCell onClick={(event: any) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
+    <TableCell onClick={(event: any) => event.stopPropagation()} textAlign={'center'} className={'relative md:hidden'}>
       <Popup
         position="top center"
         disabled={!bonus?.Amount}
@@ -404,23 +406,23 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   );
 };
 
-export const LastWeekWinnings: FC<UserTableCellProps> = (props) => {
+export const LastWeekWinningsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek, weekStart, weekEnd } = getMTDates();
+  const { isWithinThisWeek } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-
+  const betSummary = user.data.betsSummary?.[1]; // index 1 is supposedly the previous week
   let bonus = user.data.weeklyStatus?.bonus;
-  const totalEarnings = user.data.lastWeekStatus?.betSummary?.totalEarnings || 0;
+  const totalEarnings = betSummary?.data.totalEarnings || 0;
 
   if (isNewWeek) {
     bonus = undefined;
   }
 
   const weeklyBonus = bonus?.Amount || 0;
-  const lastWeekWinnings = totalEarnings + weeklyBonus
+  const lastWeekWinnings = totalEarnings + weeklyBonus;
 
   return (
-    <TableCell onClick={(event: any) => event.stopPropagation()} className={'relative'} {...omit(props, ['user'])}>
+    <TableCell onClick={(event: any) => event.stopPropagation()} className={'relative md:hidden'} textAlign={'center'}>
       <span
         className={classNames({
           'text-green-dark': lastWeekWinnings > 0,
@@ -437,7 +439,7 @@ export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
   return (
-    <TableCell className={'relative'} {...omit(props, ['user'])}>
+    <TableCell className={'relative md:hidden'} textAlign={'center'}>
       <span>{user.data.lottoTickets?.length}</span>
     </TableCell>
   );
@@ -448,7 +450,7 @@ export const LifetimeLossCell: FC<UserTableCellProps> = (props) => {
 
   const lifeTimeLoss = user.data.userSession?.GPD?.lifetimeWinAndLoss || '0.00';
   return (
-    <TableCell className={'relative'} {...omit(props, ['user'])}>
+    <TableCell className={'relative md:hidden'} textAlign={'center'}>
       <span className={'text-red-dark'}>{MoneyUtil(lifeTimeLoss)}</span>
     </TableCell>
   );
@@ -460,7 +462,7 @@ export const FreeBetCell: FC<UserTableCellProps> = (props) => {
   const freeBets = user.data.weeklyStatus?.freeBets || [];
 
   return (
-    <TableCell className={'relative'} {...omit(props, ['user'])}>
+    <TableCell className={'relative md:hidden'} extAlign={'center'}>
       <Popup
         position="top center"
         trigger={<span>{!!freeBets.length && <span className={'text-green-dark'}>{freeBets.length}</span>}</span>}
@@ -474,6 +476,34 @@ export const FreeBetCell: FC<UserTableCellProps> = (props) => {
           </Popup.Header>
         ))}
       </Popup>
+    </TableCell>
+  );
+};
+
+export const ActivePredictionCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  return (
+    <TableCell className={'relative md:hidden'} collapsing textAlign={'center'}>
+      {user.data.weeklyStatus?.predictions ?? 0}
+    </TableCell>
+  );
+};
+
+export const AutoLoginCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  return (
+    <TableCell
+      className={classNames({
+        'md:hidden': true,
+        'text-green-dark': !!user.data?.settings?.electronAutoLogin,
+        'text-red-dark': !user.data?.settings?.electronAutoLogin,
+      })}
+      collapsing
+      textAlign={'center'}
+    >
+      {`${!!user.data?.settings?.electronAutoLogin}`}
     </TableCell>
   );
 };
@@ -499,7 +529,8 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { isWithinThisWeek } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
 
-  const lastUpdate = user.updatedAt ?? user.createdAt ?? new Date();
+  const date = user.updatedAt || user.createdAt || new Date();
+  const lastUpdate = new Date(date);
   const metadata = isNewWeek ? {} : user.data.weeklyStatus?.metadata;
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
@@ -519,7 +550,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   });
 
   return (
-    <TableCell className={'relative'} {...omit(props, ['user'])}>
+    <TableCell className={'relative md:flex-1 md:!text-right'} textAlign={'center'}>
       <Popup
         position="left center"
         trigger={

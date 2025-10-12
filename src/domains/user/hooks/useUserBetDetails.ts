@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { PredictionModel, UserModel } from '@PlayAb/shared';
+import { PredictionModel, UserSupabaseModel } from '@PlayAb/shared';
 import { Dictionary } from 'lodash';
 import { SharedApiX } from '@PlayAb/uiServices';
 
-const useUserBetDetails = (user: UserModel) => {
+const useUserBetDetails = (user: UserSupabaseModel) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [predictionDictionary, setPredictionDictionary] = useState<Dictionary<PredictionModel> | undefined>(undefined);
 
-  useEffect(() => {
-    const betsInfo = user.data.weeklyStatus?.betSummary.betsInfo || [];
+  const betsInfo = useMemo(() => {
+    const betSummary = user.data.betsSummary?.[0];
+    return betSummary?.data.betsInfo || [];
+  }, [user.data.betsSummary]); // The dependency is the part of the user object that affects the calculation
 
-    console.log('gaga---------------betsInfo----------------------', betsInfo);
+  useEffect(() => {
     const gameIds = betsInfo.map((bet) => bet.gameId);
     const subs = SharedApiX.getPredictionByGameIds(gameIds).subscribe((list) => {
       setLoading(false);
@@ -20,18 +22,15 @@ const useUserBetDetails = (user: UserModel) => {
         return acc;
       }, {} as Dictionary<PredictionModel>);
 
-      console.log('gaga------dictionaryPredictions-------------------------------', dictionaryPredictions);
-
       setPredictionDictionary(dictionaryPredictions);
     });
 
     return () => {
       subs.unsubscribe();
     };
-  }, [user]);
+  }, [betsInfo, user]);
 
   const listStatus = useMemo(() => {
-    const betsInfo = user.data.weeklyStatus?.betSummary.betsInfo || [];
     let Won = 0;
     let Lost = 0;
     betsInfo.forEach((bet) => {
@@ -45,13 +44,13 @@ const useUserBetDetails = (user: UserModel) => {
     return {
       Won,
       Lost,
-    }
-  }, [user]);
+    };
+  }, [betsInfo]);
 
   return {
     predictionDictionary,
     loading,
-    listStatus
+    listStatus,
   };
 };
 

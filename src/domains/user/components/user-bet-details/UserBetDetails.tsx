@@ -1,16 +1,17 @@
 import { FC } from 'react';
-import { toMoney, UserModel } from '@PlayAb/shared';
+import { toMoney, UserModel, UserSupabaseModel } from '@PlayAb/shared';
 import useUserBetDetails from '../../hooks/useUserBetDetails';
 import { Dimmer, Loader } from 'semantic-ui-react';
 import classNames from 'classnames';
 
 interface UserBetDetailsProps {
-  user: UserModel;
+  user: UserSupabaseModel;
 }
 
 const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
   const { user } = props;
   const { predictionDictionary, loading, listStatus } = useUserBetDetails(user);
+  const betSummary = user.data.betsSummary?.[0]
 
   return (
     <div data-testid="UserBetDetails" className={'flex flex-col h-full p-1 pt-0 gap-y-1'}>
@@ -20,7 +21,7 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
       </div>
       <div className={'overflow-auto h-full flex flex-1 flex-col gap-y-1'}>
         {!!predictionDictionary &&
-          user.data.weeklyStatus?.betSummary.betsInfo?.map((betInfo) => {
+          betSummary?.data.betsInfo?.map((betInfo) => {
             const id = betInfo.gameId;
             const prediction = predictionDictionary[id];
 

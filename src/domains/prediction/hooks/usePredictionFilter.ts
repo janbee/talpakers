@@ -11,7 +11,7 @@ const usePredictionFilter = () => {
   useEffect(() => {
     const listSubs$ = PredictionStore.list$.subscribe((list) => {
       const status = list.reduce((acc, item) => {
-        const key = item.status;
+        const key = item.data.status;
         if (key) {
           acc[key] = (acc[key] || 0) + 1;
         }
@@ -29,9 +29,9 @@ const usePredictionFilter = () => {
     (day: string) => {
       const { dayStartOfWeekDay } = getMTDates();
       const getDay = selectedDay === day ? '' : day;
-      const dayStartOfWeek = dayStartOfWeekDay(getDay)?.toISOString() || '';
+      const dayStartOfWeek = dayStartOfWeekDay(getDay);
       setSelectedDay(getDay);
-      PredictionStore.reload(dayStartOfWeek as ISODateString);
+      PredictionStore.reload(dayStartOfWeek);
     },
     [selectedDay]
   );

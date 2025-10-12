@@ -1,8 +1,8 @@
 import { UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
-import { getMTDates, UserModel } from '@PlayAb/shared';
+import { getMTDates, UserModel, UserSupabaseModel } from '@PlayAb/shared';
 
-const GetUserStatusUtilComponent = (user: UserModel): UserStatusModel => {
+const GetUserStatusUtilComponent = (user: UserSupabaseModel) => {
   const isDone = user.data?.weeklyStatus?.done === true;
   const inProgress = user.data?.weeklyStatus?.done === false;
 

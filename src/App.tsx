@@ -4,12 +4,14 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { Dimmer, Loader } from 'semantic-ui-react';
 import { delay, of } from 'rxjs';
 import AppRoutes from './common/app-routes/AppRoutes';
+import { SharedApiSupabase } from '@PlayAb/services';
 
 const App = (): ReactElement | null => {
   const [appReady, setAppReady] = useState(false);
 
+
   useEffect(() => {
-    const realmInit$ = of(true)
+    const realmInit$ = SharedApiSupabase.login('talpaklogen@gmail.com')
       .pipe(delay(500))
       .subscribe(() => {
         setAppReady(true);
@@ -19,7 +21,6 @@ const App = (): ReactElement | null => {
     };
   }, []);
 
-  console.log('gaga-------------------------------------render APP', appReady);
   return (
     <>
       {appReady && (

@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 import { useLocation } from 'react-router-dom';
 import { EarningsModel } from '../../../api/rxjs-client/models/custom.models';
 import { groupBy, sumBy } from 'lodash';
 import dayjs from 'dayjs';
-import { BetSummaryModel, BonusModel, UserModel, WithdrawalModel } from '@PlayAb/shared';
+import {
+  BetSummarySupabaseModel,
+  BonusSupabaseModel,
+  UserSupabaseModel,
+  WithdrawalSupabaseModel,
+} from '@PlayAb/shared';
 import GetWeeksOfYear from '../../../common/utils/get-weeks-of-year/GetWeeksOfYear';
-import { SharedApiX } from '@PlayAb/uiServices';
+import { SharedApiSupabase } from '@PlayAb/services';
 
 const useUserDetails = () => {
   const { pathname } = useLocation();
   const [list, setList] = useState<{ title: string; data: EarningsModel[] }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [userDetails, setUserDetails] = useState<UserModel[]>([]);
+  const [userDetails, setUserDetails] = useState<UserSupabaseModel[]>([]);
   const [totalWinnings, setTotalWinnings] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
   const [emails, setEmails] = useState<string[]>([]);
@@ -23,13 +28,12 @@ const useUserDetails = () => {
 
     setLoading(true);
     const userDetails$ = forkJoin([
-      SharedApiX.getBetSummary({ email: { $in: emailArr } }),
-      SharedApiX.getBonuses({ email: { $in: emailArr } }),
-      SharedApiX.getWithdrawals({ email: { $in: emailArr } }),
-      SharedApiX.getUsers({ email: { $in: emailArr } }),
+      SharedApiSupabase.getBetsSummary(emailArr).pipe(map((res) => res.data || [])),
+      SharedApiSupabase.getBonuses(emailArr).pipe(map((res) => res.data || [])),
+      SharedApiSupabase.getWithdrawals(emailArr).pipe(map((res) => res.data || [])),
+      SharedApiSupabase.getUsers(emailArr).pipe(map((res) => res.data || [])),
     ]).subscribe({
       next: ([betSummaryList, bonusList, withdrawalList, userDetails]) => {
-        console.log('gaga----betSummaryList---------------------------------', betSummaryList);
         setLoading(false);
 
         const userBonusList = getUserBonusList(bonusList);
@@ -81,23 +85,23 @@ const useUserDetails = () => {
   };
 };
 
-const getUserBonusList = (bonusList: BonusModel[]) => {
+const getUserBonusList = (bonusList: BonusSupabaseModel[]) => {
   return (
     bonusList?.filter((item) => {
       return (
-        item.TransactionStatus === 'Approved' &&
-        item.TransactionType === 'Bonus' &&
-        ['IMMEDIATE BONUS', 'Bonus'].includes(item.PaymentMethodInfo) &&
-        item.Amount >= 10
+        item.data.TransactionStatus === 'Approved' &&
+        item.data.TransactionType === 'Bonus' &&
+        ['IMMEDIATE BONUS', 'Bonus'].includes(item.data.PaymentMethodInfo) &&
+        item.data.Amount >= 10
       );
     }) ?? []
   );
 };
 
-const getUserWithdrawalList = (withdrawalList: WithdrawalModel[]) => {
+const getUserWithdrawalList = (withdrawalList: WithdrawalSupabaseModel[]) => {
   return (
     withdrawalList?.filter((item) => {
-      return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.TransactionStatus);
+      return ['Approved', 'Pending', 'Sending to Processor', 'In Process'].includes(item.data.TransactionStatus);
     }) ?? []
   );
 };
@@ -108,16 +112,14 @@ const getWeeksForCurrentYear = ({
   emailArr,
   userWithdrawalList,
 }: {
-  betSummaryList: BetSummaryModel[];
-  userBonusList: BonusModel[];
+  betSummaryList: BetSummarySupabaseModel[];
+  userBonusList: BonusSupabaseModel[];
   emailArr: string[];
-  userWithdrawalList: WithdrawalModel[];
+  userWithdrawalList: WithdrawalSupabaseModel[];
 }) => {
   const year = dayjs(Date.now()).year();
 
   const weeks = GetWeeksOfYear(year);
-
-  console.log('gaga-------------------1--------------weeks----', weeks, year);
 
   return weeks.map(({ mondayDate, sundayDate, weekNumber }) => {
     const monday = dayjs(mondayDate);
@@ -131,7 +133,7 @@ const getWeeksForCurrentYear = ({
     let { approxWinnings } = betSummary;
 
     const bonusByWeek = getBonusByWeek(userBonusList, mondayDate, sundayDate, emailArr);
-    let playAbBonus = sumBy(bonusByWeek, (foundBonus) => foundBonus?.Amount ?? 0);
+    let playAbBonus = sumBy(bonusByWeek, (foundBonus) => foundBonus?.data.Amount ?? 0);
     if (bonusByWeek?.length !== emailArr?.length) {
       playAbBonus = bonus;
     } else {
@@ -139,7 +141,7 @@ const getWeeksForCurrentYear = ({
     }
     let winnings = 0;
     if (bonusByWeek?.length && betSummaryByWeek?.length) {
-      winnings = playAbBonus + sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalEarnings ?? 0);
+      winnings = playAbBonus + sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalEarnings ?? 0);
     }
 
     const withdrawalByWeek = getWithdrawalByWeek(userWithdrawalList, mondayDate, sundayDate);
@@ -151,7 +153,7 @@ const getWeeksForCurrentYear = ({
       startDate: mondayDate.toISOString(),
       endDate: sundayDate.toISOString(),
       bonus: playAbBonus || bonus || 0,
-      bonusDateTime: bonusByWeek?.[0]?.TransactionDateTime,
+      bonusDateTime: bonusByWeek?.[0]?.data.TransactionDateTime,
       totalStaked,
       totalEarnings,
       winnings,
@@ -167,7 +169,7 @@ const getWeeksForCurrentYear = ({
 };
 
 const getBetSummaryByWeek = (
-  betSummaryList: BetSummaryModel[],
+  betSummaryList: BetSummarySupabaseModel[],
   weekStart: Date,
   weekEnd: Date,
   year: number | string
@@ -175,16 +177,16 @@ const getBetSummaryByWeek = (
   const betSummaryByWeek =
     betSummaryList?.filter((item) => {
       return (
-        item.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
-        item.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
-        item.year.toString() === year.toString()
+        item.data.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
+        item.data.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
+        item.data.year.toString() === year.toString()
       );
     }) ?? [];
 
-  const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.bonus ?? 0);
-  const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalStaked ?? 0);
-  const totalEarnings = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.totalEarnings ?? 0);
-  const approxWinnings = sumBy(betSummaryByWeek, (betSummary) => betSummary?.betSummary.winnings ?? 0);
+  const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.bonus ?? 0);
+  const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalStaked ?? 0);
+  const totalEarnings = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalEarnings ?? 0);
+  const approxWinnings = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.winnings ?? 0);
 
   return {
     betSummaryByWeek,
@@ -195,7 +197,7 @@ const getBetSummaryByWeek = (
   };
 };
 
-const getBonusByWeek = (userBonusList: BonusModel[], weekStart: Date, weekEnd: Date, emailArr: string[]) => {
+const getBonusByWeek = (userBonusList: BonusSupabaseModel[], weekStart: Date, weekEnd: Date, emailArr: string[]) => {
   /*
    * get bonus
    * reverse to get the first occurrence not the latest
@@ -203,16 +205,18 @@ const getBonusByWeek = (userBonusList: BonusModel[], weekStart: Date, weekEnd: D
   return emailArr
     ?.map((email) => {
       return userBonusList?.reverse().find((item) => {
-        const TransactionDateTime = dayjs(item.TransactionDateTime).startOf('day').subtract(7, 'days');
-        return TransactionDateTime.isAfter(weekStart) && TransactionDateTime.isBefore(weekEnd) && item.email === email;
+        const TransactionDateTime = dayjs(item.data.TransactionDateTime).startOf('day').subtract(7, 'days');
+        return (
+          TransactionDateTime.isAfter(weekStart) && TransactionDateTime.isBefore(weekEnd) && item.data.email === email
+        );
       });
     })
     .filter(Boolean);
 };
 
-const getWithdrawalByWeek = (userWithdrawalList: WithdrawalModel[], weekStart: Date, weekEnd: Date) => {
+const getWithdrawalByWeek = (userWithdrawalList: WithdrawalSupabaseModel[], weekStart: Date, weekEnd: Date) => {
   return userWithdrawalList?.find((item) => {
-    const transactionDate = new Date(item.TransactionDateTime.split('T')[0]);
+    const transactionDate = new Date(item.data.TransactionDateTime.split('T')[0]);
     transactionDate.setUTCHours(0, 0, 0, 0);
     const TransactionDateTime = dayjs(transactionDate);
     return TransactionDateTime.isSameOrAfter(weekStart) && TransactionDateTime.isSameOrBefore(weekEnd);

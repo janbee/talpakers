@@ -24,12 +24,10 @@ const PredictionListComponent: FC = () => {
       </div>
       <div className={'flex flex-col overflow-auto flex-1 my-3 gap-y-3'}>
         {list.map((item) => {
+          const { _id, createdAt, updatedAt } = item;
           const {
-            _id,
             winningPercentage,
             game,
-            createdAt,
-            updatedAt,
             team1Name,
             team2Name,
             status,
@@ -40,7 +38,7 @@ const PredictionListComponent: FC = () => {
             usersBetInfo,
             updatedBet1Rate,
             updatedBet2Rate,
-          } = item;
+          } = item.data;
 
           return (
             <div
@@ -56,7 +54,7 @@ const PredictionListComponent: FC = () => {
             >
               <div className={'flex justify-between items-center'}>
                 <span className={'text-xl font-bold'}>
-                  {game}({winningPercentage}%)
+                  {game}({winningPercentage.toFixed(0)}%)
                 </span>
                 <Popup
                   position="left center"
@@ -140,7 +138,7 @@ const PredictionListComponent: FC = () => {
                           })}
                         >
                           <span>{item.name}</span>
-                          <span>{item.percentage}%</span>
+                          <span>{item.percentage.toFixed(0)}%</span>
                         </div>
                       );
                     });

@@ -1,45 +1,33 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { forkJoin, tap } from 'rxjs';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import { orderBy } from 'lodash';
 import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { GetUserStatusUtil } from '../../../common/utils';
-import { getMTDates, UserModel } from '@PlayAb/shared';
-import { SharedApiX } from '@PlayAb/uiServices';
+import { getMTDates, UserSupabaseModel } from '@PlayAb/shared';
+import { SharedApiSupabase } from '@PlayAb/services';
+import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const useUseUserList = () => {
-  const [list, setList] = useState<UserModel[]>([]);
+  const [list, setList] = useState<UserSupabaseModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  const watchedList = useRef<UserModel[]>([]);
-
-  const updateUser = (users: UserModel[], listFailedUpdate: UserModel[]) => {
-    const fails = listFailedUpdate.map((user) => user.build);
-    users.forEach((user) => {
-      if (fails.includes(user.build) && user.data.weeklyStatus) {
-        user.data.weeklyStatus.mongoUpdateFailed = true;
-      }
-    });
-    return users;
-  };
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     setLoading(true);
     setError(false);
 
-    const user$ = forkJoin([
-      SharedApiX.getUsersWithLastAndCurrentBetSummary(),
-      SharedApiX.getUsers({ _id__baas_transaction: { $exists: true } }),
-    ])
+    const user$ = SharedApiSupabase.getUsersWithBetsSummary()
       .pipe(tap(() => setLoading(false)))
       .subscribe({
-        next: ([list, listFailedUpdate]) => {
-          console.log('gaga---------listlist----------------------------', list);
-          const newList = getSort(list, { filter: UserColumnSortModel.Earnings });
-          watchedList.current = newList;
-          setList(updateUser(newList, listFailedUpdate));
+        next: (res) => {
+          const userList = res.data ?? [];
+          const newList = getSort(userList, { filter: UserColumnSortModel.Earnings });
+          setList(newList);
         },
         error: () => setError(true),
       });
@@ -49,12 +37,11 @@ const useUseUserList = () => {
     };
   }, []);
 
-  const getSort = (list: UserModel[], data: ButtonProps) => {
-    let newList: UserModel[] = list;
+  const getSort = (list: UserSupabaseModel[], data: ButtonProps) => {
     const { isWithinThisWeek } = getMTDates();
 
     if (data.filter === UserStatusModel.IsDone) {
-      newList = orderBy(
+      return orderBy(
         list,
         [
           (user) => {
@@ -66,19 +53,21 @@ const useUseUserList = () => {
         ['desc', 'desc']
       );
     } else if (data.filter === UserStatusModel.InProgress) {
-      newList = orderBy(
+      return orderBy(
         list,
         [
           (user) => {
             const userStatus = GetUserStatusUtil(user);
             return userStatus === UserStatusModel.InProgress;
           },
-          'data.weeklyStatus.betSummary.betSummary.totalStaked',
+          (user) => {
+            return user.data.betsSummary?.[0]?.data.totalStaked ?? 0;
+          },
         ],
         ['desc', 'desc']
       );
     } else if (data.filter === UserStatusModel.IsWaiting) {
-      newList = orderBy(
+      return orderBy(
         list,
         [
           (user) => {
@@ -90,7 +79,7 @@ const useUseUserList = () => {
         ['desc', 'desc']
       );
     } else if (data.filter === UserColumnSortModel.NextWithdrawal) {
-      newList = orderBy(
+      return orderBy(
         list,
         [
           (user) => {
@@ -103,29 +92,29 @@ const useUseUserList = () => {
         ['desc']
       );
     } else if (data.filter === UserColumnSortModel.Earnings) {
-      newList = orderBy(
+      return orderBy(
         list,
         [
           (user) => {
-            const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-            return isNewWeek ? 0 : (user.data?.weeklyStatus?.betSummary?.totalEarnings ?? 0);
+            const isNewWeek = !isWithinThisWeek(user.data.weeklyStatus?.startDate);
+            return isNewWeek ? 0 : (user.data?.betsSummary?.[0]?.data.totalEarnings ?? 0);
           },
         ],
         ['asc']
       );
     } else if (data.filter === UserColumnSortModel.OpenBets) {
-      newList = orderBy(
+      return orderBy(
         list,
         [
           (user) => {
             const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-            return isNewWeek ? 0 : (user.data?.weeklyStatus?.betSummary?.openBets ?? 0);
+            return isNewWeek ? 0 : (user.data?.betsSummary?.[0]?.data.openBets ?? 0);
           },
         ],
         ['desc']
       );
     } else if (data.filter === UserColumnSortModel.Active) {
-      newList = orderBy(
+      return orderBy(
         list,
         [
           (user) => {
@@ -136,8 +125,7 @@ const useUseUserList = () => {
       );
     }
 
-    console.log('data.filter-------------------------------------', data.filter);
-    return newList;
+    return list;
   };
 
   const handleOrderByStatus = useCallback((event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
@@ -146,15 +134,13 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    forkJoin([
-      SharedApiX.getUsersWithLastAndCurrentBetSummary(),
-      SharedApiX.getUsers({ _id__baas_transaction: { $exists: true } }),
-    ])
+    SharedApiSupabase.getUsersWithBetsSummary()
       .pipe(tap(() => setLoading(false)))
       .subscribe({
-        next: ([list, listFailedUpdate]) => {
-          const newList = getSort(list, data);
-          setList(updateUser(newList, listFailedUpdate));
+        next: (res) => {
+          const userList = res.data ?? [];
+          const newList = getSort(userList, data);
+          setList(newList);
         },
         error: () => setError(true),
       });
@@ -182,13 +168,52 @@ const useUseUserList = () => {
     return list.filter((item) => item.data.weeklyStatus?.freeBets?.length || 0).length !== 0;
   }, [list]);
 
-  const hasMongoUpdate = useMemo(() => {
-    return list.filter((item) => item.data.weeklyStatus?.mongoUpdateFailed).length !== 0;
-  }, [list]);
+  const selectedUserMemo = useMemo<Map<string, boolean>>(() => {
+    const usersFromUrl = location.pathname.replace('/users/', '').split(',').filter(Boolean);
+    const users = new Map<string, boolean>();
 
-  const hasEmailUpdate = useMemo(() => {
-    return list.filter((item) => item.data.weeklyStatus?.emailUpdate === true).length !== 0;
-  }, [list]);
+    usersFromUrl.forEach((item) => {
+      users.set(item, true);
+    });
+
+    return users;
+  }, [location.pathname]);
+
+  const handleRowClick = useCallback(
+    (user: UserSupabaseModel) => () => {
+      selectedUserMemo.clear();
+      selectedUserMemo.set(user._id, true);
+
+      navigate(`./${user._id}`, {
+        relative: 'route',
+        replace: location.pathname.includes('@'),
+      });
+    },
+    [location.pathname, navigate, selectedUserMemo]
+  );
+
+  const handleCheckboxMultiUserChange = useCallback(
+    (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
+      event.stopPropagation();
+
+      if (data.checked) {
+        selectedUserMemo.set(data.value as string, true);
+      } else {
+        selectedUserMemo.delete(data.value as string);
+      }
+
+      const joinUser: string[] = [];
+      selectedUserMemo.forEach((_, key) => {
+        joinUser.push(key);
+      });
+
+      navigate(`./${joinUser.join(',')}`, {
+        relative: 'route',
+        replace: location.pathname.includes('@'),
+      });
+    },
+    [location.pathname, navigate, selectedUserMemo]
+  );
 
   return {
     list,
@@ -198,12 +223,13 @@ const useUseUserList = () => {
     statusCount,
     restrictedCount,
     hasFreeBet,
-    hasMongoUpdate,
-    hasEmailUpdate,
+    handleCheckboxMultiUserChange,
+    handleRowClick,
+    selectedUserMemo,
   };
 };
 
-const userListFilterByStatus = (list: UserModel[], status: UserStatusModel) => {
+const userListFilterByStatus = (list: UserSupabaseModel[], status: UserStatusModel) => {
   return list.filter((user) => {
     const userStatus = GetUserStatusUtil(user);
     return userStatus === status;

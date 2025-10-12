@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActiveGameModel, ISODateString, PredictionModel } from '@PlayAb/shared';
+import { ActiveGameModel, ISODateString, PredictionModel, PredictionSupabaseModel } from '@PlayAb/shared';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { PredictionStore } from '../store/PredictionStore';
 import { InitializePubnub } from '../utils/Pubnub';
 import { orderBy } from 'lodash';
 
 const usePredictionList = () => {
-  const [list, setList] = useState<PredictionModel[]>([]);
+  const [list, setList] = useState<PredictionSupabaseModel[]>([]);
   const [listStatus, setListStatus] = useState<PredictionStatusModel>({} as PredictionStatusModel);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -36,15 +36,14 @@ const usePredictionList = () => {
         return acc;
       }, {} as any);
 
-      console.log('gaga---------------------------------listByGameId----', listByGameId);
       const updatedList = list
         .map((item) => {
           const updatedGame = listByGameId[item._id];
 
           if (updatedGame) {
-            item.updatedBet1Rate = updatedGame.bet1Rate;
-            item.updatedBet2Rate = updatedGame.bet2Rate;
-            item.updatedAt = new Date(msg.date);
+            item.data.updatedBet1Rate = updatedGame.bet1Rate;
+            item.data.updatedBet2Rate = updatedGame.bet2Rate;
+            item.updatedAt = new Date(msg.date).toISOString() as ISODateString;
           }
 
           return item;

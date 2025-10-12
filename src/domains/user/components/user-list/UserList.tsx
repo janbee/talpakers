@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, FC, useCallback, useMemo } from 'react';
+import { CSSProperties, FC } from 'react';
 import {
   Button,
   Checkbox,
@@ -16,21 +16,19 @@ import {
   TableHeaderCell,
   TableRow,
 } from 'semantic-ui-react';
-
-import { useLocation, useNavigate } from 'react-router-dom';
-import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
 import classNames from 'classnames';
 import {
   ActiveCell,
+  ActivePredictionCell,
   AppBuildCell,
+  AutoLoginCell,
   BetRestrictedCell,
   BetsCell,
   BonusCell,
   FreeBetCell,
-  LastWeekWinnings,
+  LastWeekWinningsCell,
   LifetimeLossCell,
   LottoTicketsCell,
-  MongoFailedUpdate,
   NextWithdrawalCell,
   StatusCell,
   VersionCell,
@@ -39,7 +37,7 @@ import {
 } from './UserTableCell';
 import useUserList from '../../hooks/useUserList';
 import { UserColumnSortModel, UserStatusModel } from '../../../../api/rxjs-client/models/custom.models';
-import { UserModel } from '@PlayAb/shared';
+import { UserSupabaseModel } from '@PlayAb/shared';
 
 const UserListComponent: FC = () => {
   const {
@@ -49,59 +47,124 @@ const UserListComponent: FC = () => {
     statusCount,
     restrictedCount,
     hasFreeBet,
-    hasMongoUpdate,
-    hasEmailUpdate,
+    handleRowClick,
+    selectedUserMemo,
+    handleCheckboxMultiUserChange,
   } = useUserList();
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  const selectedUserMemo = useMemo<Map<string, boolean>>(() => {
-    const usersFromUrl = location.pathname.replace('/users/', '').split(',').filter(Boolean);
-    const users = new Map<string, boolean>();
-
-    usersFromUrl.forEach((item) => {
-      users.set(item, true);
-    });
-
-    return users;
-  }, [location.pathname]);
-
-  const handleRowClick = useCallback(
-    (user: UserModel) => () => {
-      selectedUserMemo.clear();
-      selectedUserMemo.set(user._id, true);
-
-      navigate(`./${user._id}`, {
-        relative: 'route',
-        replace: location.pathname.includes('@'),
-      });
+  const tableCols = [
+    {
+      name: 'App Build',
+      render: (user: UserSupabaseModel) => <AppBuildCell user={user} />,
     },
-    [location.pathname, navigate, selectedUserMemo]
-  );
-
-  const handleCheckboxMultiUserChange = useCallback(
-    (event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
-      event.stopPropagation();
-
-      if (data.checked) {
-        selectedUserMemo.set(data.value as string, true);
-      } else {
-        selectedUserMemo.delete(data.value as string);
-      }
-
-      const joinUser: string[] = [];
-      selectedUserMemo.forEach((_, key) => {
-        joinUser.push(key);
-      });
-
-      navigate(`./${joinUser.join(',')}`, {
-        relative: 'route',
-        replace: location.pathname.includes('@'),
-      });
+    {
+      name: 'Status',
+      render: (user: UserSupabaseModel) => <StatusCell user={user} />,
     },
-    [location.pathname, navigate, selectedUserMemo]
-  );
+    {
+      name: 'Version',
 
+      render: (user: UserSupabaseModel) => <VersionCell user={user} />,
+    },
+    {
+      name: 'Weekly Summary <br /> (Bonus + Earnings = Total)',
+      className: {
+        'min-w-[205px]': true,
+      },
+      filter: UserColumnSortModel.Earnings,
+      render: (user: UserSupabaseModel) => <WeeklySummaryCell user={user} />,
+    },
+    {
+      name: 'Weekly <br /> Progress',
+      className: {
+        'min-w-[74px]': true,
+      },
+      collapsing: false,
+      render: (user: UserSupabaseModel) => <WeeklyProgressCell user={user} />,
+    },
+    {
+      name: 'Bets',
+      className: {
+        'min-w-[60px]': true,
+      },
+      filter: UserColumnSortModel.OpenBets,
+      render: (user: UserSupabaseModel) => <BetsCell user={user} />,
+    },
+    {
+      name: 'Next <br /> Withdrawal',
+      className: {
+        'min-w-[105px]': true,
+      },
+      filter: UserColumnSortModel.NextWithdrawal,
+      render: (user: UserSupabaseModel) => <NextWithdrawalCell user={user} />,
+    },
+    {
+      name: 'Bet <br /> Restricted',
+      className: {
+        'min-w-[75px]': true,
+      },
+      isVisible: !!restrictedCount,
+      render: (user: UserSupabaseModel) => <BetRestrictedCell user={user} />,
+    },
+    {
+      name: 'Bonus',
+      className: {
+        'min-w-[75px]': true,
+      },
+      render: (user: UserSupabaseModel) => <BonusCell user={user} />,
+    },
+    {
+      name: 'LastWeek <br /> Winnings',
+      className: {
+        'min-w-[75px]': true,
+      },
+      render: (user: UserSupabaseModel) => <LastWeekWinningsCell user={user} />,
+    },
+    {
+      name: 'Tickets',
+      className: {
+        'min-w-[60px]': true,
+      },
+      render: (user: UserSupabaseModel) => <LottoTicketsCell user={user} />,
+    },
+    {
+      name: 'Total <br /> Loss',
+      className: {
+        'min-w-[75px]': true,
+      },
+      render: (user: UserSupabaseModel) => <LifetimeLossCell user={user} />,
+    },
+    {
+      name: 'Free <br /> Bet',
+      className: {
+        'min-w-[75px]': true,
+      },
+      isVisible: hasFreeBet,
+      render: (user: UserSupabaseModel) => <FreeBetCell user={user} />,
+    },
+    {
+      name: 'Active <br /> Predictions',
+      className: {
+        'min-w-[60px]': true,
+      },
+      render: (user: UserSupabaseModel) => <ActivePredictionCell user={user} />,
+    },
+    {
+      name: 'Auto <br /> Login',
+      className: {
+        'min-w-[50px]': true,
+      },
+      render: (user: UserSupabaseModel) => <AutoLoginCell user={user} />,
+    },
+    {
+      name: 'Active',
+      className: {
+        'min-w-[105px]': true,
+      },
+      filter: UserColumnSortModel.Active,
+      render: (user: UserSupabaseModel) => <ActiveCell user={user} />,
+    },
+  ] as any;
   return (
     <div
       data-testid="UserList"
@@ -129,117 +192,29 @@ const UserListComponent: FC = () => {
             >
               <TableRow>
                 <TableHeaderCell collapsing>#</TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'}>
-                  App Build
-                </TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'}>
-                  Status
-                </TableHeaderCell>
-                <TableHeaderCell collapsing>Version</TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[205px] relative'}>
-                  Weekly Summary <br />
-                  (Bonus + Earnings = Total)
-                  <Button
-                    className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
-                    inverted
-                    onClick={handleOrderByStatus}
-                    filter={UserColumnSortModel.Earnings}
-                  />
-                </TableHeaderCell>
-                <TableHeaderCell textAlign={'center'} className={'min-w-[74px]'}>
-                  Weekly <br />
-                  Progress
-                </TableHeaderCell>
-                <TableHeaderCell collapsing className={'min-w-[60px] relative'}>
-                  Bets
-                  <Button
-                    className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
-                    inverted
-                    onClick={handleOrderByStatus}
-                    filter={UserColumnSortModel.OpenBets}
-                  />
-                </TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px] relative'}>
-                  Next <br />
-                  Withdrawal
-                  <Button
-                    className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
-                    inverted
-                    onClick={handleOrderByStatus}
-                    filter={UserColumnSortModel.NextWithdrawal}
-                  />
-                </TableHeaderCell>
-
-                {!!restrictedCount && (
-                  <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                    Bet <br />
-                    Restricted
-                  </TableHeaderCell>
+                {tableCols.map(({ name, className, filter, isVisible, collapsing }: any) =>
+                  isVisible === false ? null : (
+                    <TableHeaderCell
+                      key={name}
+                      collapsing={collapsing === false ? undefined : true}
+                      textAlign={'center'}
+                      className={classNames({
+                        relative: true,
+                        ...className,
+                      })}
+                    >
+                      <span dangerouslySetInnerHTML={{ __html: name }} />
+                      {filter && (
+                        <Button
+                          className={'absolute top-0 right-0 bottom-0 left-0 opacity-0'}
+                          inverted
+                          onClick={handleOrderByStatus}
+                          filter={filter}
+                        />
+                      )}
+                    </TableHeaderCell>
+                  )
                 )}
-
-                {hasMongoUpdate && (
-                  <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                    Mongo <br />
-                    Update
-                  </TableHeaderCell>
-                )}
-
-                {hasEmailUpdate && (
-                  <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                    Email <br />
-                    Update
-                  </TableHeaderCell>
-                )}
-
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                  Bonus
-                </TableHeaderCell>
-
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                  LastWeek <br />
-                  Winnings
-                </TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[60px]'}>
-                  Tickets
-                </TableHeaderCell>
-
-                {/*<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[60px]'}>
-                  CanBetLow
-                </TableHeaderCell>*/}
-
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                  Total <br />
-                  Loss
-                </TableHeaderCell>
-
-                {hasFreeBet && (
-                  <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[75px]'}>
-                    Free <br />
-                    Bet
-                  </TableHeaderCell>
-                )}
-
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[95px]'}>
-                  Active <br />
-                  Predictions
-                </TableHeaderCell>
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[50px]'}>
-                  Auto <br />
-                  Login
-                </TableHeaderCell>
-                {/*<TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px]'}>
-                Last
-                Login
-              </TableHeaderCell>*/}
-                <TableHeaderCell collapsing textAlign={'center'} className={'min-w-[105px] relative'}>
-                  Active
-                  <Button
-                    className={'absolute !text-[9px] top-0 right-0 bottom-0 left-0 opacity-0'}
-                    inverted
-                    onClick={handleOrderByStatus}
-                    filter={UserColumnSortModel.Active}
-                  />
-                </TableHeaderCell>
               </TableRow>
             </TableHeader>
 
@@ -247,11 +222,11 @@ const UserListComponent: FC = () => {
               {list.map((user) => {
                 return (
                   <TableRow
+                    key={user._id}
                     className={classNames({
                       'md:flex md:flex-row md:flex-wrap': true,
                       'child:md:!border-0 child:relative': true,
                     })}
-                    key={user._id}
                     onClick={handleRowClick(user)}
                   >
                     <TableCell className={'md:!min-w-[33%]'}>
@@ -268,10 +243,8 @@ const UserListComponent: FC = () => {
                         />
                       </FormField>
                     </TableCell>
-                    <AppBuildCell className={'md:!min-w-[33%] md:!text-center'} user={user} />
-                    <StatusCell className={'md:!min-w-[33%] md:!text-right'} textAlign={'center'} user={user} />
+                    {/*<AppBuildCell user={user} />
 
-                    <VersionCell className={'md:hidden'} user={user} collapsing />
 
                     <WeeklySummaryCell className={'md:flex-1'} textAlign={'center'} user={user} />
 
@@ -284,46 +257,18 @@ const UserListComponent: FC = () => {
                       <BetRestrictedCell className={'md:hidden'} textAlign={'center'} user={user} />
                     )}
 
-                    {hasMongoUpdate && <MongoFailedUpdate className={'md:hidden'} textAlign={'center'} user={user} />}
-
-                    {hasEmailUpdate && (
-                      <TableCell
-                        className={classNames({
-                          'md:hidden': true,
-                          'text-green-dark': !user.data.weeklyStatus?.emailUpdate,
-                          'text-red-dark': !!user.data.weeklyStatus?.emailUpdate,
-                        })}
-                        collapsing
-                        textAlign={'center'}
-                      >
-                        {user.data.weeklyStatus?.emailUpdate ? 'true' : false}
-                      </TableCell>
-                    )}
-
                     <BonusCell className={'md:hidden'} user={user} textAlign={'center'} />
 
-                    <LastWeekWinnings className={'md:hidden'} user={user} textAlign={'center'} />
+                    <LastWeekWinnings className={'md:hidden'} textAlign={'center'} />
 
-                    <LottoTicketsCell className={'md:hidden'} user={user} textAlign={'center'} />
+                    <LottoTicketsCell className={'md:hidden'}  textAlign={'center'} />
 
-                    {/*<TableCell
-                      className={classNames({
-                        'md:hidden': true,
-                        'text-green-dark': !!user.data?.weeklyStatus?.canBetLow,
-                        'text-red-dark': !user.data?.weeklyStatus?.canBetLow,
-                      })}
-                      collapsing
-                      textAlign={'center'}
-                    >
-                      {`${!!user.data?.weeklyStatus?.canBetLow}`}
-                    </TableCell>*/}
+                    <LifetimeLossCell className={'md:hidden'} textAlign={'center'} />
 
-                    <LifetimeLossCell className={'md:hidden'} user={user} textAlign={'center'} />
-
-                    {hasFreeBet && <FreeBetCell className={'md:hidden'} user={user} textAlign={'center'} />}
+                    {hasFreeBet && <FreeBetCell className={'md:hidden'} extAlign={'center'} />}
 
                     <TableCell className={'md:hidden'} collapsing textAlign={'center'}>
-                      {/*Predictions*/}
+                      Predictions
                       {user.data.weeklyStatus?.predictions ?? 0}
                     </TableCell>
 
@@ -339,12 +284,21 @@ const UserListComponent: FC = () => {
                       {`${!!user.data?.settings?.electronAutoLogin}`}
                     </TableCell>
 
-                    {/*<LastLoginCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />*/}
-                    <ActiveCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />
+                    <LastLoginCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />
+                    <ActiveCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />*/}
+
+                    {tableCols.map(({ render, isVisible }: any, index: number) => {
+                      return (
+                        <React.Fragment key={index}>
+                          {isVisible === false ? null : render(user)}
+                        </React.Fragment>
+                      );
+                    })}
                   </TableRow>
                 );
               })}
             </TableBody>
+
             <TableFooter className={'bg-neutral-800 sticky bottom-0 z-10'}>
               <TableRow>
                 <TableHeaderCell colSpan={100}>
