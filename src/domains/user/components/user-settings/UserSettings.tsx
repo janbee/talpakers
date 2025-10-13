@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import useUserSettings from '../../hooks/useUserSettings';
 import DatePicker from 'react-datepicker';
-import { UserModel } from '@PlayAb/shared';
+import { UserModel, UserSupabaseModel } from '@PlayAb/shared';
 
 interface UserSettingsProps {
-  userDetails: UserModel;
+  userDetails: UserSupabaseModel;
 }
 
 const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
@@ -43,8 +43,8 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
           <hr />
 
           <Form className={'flex flex-col p-3 w-[360px]'} onSubmit={form.submit}>
-            <input hidden name={'email'} key={userDetails._id} defaultValue={userDetails._id} />
-            <div className={'text-xl mb-3 text-left'}>{userDetails.build}</div>
+            <input hidden name={'data.email'} key={userDetails._id} defaultValue={userDetails._id} />
+            <div className={'text-xl mb-3 text-left'}>{userDetails.data.build}</div>
 
             <div className={'form-values flex-1'}>
               <div className={'flex flex-col items-start mb-5 '}>

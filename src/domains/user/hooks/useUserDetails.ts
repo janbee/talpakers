@@ -35,7 +35,6 @@ const useUserDetails = () => {
     ]).subscribe({
       next: ([betSummaryList, bonusList, withdrawalList, userDetails]) => {
         setLoading(false);
-
         const userBonusList = getUserBonusList(bonusList);
         const userWithdrawalList = getUserWithdrawalList(withdrawalList);
         const weeksForCurrentYear = getWeeksForCurrentYear({
@@ -57,9 +56,7 @@ const useUserDetails = () => {
           return sumBy(item.data, 'winnings');
         });
 
-        const yearTotalWithdrawals = sumBy(weeksGroupedByMonKeys, (item) => {
-          return sumBy(item.data, 'withdrawal.Amount');
-        });
+        const yearTotalWithdrawals = sumBy(withdrawalList, 'data.Amount');
 
         setTotalWithdrawals(yearTotalWithdrawals);
         setTotalWinnings(yearTotalWinnings);

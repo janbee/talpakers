@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { EarningsModel } from '../../../../api/rxjs-client/models/custom.models';
 import dayjs from 'dayjs';
 import { Header, Icon, Label, Menu, Popup } from 'semantic-ui-react';
-import { toMoney, UserModel } from '@PlayAb/shared';
+import { toMoney, UserModel, UserSupabaseModel } from '@PlayAb/shared';
 
 export const WeeklyCard: FC<{ earnings: EarningsModel }> = ({ earnings }) => {
   const startDate = dayjs(earnings.startDate).utc();
@@ -148,7 +148,7 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) =
 };
 
 export const UserYearlySummary: FC<{
-  userDetails: UserModel[];
+  userDetails: UserSupabaseModel[];
   totalWinnings: number;
   totalWithdrawals: number;
 }> = ({ userDetails, totalWinnings, totalWithdrawals }) => {

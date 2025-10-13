@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { mergeMap, of } from 'rxjs';
 import { set } from 'lodash';
-import { UserModel } from '@PlayAb/shared';
-import { SharedApiX } from '@PlayAb/uiServices';
+import { UserSupabaseModel } from '@PlayAb/shared';
+import { SharedApiSupabase } from '@PlayAb/services';
 
 interface FormData {
   entries(): IterableIterator<[string, FormDataEntryValue]>;
@@ -40,15 +40,14 @@ const useUseUserSettings = () => {
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
 
-      const email = formData.get('email') as string;
+      const email = formData.get('data.email') as string;
       const pword = formData.get('password') as string;
 
       formData.delete('password');
 
-      const userDetails: Partial<UserModel> = {
+      const userDetails: Partial<UserSupabaseModel> = {
         _id: email,
       };
-
 
       // @ts-expect-error - yes
       for (const [key, val] of formData.entries()) {
@@ -58,15 +57,14 @@ const useUseUserSettings = () => {
         set(userDetails, key, val);
       }
 
-      console.log('gaga----------------------------------userDetails---', userDetails);
-
+      console.log('gaga------------------------------------', JSON.stringify(userDetails, null, 2));
       setLoading(true);
       setError('');
       of(true)
         .pipe(
           mergeMap(() => {
             console.log('gaga---------------------------------userDetails----', userDetails);
-            return SharedApiX.upsertUserData(userDetails as UserModel);
+            return SharedApiSupabase.upsertUserData(userDetails);
           })
         )
         .subscribe({

@@ -1,7 +1,6 @@
 import { BehaviorSubject, forkJoin, tap } from 'rxjs';
-import { ISODateString, PredictionModel, PredictionSupabaseModel } from '@PlayAb/shared';
+import { PredictionSupabaseModel } from '@PlayAb/shared';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
-import { SharedApiX } from '@PlayAb/uiServices';
 import { SharedApiSupabase } from '@PlayAb/services';
 
 class PredictionStoreClass {
@@ -14,12 +13,15 @@ class PredictionStoreClass {
     this.loading$.next(true);
     this.error$.next(false);
 
-    forkJoin([SharedApiSupabase.getPredictionsByDayWithUserBetInfo(day), SharedApiSupabase.getPredictionsByWeekWithUserBetInfo()])
+    forkJoin([
+      SharedApiSupabase.getPredictionsByDayWithUserBetInfo(day),
+      SharedApiSupabase.getPredictionsByWeekWithUserBetInfo(),
+    ])
       .pipe(tap(() => this.loading$.next(false)))
       .subscribe({
         next: ([resPredictionsByDay, resPredictionsByWeek]) => {
-          const predictionByDayList = resPredictionsByDay.data || []
-          const predictionsByWeek = resPredictionsByWeek.data || []
+          const predictionByDayList = resPredictionsByDay.data || [];
+          const predictionsByWeek = resPredictionsByWeek.data || [];
           this.list$.next(
             predictionByDayList.sort(
               (a, b) => new Date(b.updatedAt || new Date()).getTime() - new Date(a.updatedAt || new Date()).getTime()
