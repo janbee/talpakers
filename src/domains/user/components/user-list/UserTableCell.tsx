@@ -154,9 +154,10 @@ export const VersionCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek } = getMTDates();
+  const { isWithinThisWeek, weekStart } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-  const betSummary = user.data?.betsSummary?.[0];
+
+  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
 
   let totalEarnings = betSummary?.data.totalEarnings || 0;
   let winnings = betSummary?.data.winnings || 0;
@@ -206,10 +207,10 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek } = getMTDates();
+  const { isWithinThisWeek, weekStart } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-  const betSummary = user.data?.betsSummary?.[0];
   const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0;
+  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
   const totalStaked = betSummary?.data.totalStaked || 0;
 
   let finalTotalStaked = Math.max(highestTotalStaked, totalStaked);
@@ -234,9 +235,9 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
 
 export const BetsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek } = getMTDates();
+  const { isWithinThisWeek, weekStart } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-  const betSummary = user.data?.betsSummary?.[0];
+  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
   const bets = {
     open: betSummary?.data.openBets ?? 0,
     settled: betSummary?.data.settledBets ?? 0,
