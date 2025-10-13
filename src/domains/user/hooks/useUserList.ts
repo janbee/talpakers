@@ -38,7 +38,7 @@ const useUseUserList = () => {
   }, []);
 
   const getSort = (list: UserSupabaseModel[], data: ButtonProps) => {
-    const { isWithinThisWeek } = getMTDates();
+    const { isWithinThisWeek, weekStart } = getMTDates();
 
     if (data.filter === UserStatusModel.IsDone) {
       return orderBy(
@@ -61,7 +61,10 @@ const useUseUserList = () => {
             return userStatus === UserStatusModel.InProgress;
           },
           (user) => {
-            return user.data.betsSummary?.[0]?.data.totalStaked ?? 0;
+            const betSummary = user?.data.betsSummary?.find(
+              (item) => item.data.startDate === weekStart.toISOString(),
+            );
+            return betSummary?.data.totalStaked ?? 0;
           },
         ],
         ['desc', 'desc']

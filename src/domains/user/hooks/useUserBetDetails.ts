@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { PredictionSupabaseModel, UserSupabaseModel } from '@PlayAb/shared';
+import { getMTDates, PredictionSupabaseModel, UserSupabaseModel } from '@PlayAb/shared';
 import { Dictionary } from 'lodash';
 import { SharedApiSupabase } from '@PlayAb/services';
 
@@ -10,7 +10,9 @@ const useUserBetDetails = (user: UserSupabaseModel) => {
   );
 
   const betsInfo = useMemo(() => {
-    const betSummary = user.data.betsSummary?.[0];
+    const { weekStart } = getMTDates();
+
+    const betSummary = user.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
     return betSummary?.data.betsInfo || [];
   }, [user.data.betsSummary]); // The dependency is the part of the user object that affects the calculation
 

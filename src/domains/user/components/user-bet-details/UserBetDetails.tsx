@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { toMoney, UserModel, UserSupabaseModel } from '@PlayAb/shared';
+import { getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/shared';
 import useUserBetDetails from '../../hooks/useUserBetDetails';
 import { Dimmer, Loader } from 'semantic-ui-react';
 import classNames from 'classnames';
@@ -9,9 +9,11 @@ interface UserBetDetailsProps {
 }
 
 const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
+  const { weekStart } = getMTDates();
+
   const { user } = props;
   const { predictionDictionary, loading, listStatus } = useUserBetDetails(user);
-  const betSummary = user.data.betsSummary?.[0]
+  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
 
   return (
     <div data-testid="UserBetDetails" className={'flex flex-col h-full p-1 pt-0 gap-y-1'}>
