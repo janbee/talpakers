@@ -350,11 +350,11 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
 export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { isWithinThisWeek, weekStart, weekEnd } = getMTDates();
-  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+  const isThisWeekBonus = isWithinThisWeek(user.data.weeklyStatus?.bonus?.TransactionDateTime);
 
   let bonus = user.data.weeklyStatus?.bonus;
 
-  if (isNewWeek) {
+  if (!isThisWeekBonus) {
     bonus = undefined;
   }
 
