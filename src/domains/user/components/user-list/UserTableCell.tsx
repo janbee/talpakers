@@ -5,7 +5,6 @@ import { Popup, Progress, TableCell } from 'semantic-ui-react';
 import classNames from 'classnames';
 import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '../../../../common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
-import { omit } from 'lodash';
 import dayjs from 'dayjs';
 import { convertToMT, getMTDates, isDateWithin, toMoney, UserSupabaseModel } from '@PlayAb/shared';
 import UserBetDetails from '../user-bet-details/UserBetDetails';
@@ -409,9 +408,10 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
 
 export const LastWeekWinningsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek } = getMTDates();
+  const { isWithinThisWeek, lastWeekStart } = getMTDates();
   const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-  const betSummary = user.data.betsSummary?.[1]; // index 1 is supposedly the previous week
+  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === lastWeekStart.toISOString());
+
   let bonus = user.data.weeklyStatus?.bonus;
   const totalEarnings = betSummary?.data.totalEarnings || 0;
 
@@ -509,7 +509,7 @@ export const AutoLoginCell: FC<UserTableCellProps> = (props) => {
   );
 };
 
-export const LastLoginCell: FC<UserTableCellProps> = (props) => {
+/*export const LastLoginCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
   const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || new Date());
@@ -523,7 +523,7 @@ export const LastLoginCell: FC<UserTableCellProps> = (props) => {
       <span style={{ color: bgColor }}>{getMTDates().fromNow(lastUpdate)} </span>
     </TableCell>
   );
-};
+};*/
 
 export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;

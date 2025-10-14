@@ -24,7 +24,7 @@ class PredictionStoreClass {
           const predictionsByWeek = resPredictionsByWeek.data || [];
           this.list$.next(
             predictionByDayList.sort(
-              (a, b) => new Date(b.updatedAt || new Date()).getTime() - new Date(a.updatedAt || new Date()).getTime()
+              (a, b) => new Date(b.createdAt || new Date()).getTime() - new Date(a.createdAt || new Date()).getTime()
             )
           );
 

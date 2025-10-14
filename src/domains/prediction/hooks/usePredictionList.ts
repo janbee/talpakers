@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActiveGameModel, ISODateString, PredictionModel, PredictionSupabaseModel } from '@PlayAb/shared';
+import { ActiveGameModel, ISODateString, PredictionSupabaseModel } from '@PlayAb/shared';
 import { PredictionStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { PredictionStore } from '../store/PredictionStore';
 import { InitializePubnub } from '../utils/Pubnub';
@@ -31,25 +31,25 @@ const usePredictionList = () => {
 
   useEffect(() => {
     const pnCleanup = InitializePubnub((msg: { data: ActiveGameModel[]; date: ISODateString }) => {
+      console.log('gaga-----------------------msg.data--------------', msg.data);
       const listByGameId = msg.data.reduce((acc, match) => {
         acc[match.gameId] = match;
         return acc;
       }, {} as any);
 
-      const updatedList = list
-        .map((item) => {
-          const updatedGame = listByGameId[item._id];
+      const updatedList = list.map((item) => {
+        const updatedGame = listByGameId[item._id];
 
-          if (updatedGame) {
-            item.data.updatedBet1Rate = updatedGame.bet1Rate;
-            item.data.updatedBet2Rate = updatedGame.bet2Rate;
-            item.updatedAt = new Date(msg.date).toISOString() as ISODateString;
-          }
+        if (updatedGame) {
+          item.data.updatedBet1Rate = updatedGame.bet1Rate || item.data.updatedBet1Rate;
+          item.data.updatedBet2Rate = updatedGame.bet2Rate || item.data.updatedBet2Rate;
+          item.updatedAt = new Date(msg.date).toISOString() as ISODateString;
+        }
 
-          return item;
-        })
+        return item;
+      });
 
-      const sortedList = orderBy(updatedList, ['updatedAt','status'], ['desc']);
+      const sortedList = orderBy(updatedList, ['updatedAt', 'status'], ['desc']);
       setList(sortedList);
     });
 
