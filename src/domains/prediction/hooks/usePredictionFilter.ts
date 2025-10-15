@@ -29,6 +29,8 @@ const usePredictionFilter = () => {
     (day: string) => {
       const { dayStartOfWeekDay } = getMTDates();
       const getDay = selectedDay === day ? '' : day;
+
+      console.log('gaga---------------------------------getDay----', getDay);
       const dayStartOfWeek = dayStartOfWeekDay(getDay);
       setSelectedDay(getDay);
       PredictionStore.reload(dayStartOfWeek);

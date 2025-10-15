@@ -13,6 +13,7 @@ class PredictionStoreClass {
     this.loading$.next(true);
     this.error$.next(false);
 
+    console.log('gaga------------------------------daydayday-------',day );
     forkJoin([
       SharedApiSupabase.getPredictionsByDayWithUserBetInfo(day),
       SharedApiSupabase.getPredictionsByWeekWithUserBetInfo(),
