@@ -13,7 +13,6 @@ class PredictionStoreClass {
     this.loading$.next(true);
     this.error$.next(false);
 
-    console.log('gaga------------------------------daydayday-------',day );
     forkJoin([
       SharedApiSupabase.getPredictionsByDayWithUserBetInfo(day),
       SharedApiSupabase.getPredictionsByWeekWithUserBetInfo(),
@@ -23,6 +22,11 @@ class PredictionStoreClass {
         next: ([resPredictionsByDay, resPredictionsByWeek]) => {
           const predictionByDayList = resPredictionsByDay.data || [];
           const predictionsByWeek = resPredictionsByWeek.data || [];
+
+          console.log('check prediction game-------------------------------------', [
+            ...new Set(predictionsByWeek.map((item) => item.data.game)),
+          ]);
+
           this.list$.next(
             predictionByDayList.sort(
               (a, b) => new Date(b.createdAt || new Date()).getTime() - new Date(a.createdAt || new Date()).getTime()
