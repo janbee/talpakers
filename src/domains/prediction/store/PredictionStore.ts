@@ -23,9 +23,11 @@ class PredictionStoreClass {
           const predictionByDayList = resPredictionsByDay.data || [];
           const predictionsByWeek = resPredictionsByWeek.data || [];
 
-          console.log('check prediction game-------------------------------------', [
-            ...new Set(predictionsByWeek.map((item) => item.data.game)),
-          ]);
+          const storedGames = JSON.parse(localStorage.getItem('uniqueGames') || '[]');
+          const newGames = predictionsByWeek.map(item => item.data.game);
+          const allUniqueGames = [...new Set([...storedGames, ...newGames])];
+          localStorage.setItem('uniqueGames', JSON.stringify(allUniqueGames));
+          console.log('check prediction game-------------------------------------', allUniqueGames);
 
           this.list$.next(
             predictionByDayList.sort(
