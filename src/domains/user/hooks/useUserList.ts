@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
-import { orderBy, sum } from 'lodash';
+import { orderBy } from 'lodash';
 import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { GetUserStatusUtil } from '../../../common/utils';
 import { getMTDates, UserSupabaseModel } from '@PlayAb/shared';
@@ -222,32 +222,6 @@ const useUseUserList = () => {
     [location.pathname, navigate, selectedUserMemo]
   );
 
-  const totals = useMemo(() => {
-    console.log('gaga---------------------------listlist----------', list);
-    const { weekStart, lastWeekStart } = getMTDates();
-    const allBonus: number[] = [];
-    const allLastWeekWinnings: number[] = [];
-    list.forEach((item) => {
-      const foundBetSummary = item.data.betsSummary?.find(
-        (betSum) => betSum.data.startDate === weekStart.toISOString()
-      );
-      const foundLastWeekBetSummary = item.data.betsSummary?.find(
-        (betSum) => betSum.data.startDate === lastWeekStart.toISOString()
-      );
-      if (foundBetSummary) {
-        allBonus.push(foundBetSummary.data.bonus);
-      }
-
-      if(foundBetSummary && foundLastWeekBetSummary){
-        allLastWeekWinnings.push(foundBetSummary.data.bonus + foundLastWeekBetSummary.data.totalEarnings)
-      }
-    });
-    return {
-      bonus: sum(allBonus),
-      winnings: sum(allLastWeekWinnings),
-    };
-  }, [list]);
-
   return {
     list,
     loading,
@@ -259,7 +233,6 @@ const useUseUserList = () => {
     handleCheckboxMultiUserChange,
     handleRowClick,
     selectedUserMemo,
-    totals,
   };
 };
 

@@ -463,7 +463,7 @@ export const FreeBetCell: FC<UserTableCellProps> = (props) => {
   const freeBets = user.data.weeklyStatus?.freeBets || [];
 
   return (
-    <TableCell className={'relative md:hidden'} extAlign={'center'}>
+    <TableCell className={'relative md:hidden'} textAlign={'center'}>
       <Popup
         position="top center"
         trigger={<span>{!!freeBets.length && <span className={'text-green-dark'}>{freeBets.length}</span>}</span>}

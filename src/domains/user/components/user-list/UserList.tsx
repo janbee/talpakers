@@ -37,7 +37,7 @@ import {
 } from './UserTableCell';
 import useUserList from '../../hooks/useUserList';
 import { UserColumnSortModel, UserStatusModel } from '../../../../api/rxjs-client/models/custom.models';
-import { toMoney, UserSupabaseModel } from '@PlayAb/shared';
+import { UserSupabaseModel } from '@PlayAb/shared';
 
 const UserListComponent: FC = () => {
   const {
@@ -50,7 +50,6 @@ const UserListComponent: FC = () => {
     handleRowClick,
     selectedUserMemo,
     handleCheckboxMultiUserChange,
-    totals,
   } = useUserList();
 
   const tableCols = [
@@ -108,14 +107,14 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <BetRestrictedCell user={user} />,
     },
     {
-      name: `Bonus <br /> (${toMoney(totals.bonus, 0)})`,
+      name: 'Bonus',
       className: {
         'min-w-[75px]': true,
       },
       render: (user: UserSupabaseModel) => <BonusCell user={user} />,
     },
     {
-      name: `Earnings <br /> (${toMoney(totals.winnings, 0)})`,
+      name: 'LastWeek <br /> Winnings',
       className: {
         'min-w-[75px]': true,
       },
@@ -289,7 +288,11 @@ const UserListComponent: FC = () => {
                     <ActiveCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />*/}
 
                     {tableCols.map(({ render, isVisible }: any, index: number) => {
-                      return <React.Fragment key={index}>{isVisible === false ? null : render(user)}</React.Fragment>;
+                      return (
+                        <React.Fragment key={index}>
+                          {isVisible === false ? null : render(user)}
+                        </React.Fragment>
+                      );
                     })}
                   </TableRow>
                 );
