@@ -57,14 +57,13 @@ const useUseUserSettings = () => {
         set(userDetails, key, val);
       }
 
-      console.log('gaga------------------------------------', JSON.stringify(userDetails, null, 2));
+      console.log('userDetails------------------------------------', JSON.stringify(userDetails, null, 2));
       setLoading(true);
       setError('');
       of(true)
         .pipe(
           mergeMap(() => {
-            console.log('gaga---------------------------------userDetails----', userDetails);
-            return SharedApiSupabase.upsertUserData(userDetails);
+            return SharedApiSupabase.upsertUserData(userDetails, userDetails.updatedAt);
           })
         )
         .subscribe({
