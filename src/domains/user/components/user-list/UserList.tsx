@@ -144,13 +144,6 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <FreeBetCell user={user} />,
     },
     {
-      name: 'Active <br /> Predictions',
-      className: {
-        'min-w-[60px]': true,
-      },
-      render: (user: UserSupabaseModel) => <ActivePredictionCell user={user} />,
-    },
-    {
       name: 'Auto <br /> Login',
       className: {
         'min-w-[50px]': true,

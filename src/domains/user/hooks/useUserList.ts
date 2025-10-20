@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { tap } from 'rxjs';
 import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
-import { orderBy, sum } from 'lodash';
+import { orderBy, sum, sumBy } from 'lodash';
 import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { GetUserStatusUtil } from '../../../common/utils';
 import { getMTDates, UserSupabaseModel } from '@PlayAb/shared';
@@ -97,11 +97,8 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const isNewWeek = !isWithinThisWeek(user.data.weeklyStatus?.startDate);
-
             const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
-
-            return isNewWeek ? 0 : (betSummary?.data.totalEarnings ?? 0);
+            return betSummary?.data.totalEarnings ?? 0;
           },
         ],
         ['asc']
@@ -111,11 +108,8 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-
             const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
-
-            return isNewWeek ? 0 : (betSummary?.data.openBets ?? 0);
+            return betSummary?.data.openBets ?? 0;
           },
         ],
         ['desc']
@@ -162,17 +156,29 @@ const useUseUserList = () => {
   }, [list]);
 
   const restrictedCount = useMemo(() => {
-    const { isWithinThisWeek } = getMTDates();
+    const { weekStart } = getMTDates();
+
     return list.filter((item) => {
-      const isNewWeek = !isWithinThisWeek(item?.data?.weeklyStatus?.startDate);
-      return isNewWeek
-        ? null
-        : !!item.data.weeklyStatus?.hasBetRestriction || item.data.weeklyStatus?.accountAccessible === false;
+      const betSummary = item?.data.betsSummary?.find((item) => {
+        return item.data.startDate === weekStart.toISOString();
+      });
+
+      return !!betSummary?.data.metadata?.hasBetRestriction;
     }).length;
   }, [list]);
 
   const hasFreeBet = useMemo(() => {
-    return list.filter((item) => item.data.weeklyStatus?.freeBets?.length || 0).length !== 0;
+    const { weekStart } = getMTDates();
+
+    return (
+      list.filter((item) => {
+        const betSummary = item?.data.betsSummary?.find((item) => {
+          return item.data.startDate === weekStart.toISOString();
+        });
+
+        return betSummary?.data.freeBets?.length ?? 0;
+      }).length !== 0
+    );
   }, [list]);
 
   const selectedUserMemo = useMemo<Map<string, boolean>>(() => {
@@ -230,15 +236,20 @@ const useUseUserList = () => {
       const foundBetSummary = item.data.betsSummary?.find(
         (betSum) => betSum.data.startDate === weekStart.toISOString()
       );
+
       const foundLastWeekBetSummary = item.data.betsSummary?.find(
         (betSum) => betSum.data.startDate === lastWeekStart.toISOString()
       );
-      if (foundBetSummary) {
-        allBonus.push(foundBetSummary.data.bonus);
-      }
 
-      if (foundBetSummary && foundLastWeekBetSummary) {
-        allLastWeekWinnings.push(foundBetSummary.data.bonus + foundLastWeekBetSummary.data.totalEarnings);
+      if (foundBetSummary) {
+        const bonus = sumBy(foundBetSummary.data.bonuses, (bonus) => {
+          return bonus.Amount;
+        });
+        allBonus.push(bonus);
+
+        if (foundLastWeekBetSummary) {
+          allLastWeekWinnings.push(bonus + foundLastWeekBetSummary.data.totalEarnings);
+        }
       }
     });
 
