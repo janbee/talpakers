@@ -172,11 +172,11 @@ const useUseUserList = () => {
 
     return (
       list.filter((item) => {
-        const betSummary = item?.data.weeklySummary?.find((item) => {
+        const weeklySummary = item?.data.weeklySummary?.find((item) => {
           return item.data.startDate === weekStart.toISOString();
         });
 
-        return betSummary?.data.freeBets?.length ?? 0;
+        return weeklySummary?.data.freeBets?.length ?? 0;
       }).length !== 0
     );
   }, [list]);
@@ -237,7 +237,7 @@ const useUseUserList = () => {
         (betSum) => betSum.data.startDate === weekStart.toISOString()
       );
 
-      const foundLastWeekBetSummary = item.data.weeklySummary?.find(
+      const foundLastWeekSummary = item.data.weeklySummary?.find(
         (betSum) => betSum.data.startDate === lastWeekStart.toISOString()
       );
 
@@ -247,8 +247,8 @@ const useUseUserList = () => {
         });
         allBonus.push(bonus);
 
-        if (foundLastWeekBetSummary) {
-          allLastWeekWinnings.push(bonus + foundLastWeekBetSummary.data.totalEarnings);
+        if (foundLastWeekSummary) {
+          allLastWeekWinnings.push(bonus + foundLastWeekSummary.data.totalEarnings);
         }
       }
     });

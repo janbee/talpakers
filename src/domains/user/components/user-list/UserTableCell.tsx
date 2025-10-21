@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FC } from 'react';
 import { Popup, Progress, TableCell } from 'semantic-ui-react';
 import classNames from 'classnames';
-import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '../../../../common/utils';
+import { GetColorUtil, GetUserStatusUtil } from '../../../../common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import dayjs from 'dayjs';
 import { convertToMT, getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/shared';
@@ -91,7 +91,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
                 </div>
               </Popup.Header>
               <Popup.Content>
-                <div>{`${withdrawal?.PaymentMethodInfo} ${MoneyUtil(withdrawal?.Amount ?? 0)}`}</div>
+                <div>{`${withdrawal?.PaymentMethodInfo} ${toMoney(withdrawal?.Amount ?? 0)}`}</div>
               </Popup.Content>
             </Popup>
           ))}
@@ -164,7 +164,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
             'text-green-dark': bonus > 0,
           })}
         >
-          {MoneyUtil(bonus)}
+          {toMoney(bonus)}
         </span>
         {' + '}
         <span
@@ -174,7 +174,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
             'text-red-dark': totalEarnings < 0,
           })}
         >
-          {MoneyUtil(totalEarnings)}
+          {toMoney(totalEarnings)}
         </span>
         {' = '}
         <span
@@ -184,7 +184,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
             'text-red-dark': winnings < 0,
           })}
         >
-          {MoneyUtil(winnings)}
+          {toMoney(winnings)}
         </span>
       </div>
     </TableCell>
@@ -206,7 +206,7 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
         value={Math.floor(totalStaked)}
         progress={'percent'}
         total={500}
-        label={MoneyUtil(totalStaked)}
+        label={toMoney(totalStaked)}
       />
     </TableCell>
   );
@@ -265,20 +265,18 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
       <div className={'flex justify-between'}>
         <Popup
           position="left center"
-          trigger={
-            <span style={{ color: bgColor }}>{MoneyUtil(cashout.toFixed(0), { minimumFractionDigits: 0 })}</span>
-          }
+          trigger={<span style={{ color: bgColor }}>{toMoney(cashout.toFixed(0), 0)}</span>}
           flowing
         >
           <Popup.Header>
-            <span className={'text-green-light'}>Current Cash - {MoneyUtil(cash, { minimumFractionDigits: 0 })}</span>
+            <span className={'text-green-light'}>Current Cash - {toMoney(cash, 0)}</span>
           </Popup.Header>
           <Popup.Header>
             <span className={'text-green-light'}>Cashout at - {`${cashoutPercent}%`}</span>
           </Popup.Header>
         </Popup>
         <span>/</span>
-        <span>{MoneyUtil(fixedAmount, { minimumFractionDigits: 0 })}</span>
+        <span>{toMoney(fixedAmount, 0)}</span>
       </div>
     </TableCell>
   );
@@ -418,7 +416,7 @@ export const LifetimeLossCell: FC<UserTableCellProps> = (props) => {
   const lifeTimeLoss = user.data.userSession?.GPD?.lifetimeWinAndLoss || '0.00';
   return (
     <TableCell className={'relative md:hidden'} textAlign={'center'}>
-      <span className={'text-red-dark'}>{MoneyUtil(lifeTimeLoss)}</span>
+      <span className={'text-red-dark'}>{toMoney(lifeTimeLoss)}</span>
     </TableCell>
   );
 };
@@ -439,7 +437,7 @@ export const FreeBetCell: FC<UserTableCellProps> = (props) => {
       >
         {freeBets.map((t) => (
           <Popup.Header key={t.PlayerBonusID} className={'text-green-light'}>
-            <span>{MoneyUtil(t.BonusAmount)}</span>
+            <span>{toMoney(t.BonusAmount)}</span>
             <span> - </span>
             <span>{dayjs(t.FreeGameUsageExpirationDateTime).fromNow()}</span>
           </Popup.Header>

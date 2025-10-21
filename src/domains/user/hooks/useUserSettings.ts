@@ -41,7 +41,7 @@ const useUseUserSettings = () => {
       const formData = new FormData(event.currentTarget);
 
       const email = formData.get('data.email') as string;
-      const pword = formData.get('password') as string;
+      //const pword = formData.get('password') as string;
 
       formData.delete('password');
 

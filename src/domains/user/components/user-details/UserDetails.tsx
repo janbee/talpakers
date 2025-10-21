@@ -5,11 +5,10 @@ import classNames from 'classnames';
 import { UserYearlySummary, WeeklyCard, WithdrawalPopup } from '../user-details/UserDetailsUI';
 import UserSettingsComponent from '../user-settings/UserSettings';
 import useUserDetails from '../../hooks/useUserDetails';
-import { MoneyUtil } from '../../../../common/utils';
+import { toMoney } from '@PlayAb/shared';
 
 const UserDetailsComponent: FC = () => {
   const { list, loading, userDetails, totalWinnings, totalWithdrawals, emails } = useUserDetails();
-
 
   return (
     <div data-testid="UserDetails" className={'w-full m-4 bg-neutral-800 rounded-lg relative'}>
@@ -43,7 +42,7 @@ const UserDetailsComponent: FC = () => {
                       'text-red-dark': totalMonthlyWinnings < 0,
                     })}
                   >
-                    {MoneyUtil(totalMonthlyWinnings)}
+                    {toMoney(totalMonthlyWinnings)}
                   </span>
                 </div>
                 <hr />

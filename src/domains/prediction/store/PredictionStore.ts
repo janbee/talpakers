@@ -15,7 +15,7 @@ class PredictionStoreClass {
 
     forkJoin([
       SharedApiSupabase.getPredictionsByDayWithUserBetInfo(day),
-      SharedApiSupabase.getPredictionsByWeekWithUserBetInfo(),
+      SharedApiSupabase.getPredictionsByWeek(),
     ])
       .pipe(tap(() => this.loading$.next(false)))
       .subscribe({

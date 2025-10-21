@@ -5,9 +5,9 @@ import { EarningsModel } from '../../../api/rxjs-client/models/custom.models';
 import { groupBy, sumBy } from 'lodash';
 import dayjs from 'dayjs';
 import {
-  BetSummarySupabaseModel,
   BonusSupabaseModel,
   UserSupabaseModel,
+  WeeklySummarySupabaseModel,
   WithdrawalSupabaseModel,
 } from '@PlayAb/shared';
 import GetWeeksOfYear from '../../../common/utils/get-weeks-of-year/GetWeeksOfYear';
@@ -33,12 +33,12 @@ const useUserDetails = () => {
       SharedApiSupabase.getWithdrawals(emailArr).pipe(map((res) => res.data || [])),
       SharedApiSupabase.getUsers(emailArr).pipe(map((res) => res.data || [])),
     ]).subscribe({
-      next: ([betSummaryList, bonusList, withdrawalList, userDetails]) => {
+      next: ([weeklySummaryList, bonusList, withdrawalList, userDetails]) => {
         setLoading(false);
         const userBonusList = getUserBonusList(bonusList);
         const userWithdrawalList = getUserWithdrawalList(withdrawalList);
         const weeksForCurrentYear = getWeeksForCurrentYear({
-          betSummaryList,
+          weeklySummaryList,
           userBonusList,
           emailArr,
           userWithdrawalList,
@@ -104,12 +104,12 @@ const getUserWithdrawalList = (withdrawalList: WithdrawalSupabaseModel[]) => {
 };
 
 const getWeeksForCurrentYear = ({
-  betSummaryList,
+  weeklySummaryList,
   userBonusList,
   emailArr,
   userWithdrawalList,
 }: {
-  betSummaryList: BetSummarySupabaseModel[];
+  weeklySummaryList: WeeklySummarySupabaseModel[];
   userBonusList: BonusSupabaseModel[];
   emailArr: string[];
   userWithdrawalList: WithdrawalSupabaseModel[];
@@ -124,10 +124,10 @@ const getWeeksForCurrentYear = ({
     const monNumber = monday.format('M');
     const year = monday.format('YYYY');
 
-    const betSummary = getBetSummaryByWeek(betSummaryList, mondayDate, sundayDate, year);
+    const weeklySummary = getWeeklySummary(weeklySummaryList, mondayDate, sundayDate, year);
 
-    const { betSummaryByWeek, bonus, totalStaked, totalEarnings } = betSummary;
-    let { approxWinnings } = betSummary;
+    const { byWeekSummary, bonus, totalStaked, totalEarnings } = weeklySummary;
+    let { approxWinnings } = weeklySummary;
 
     const bonusByWeek = getBonusByWeek(userBonusList, mondayDate, sundayDate, emailArr);
     let playAbBonus = sumBy(bonusByWeek, (foundBonus) => foundBonus?.data.Amount ?? 0);
@@ -137,8 +137,8 @@ const getWeeksForCurrentYear = ({
       approxWinnings = 0;
     }
     let winnings = 0;
-    if (bonusByWeek?.length && betSummaryByWeek?.length) {
-      winnings = playAbBonus + sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalEarnings ?? 0);
+    if (bonusByWeek?.length && byWeekSummary?.length) {
+      winnings = playAbBonus + sumBy(byWeekSummary, (weekSummary) => weekSummary.data.totalEarnings ?? 0);
     }
 
     const withdrawalByWeek = getWithdrawalByWeek(userWithdrawalList, mondayDate, sundayDate);
@@ -165,14 +165,14 @@ const getWeeksForCurrentYear = ({
   });
 };
 
-const getBetSummaryByWeek = (
-  betSummaryList: BetSummarySupabaseModel[],
+const getWeeklySummary = (
+  weeklySummaryList: WeeklySummarySupabaseModel[],
   weekStart: Date,
   weekEnd: Date,
   year: number | string
 ) => {
-  const betSummaryByWeek =
-    betSummaryList?.filter((item) => {
+  const byWeekSummary =
+    weeklySummaryList?.filter((item) => {
       return (
         item.data.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
         item.data.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
@@ -180,13 +180,13 @@ const getBetSummaryByWeek = (
       );
     }) ?? [];
 
-  const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.potentialBonus ?? 0);
-  const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalStaked ?? 0);
-  const totalEarnings = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalEarnings ?? 0);
-  const approxWinnings = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.winnings ?? 0);
+  const bonus = sumBy(byWeekSummary, (weekSummary) => weekSummary.data.potentialBonus ?? 0);
+  const totalStaked = sumBy(byWeekSummary, (weekSummary) => weekSummary.data.totalStaked ?? 0);
+  const totalEarnings = sumBy(byWeekSummary, (weekSummary) => weekSummary.data.totalEarnings ?? 0);
+  const approxWinnings = sumBy(byWeekSummary, (weekSummary) => weekSummary.data.winnings ?? 0);
 
   return {
-    betSummaryByWeek,
+    byWeekSummary,
     bonus,
     totalStaked,
     totalEarnings,
