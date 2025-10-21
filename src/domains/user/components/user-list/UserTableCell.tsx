@@ -376,13 +376,14 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
 
 export const LastWeekWinningsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { lastWeekStart } = getMTDates();
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === lastWeekStart.toISOString());
+  const { lastWeekStart, weekStart } = getMTDates();
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const lastWeekSummary = user?.data.weeklySummary?.find((item) => item.data.startDate === lastWeekStart.toISOString());
 
   const weeklyBonus = sumBy(weeklySummary?.data.bonuses, (bonus) => {
     return bonus.Amount;
   });
-  const totalEarnings = weeklySummary?.data.totalEarnings || 0;
+  const totalEarnings = lastWeekSummary?.data.totalEarnings || 0;
 
   const lastWeekWinnings = totalEarnings + weeklyBonus;
 
