@@ -21,7 +21,7 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    const user$ = SharedApiSupabase.getUsersWithBetsSummary()
+    const user$ = SharedApiSupabase.getUsersWithWeeklySummary()
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: (res) => {
@@ -38,7 +38,7 @@ const useUseUserList = () => {
   }, []);
 
   const getSort = (list: UserSupabaseModel[], data: ButtonProps) => {
-    const { isWithinThisWeek, weekStart } = getMTDates();
+    const { weekStart } = getMTDates();
 
     if (data.filter === UserStatusModel.IsDone) {
       return orderBy(
@@ -61,8 +61,8 @@ const useUseUserList = () => {
             return userStatus === UserStatusModel.InProgress;
           },
           (user) => {
-            const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
-            return betSummary?.data.totalStaked ?? 0;
+            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+            return weeklySummary?.data.totalStaked ?? 0;
           },
         ],
         ['desc', 'desc']
@@ -97,8 +97,8 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
-            return betSummary?.data.totalEarnings ?? 0;
+            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+            return weeklySummary?.data.totalEarnings ?? 0;
           },
         ],
         ['asc']
@@ -108,8 +108,8 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
-            return betSummary?.data.openBets ?? 0;
+            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+            return weeklySummary?.data.openBets ?? 0;
           },
         ],
         ['desc']
@@ -135,7 +135,7 @@ const useUseUserList = () => {
     setLoading(true);
     setError(false);
 
-    SharedApiSupabase.getUsersWithBetsSummary()
+    SharedApiSupabase.getUsersWithWeeklySummary()
       .pipe(tap(() => setLoading(false)))
       .subscribe({
         next: (res) => {
@@ -159,11 +159,11 @@ const useUseUserList = () => {
     const { weekStart } = getMTDates();
 
     return list.filter((item) => {
-      const betSummary = item?.data.betsSummary?.find((item) => {
+      const weeklySummary = item?.data.weeklySummary?.find((item) => {
         return item.data.startDate === weekStart.toISOString();
       });
 
-      return !!betSummary?.data.metadata?.hasBetRestriction;
+      return !!weeklySummary?.data.metadata?.hasBetRestriction;
     }).length;
   }, [list]);
 
@@ -172,7 +172,7 @@ const useUseUserList = () => {
 
     return (
       list.filter((item) => {
-        const betSummary = item?.data.betsSummary?.find((item) => {
+        const betSummary = item?.data.weeklySummary?.find((item) => {
           return item.data.startDate === weekStart.toISOString();
         });
 
@@ -233,16 +233,16 @@ const useUseUserList = () => {
     const allBonus: number[] = [];
     const allLastWeekWinnings: number[] = [];
     list.forEach((item) => {
-      const foundBetSummary = item.data.betsSummary?.find(
+      const foundWeeklySummary = item.data.weeklySummary?.find(
         (betSum) => betSum.data.startDate === weekStart.toISOString()
       );
 
-      const foundLastWeekBetSummary = item.data.betsSummary?.find(
+      const foundLastWeekBetSummary = item.data.weeklySummary?.find(
         (betSum) => betSum.data.startDate === lastWeekStart.toISOString()
       );
 
-      if (foundBetSummary) {
-        const bonus = sumBy(foundBetSummary.data.bonuses, (bonus) => {
+      if (foundWeeklySummary) {
+        const bonus = sumBy(foundWeeklySummary.data.bonuses, (bonus) => {
           return bonus.Amount;
         });
         allBonus.push(bonus);

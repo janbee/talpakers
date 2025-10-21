@@ -19,7 +19,6 @@ import {
 import classNames from 'classnames';
 import {
   ActiveCell,
-  ActivePredictionCell,
   AppBuildCell,
   AutoLoginCell,
   BetRestrictedCell,

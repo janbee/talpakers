@@ -13,7 +13,7 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
 
   const { user } = props;
   const { predictionDictionary, loading, listStatus } = useUserBetDetails(user);
-  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const betSummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
 
   return (
     <div data-testid="UserBetDetails" className={'flex flex-col h-full p-1 pt-0 gap-y-1'}>

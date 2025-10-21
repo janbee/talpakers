@@ -28,7 +28,7 @@ const useUserDetails = () => {
 
     setLoading(true);
     const userDetails$ = forkJoin([
-      SharedApiSupabase.getBetsSummary(emailArr).pipe(map((res) => res.data || [])),
+      SharedApiSupabase.getWeeklySummary(emailArr).pipe(map((res) => res.data || [])),
       SharedApiSupabase.getBonuses(emailArr).pipe(map((res) => res.data || [])),
       SharedApiSupabase.getWithdrawals(emailArr).pipe(map((res) => res.data || [])),
       SharedApiSupabase.getUsers(emailArr).pipe(map((res) => res.data || [])),
@@ -180,7 +180,7 @@ const getBetSummaryByWeek = (
       );
     }) ?? [];
 
-  const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.bonus ?? 0);
+  const bonus = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.potentialBonus ?? 0);
   const totalStaked = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalStaked ?? 0);
   const totalEarnings = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.totalEarnings ?? 0);
   const approxWinnings = sumBy(betSummaryByWeek, (betSummary) => betSummary.data.winnings ?? 0);

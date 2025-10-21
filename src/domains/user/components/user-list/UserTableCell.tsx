@@ -6,9 +6,10 @@ import classNames from 'classnames';
 import { GetColorUtil, GetUserStatusUtil, MoneyUtil } from '../../../../common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import dayjs from 'dayjs';
-import { convertToMT, getMTDates, isDateWithin, toMoney, UserSupabaseModel } from '@PlayAb/shared';
+import { convertToMT, getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/shared';
 import UserBetDetails from '../user-bet-details/UserBetDetails';
 import { toPascalCase } from '@react-native-community/cli-platform-android/build/commands/runAndroid/toPascalCase';
+import { sumBy } from 'lodash';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserSupabaseModel;
@@ -16,12 +17,9 @@ interface UserTableCellProps extends StrictTableCellProps {
 
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const TransactionDateTime = user.data.weeklyStatus?.withdrawal?.TransactionDateTime;
   const { weekStart, weekEnd } = getMTDates();
-  const isThisWeek = isDateWithin(TransactionDateTime, {
-    starDate: weekStart.toISOString(),
-    endDate: weekEnd.toISOString(),
-  });
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const withdrawal = weeklySummary?.data.withdrawals?.[0];
 
   const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
   -H 'accept: application/json, text/plain, */*' \\
@@ -44,15 +42,13 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
 
   return (
     <TableCell className={'md:!min-w-[33%] md:!text-center'}>
-      {!!user.data.weeklyStatus?.withdrawal && isThisWeek && (
+      {!!withdrawal && (
         <>
           {[
             {
-              Pending: user.data.weeklyStatus?.withdrawal.TransactionStatus === 'Pending',
-              Approved: user.data.weeklyStatus?.withdrawal.TransactionStatus === 'Approved',
-              Processing: ['In Process', 'Sending to Processor'].includes(
-                user.data.weeklyStatus?.withdrawal.TransactionStatus
-              ),
+              Pending: withdrawal.TransactionStatus === 'Pending',
+              Approved: withdrawal.TransactionStatus === 'Approved',
+              Processing: ['In Process', 'Sending to Processor'].includes(withdrawal.TransactionStatus),
             },
           ].map((status, index) => (
             <Popup
@@ -85,19 +81,17 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
                         'text-blue-light': status.Processing,
                       })}
                     >
-                      {user.data.weeklyStatus?.withdrawal?.TransactionStatus}
+                      {withdrawal?.TransactionStatus}
                     </span>
                     )
                   </span>
                   <span className={`transaction-wrap`}>
-                    {` ${user.data.weeklyStatus?.withdrawal?.TransactionDateTime && dayjs(user.data.weeklyStatus.withdrawal.TransactionDateTime).fromNow()}`}
+                    {` ${withdrawal?.TransactionDateTime && dayjs(withdrawal.TransactionDateTime).fromNow()}`}
                   </span>
                 </div>
               </Popup.Header>
               <Popup.Content>
-                <div>
-                  {`${user.data.weeklyStatus?.withdrawal?.PaymentMethodInfo} ${MoneyUtil(user.data.weeklyStatus?.withdrawal?.Amount ?? 0)}`}
-                </div>
+                <div>{`${withdrawal?.PaymentMethodInfo} ${MoneyUtil(withdrawal?.Amount ?? 0)}`}</div>
               </Popup.Content>
             </Popup>
           ))}
@@ -153,20 +147,13 @@ export const VersionCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek, weekStart } = getMTDates();
-  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+  const { weekStart } = getMTDates();
 
-  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
 
-  let totalEarnings = betSummary?.data.totalEarnings || 0;
-  let winnings = betSummary?.data.winnings || 0;
-  let bonus = betSummary?.data.bonus || 0;
-
-  if (isNewWeek) {
-    totalEarnings = 0;
-    winnings = 0;
-    bonus = 0;
-  }
+  const totalEarnings = weeklySummary?.data.totalEarnings || 0;
+  const winnings = weeklySummary?.data.winnings || 0;
+  const bonus = weeklySummary?.data.potentialBonus || 0;
 
   return (
     <TableCell className={'md:flex-1'} textAlign={'center'}>
@@ -206,27 +193,20 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
 
 export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek, weekStart } = getMTDates();
-  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-  const highestTotalStaked = user.data?.weeklyStatus?.highestTotalStaked || 0;
-  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
-  const totalStaked = betSummary?.data.totalStaked || 0;
+  const { weekStart } = getMTDates();
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const totalStaked = weeklySummary?.data.totalStaked || 0;
 
-  let finalTotalStaked = Math.max(highestTotalStaked, totalStaked);
-
-  if (isNewWeek) {
-    finalTotalStaked = 0;
-  }
   return (
     <TableCell className={'md:w-full'} textAlign={'center'}>
       <Progress
         inverted
-        success={user.data?.weeklyStatus?.done === true && finalTotalStaked !== 0}
+        success={weeklySummary?.data.done === true && totalStaked !== 0}
         precision={0}
-        value={Math.floor(finalTotalStaked)}
+        value={Math.floor(totalStaked)}
         progress={'percent'}
         total={500}
-        label={MoneyUtil(finalTotalStaked)}
+        label={MoneyUtil(totalStaked)}
       />
     </TableCell>
   );
@@ -234,18 +214,12 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
 
 export const BetsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek, weekStart } = getMTDates();
-  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const { weekStart } = getMTDates();
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
   const bets = {
-    open: betSummary?.data.openBets ?? 0,
-    settled: betSummary?.data.settledBets ?? 0,
+    open: weeklySummary?.data.openBets ?? 0,
+    settled: weeklySummary?.data.settledBets ?? 0,
   };
-
-  if (isNewWeek) {
-    bets.open = 0;
-    bets.settled = 0;
-  }
 
   return (
     <TableCell className={'md:w-[60px]'}>
@@ -312,20 +286,19 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
 
 export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
+  const { weekStart } = getMTDates();
 
-  const { isWithinThisWeek } = getMTDates();
-  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+  const weeklySummary = user.data.weeklySummary?.find((item) => {
+    return item.data.startDate === weekStart.toISOString();
+  });
 
-  const hasBetRestriction = isNewWeek
-    ? null
-    : !!user.data.weeklyStatus?.hasBetRestriction || user.data.weeklyStatus?.accountAccessible === false;
-
+  const hasBetRestriction = weeklySummary?.data.metadata?.['hasMinimumBetRestriction'];
   return (
     <TableCell className={'md:hidden relative'} textAlign={'center'}>
       {hasBetRestriction && (
         <Popup position="left center" trigger={<span className={'text-red-dark'}>true</span>} flowing>
           <Popup.Header>
-            <span className={'text-red-light'}>{dayjs(user.data.weeklyStatus?.hasBetRestriction).fromNow()}</span>
+            <span className={'text-red-light'}>{dayjs(hasBetRestriction).fromNow()}</span>
           </Popup.Header>
         </Popup>
       )}
@@ -349,14 +322,11 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
 
 export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek, weekStart, weekEnd } = getMTDates();
-  const isThisWeekBonus = isWithinThisWeek(user.data.weeklyStatus?.bonus?.TransactionDateTime);
-
-  let bonus = user.data.weeklyStatus?.bonus;
-
-  if (!isThisWeekBonus) {
-    bonus = undefined;
-  }
+  const { weekStart, weekEnd } = getMTDates();
+  const weeklySummary = user.data.weeklySummary?.find((item) => {
+    return item.data.startDate === weekStart.toISOString();
+  });
+  const bonus = weeklySummary?.data.bonuses?.[0];
 
   const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
   -H 'accept: application/json, text/plain, */*' \\
@@ -408,18 +378,14 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
 
 export const LastWeekWinningsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek, lastWeekStart } = getMTDates();
-  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
-  const betSummary = user?.data.betsSummary?.find((item) => item.data.startDate === lastWeekStart.toISOString());
+  const { lastWeekStart } = getMTDates();
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === lastWeekStart.toISOString());
 
-  let bonus = user.data.weeklyStatus?.bonus;
-  const totalEarnings = betSummary?.data.totalEarnings || 0;
+  const weeklyBonus = sumBy(weeklySummary?.data.bonuses, (bonus) => {
+    return bonus.Amount;
+  });
+  const totalEarnings = weeklySummary?.data.totalEarnings || 0;
 
-  if (isNewWeek) {
-    bonus = undefined;
-  }
-
-  const weeklyBonus = bonus?.Amount || 0;
   const lastWeekWinnings = totalEarnings + weeklyBonus;
 
   return (
@@ -459,8 +425,10 @@ export const LifetimeLossCell: FC<UserTableCellProps> = (props) => {
 
 export const FreeBetCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
+  const { weekStart } = getMTDates();
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
 
-  const freeBets = user.data.weeklyStatus?.freeBets || [];
+  const freeBets = weeklySummary?.data?.freeBets || [];
 
   return (
     <TableCell className={'relative md:hidden'} textAlign={'center'}>
@@ -477,16 +445,6 @@ export const FreeBetCell: FC<UserTableCellProps> = (props) => {
           </Popup.Header>
         ))}
       </Popup>
-    </TableCell>
-  );
-};
-
-export const ActivePredictionCell: FC<UserTableCellProps> = (props) => {
-  const { user } = props;
-
-  return (
-    <TableCell className={'relative md:hidden'} collapsing textAlign={'center'}>
-      {user.data.weeklyStatus?.predictions ?? 0}
     </TableCell>
   );
 };
@@ -527,12 +485,12 @@ export const AutoLoginCell: FC<UserTableCellProps> = (props) => {
 
 export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { isWithinThisWeek } = getMTDates();
-  const isNewWeek = !isWithinThisWeek(user?.data?.weeklyStatus?.startDate);
+  const { weekStart } = getMTDates();
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
 
   const date = user.updatedAt || user.createdAt || new Date();
   const lastUpdate = new Date(date);
-  const metadata = isNewWeek ? {} : user.data.weeklyStatus?.metadata;
+  const metadata = weeklySummary?.data.metadata;
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
 

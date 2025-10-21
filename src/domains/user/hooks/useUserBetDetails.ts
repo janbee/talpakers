@@ -12,9 +12,9 @@ const useUserBetDetails = (user: UserSupabaseModel) => {
   const betsInfo = useMemo(() => {
     const { weekStart } = getMTDates();
 
-    const betSummary = user.data.betsSummary?.find((item) => item.data.startDate === weekStart.toISOString());
-    return betSummary?.data.betsInfo || [];
-  }, [user.data.betsSummary]); // The dependency is the part of the user object that affects the calculation
+    const weeklySummary = user.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+    return weeklySummary?.data.betsInfo || [];
+  }, [user.data.weeklySummary]); // The dependency is the part of the user object that affects the calculation
 
   useEffect(() => {
     const gameIds = betsInfo.map((bet) => bet.gameId);
