@@ -12,7 +12,7 @@ const useUserBetDetails = (user: UserSupabaseModel) => {
   const betsInfo = useMemo(() => {
     const { weekStart } = getMTDates();
 
-    const weeklySummary = user.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+    const weeklySummary = user.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
     return weeklySummary?.data.betsInfo || [];
   }, [user.data.weeklySummary]); // The dependency is the part of the user object that affects the calculation
 

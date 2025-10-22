@@ -61,7 +61,7 @@ const useUseUserList = () => {
             return userStatus === UserStatusModel.InProgress;
           },
           (user) => {
-            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
             return weeklySummary?.data.totalStaked ?? 0;
           },
         ],
@@ -97,7 +97,7 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
             return weeklySummary?.data.totalEarnings ?? 0;
           },
         ],
@@ -108,7 +108,7 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
             return weeklySummary?.data.openBets ?? 0;
           },
         ],
@@ -160,7 +160,7 @@ const useUseUserList = () => {
 
     return list.filter((item) => {
       const weeklySummary = item?.data.weeklySummary?.find((item) => {
-        return item.data.startDate === weekStart.toISOString();
+        return item.data.weekStart === weekStart.toISOString();
       });
 
       return !!weeklySummary?.data.metadata?.hasBetRestriction;
@@ -173,7 +173,7 @@ const useUseUserList = () => {
     return (
       list.filter((item) => {
         const weeklySummary = item?.data.weeklySummary?.find((item) => {
-          return item.data.startDate === weekStart.toISOString();
+          return item.data.weekStart === weekStart.toISOString();
         });
 
         return weeklySummary?.data.freeBets?.length ?? 0;
@@ -234,11 +234,11 @@ const useUseUserList = () => {
     const allLastWeekWinnings: number[] = [];
     list.forEach((item) => {
       const foundWeeklySummary = item.data.weeklySummary?.find(
-        (betSum) => betSum.data.startDate === weekStart.toISOString()
+        (betSum) => betSum.data.weekStart === weekStart.toISOString()
       );
 
       const foundLastWeekSummary = item.data.weeklySummary?.find(
-        (betSum) => betSum.data.startDate === lastWeekStart.toISOString()
+        (betSum) => betSum.data.weekStart === lastWeekStart.toISOString()
       );
 
       if (foundWeeklySummary) {

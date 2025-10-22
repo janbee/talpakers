@@ -174,8 +174,8 @@ const getWeeklySummary = (
   const byWeekSummary =
     weeklySummaryList?.filter((item) => {
       return (
-        item.data.startDate === dayjs(weekStart).utc().startOf('day').toISOString() &&
-        item.data.endDate === dayjs(weekEnd).utc().endOf('day').toISOString() &&
+        item.data.weekStart === dayjs(weekStart).utc().startOf('day').toISOString() &&
+        item.data.weekEnd === dayjs(weekEnd).utc().endOf('day').toISOString() &&
         item.data.year.toString() === year.toString()
       );
     }) ?? [];

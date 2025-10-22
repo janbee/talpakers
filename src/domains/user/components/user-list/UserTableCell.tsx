@@ -18,7 +18,7 @@ interface UserTableCellProps extends StrictTableCellProps {
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart, weekEnd } = getMTDates();
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
   const withdrawal = weeklySummary?.data.withdrawals?.[0];
 
   const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
@@ -149,7 +149,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart } = getMTDates();
 
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
 
   const totalEarnings = weeklySummary?.data.totalEarnings || 0;
   const winnings = weeklySummary?.data.winnings || 0;
@@ -194,7 +194,7 @@ export const WeeklySummaryCell: FC<UserTableCellProps> = (props) => {
 export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart } = getMTDates();
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
   const totalStaked = weeklySummary?.data.totalStaked || 0;
 
   return (
@@ -215,7 +215,7 @@ export const WeeklyProgressCell: FC<UserTableCellProps> = (props) => {
 export const BetsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart } = getMTDates();
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
   const bets = {
     open: weeklySummary?.data.openBets ?? 0,
     settled: weeklySummary?.data.settledBets ?? 0,
@@ -287,7 +287,7 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
   const { weekStart } = getMTDates();
 
   const weeklySummary = user.data.weeklySummary?.find((item) => {
-    return item.data.startDate === weekStart.toISOString();
+    return item.data.weekStart === weekStart.toISOString();
   });
 
   const hasBetRestriction = weeklySummary?.data.metadata?.['hasMinimumBetRestriction'];
@@ -322,7 +322,7 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart, weekEnd } = getMTDates();
   const weeklySummary = user.data.weeklySummary?.find((item) => {
-    return item.data.startDate === weekStart.toISOString();
+    return item.data.weekStart === weekStart.toISOString();
   });
   const bonus = weeklySummary?.data.bonuses?.[0];
 
@@ -377,8 +377,8 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
 export const LastWeekWinningsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { lastWeekStart, weekStart } = getMTDates();
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
-  const lastWeekSummary = user?.data.weeklySummary?.find((item) => item.data.startDate === lastWeekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
+  const lastWeekSummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === lastWeekStart.toISOString());
 
   const weeklyBonus = sumBy(weeklySummary?.data.bonuses, (bonus) => {
     return bonus.Amount;
@@ -425,7 +425,7 @@ export const LifetimeLossCell: FC<UserTableCellProps> = (props) => {
 export const FreeBetCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart } = getMTDates();
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
 
   const freeBets = weeklySummary?.data?.freeBets || [];
 
@@ -485,7 +485,7 @@ export const AutoLoginCell: FC<UserTableCellProps> = (props) => {
 export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart } = getMTDates();
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.startDate === weekStart.toISOString());
+  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
 
   const date = user.updatedAt || user.createdAt || new Date();
   const lastUpdate = new Date(date);
