@@ -1,41 +1,44 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getMTDates, PredictionSupabaseModel, UserSupabaseModel } from '@PlayAb/shared';
+import { BetInfoModel, getMTDates, PredictionSupabaseModel, UserSupabaseModel } from '@PlayAb/shared';
 import { Dictionary } from 'lodash';
 import { SharedApiSupabase } from '@PlayAb/services';
+import { mergeMap } from 'rxjs';
 
 const useUserBetDetails = (user: UserSupabaseModel) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [betsInfo, setBetsInfo] = useState<BetInfoModel[]>([]);
   const [predictionDictionary, setPredictionDictionary] = useState<Dictionary<PredictionSupabaseModel> | undefined>(
     undefined
   );
 
-  const betsInfo = useMemo(() => {
-    const { weekStart } = getMTDates();
-
-    const weeklySummary = user.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
-    return weeklySummary?.data.betsInfo || [];
-  }, [user.data.weeklySummary]); // The dependency is the part of the user object that affects the calculation
-
   useEffect(() => {
-    const gameIds = betsInfo.map((bet) => bet.gameId);
+    const { weekStart } = getMTDates();
+    const subs = SharedApiSupabase.getWeeklySummaryByWeek(user._id, weekStart.toISOString())
+      .pipe(
+        mergeMap((res) => {
+          const weeklySummary = res.data?.[0];
+          const betsInfo = weeklySummary?.data.betsInfo || [];
+          setBetsInfo(betsInfo);
+          const gameIds = betsInfo.map((bet) => bet.gameId);
+          return SharedApiSupabase.getPredictionsByGameIds(gameIds);
+        })
+      )
+      .subscribe((res) => {
+        const list = res.data || [];
+        setLoading(false);
 
-    console.log('gameIds-------------------------------------', gameIds);
-    const subs = SharedApiSupabase.getPredictionsByGameIds(gameIds).subscribe((res) => {
-      const list = res.data || [];
-      setLoading(false);
+        const dictionaryPredictions = list.reduce((acc, item) => {
+          acc[item._id] = item;
+          return acc;
+        }, {} as Dictionary<PredictionSupabaseModel>);
 
-      const dictionaryPredictions = list.reduce((acc, item) => {
-        acc[item._id] = item;
-        return acc;
-      }, {} as Dictionary<PredictionSupabaseModel>);
-
-      setPredictionDictionary(dictionaryPredictions);
-    });
+        setPredictionDictionary(dictionaryPredictions);
+      });
 
     return () => {
       subs.unsubscribe();
     };
-  }, [betsInfo, user]);
+  }, [user]);
 
   const listStatus = useMemo(() => {
     let Won = 0;
@@ -55,6 +58,7 @@ const useUserBetDetails = (user: UserSupabaseModel) => {
   }, [betsInfo]);
 
   return {
+    betsInfo,
     predictionDictionary,
     loading,
     listStatus,

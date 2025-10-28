@@ -1,4 +1,4 @@
-import { UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
+import { UserStatusModel } from '../../../api';
 import dayjs from 'dayjs';
 import { getMTDates, UserSupabaseModel } from '@PlayAb/shared';
 

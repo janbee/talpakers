@@ -10,10 +10,8 @@ interface UserBetDetailsProps {
 
 const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
   const { weekStart } = getMTDates();
-
   const { user } = props;
-  const { predictionDictionary, loading, listStatus } = useUserBetDetails(user);
-  const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
+  const { predictionDictionary, loading, listStatus, betsInfo } = useUserBetDetails(user);
 
   return (
     <div data-testid="UserBetDetails" className={'flex flex-col h-full p-1 pt-0 gap-y-1'}>
@@ -23,7 +21,7 @@ const UserBetDetailsComponent: FC<UserBetDetailsProps> = (props) => {
       </div>
       <div className={'overflow-auto h-full flex flex-1 flex-col gap-y-1'}>
         {!!predictionDictionary &&
-          weeklySummary?.data.betsInfo?.map((betInfo) => {
+          betsInfo.map((betInfo) => {
             const id = betInfo.gameId;
             const prediction = predictionDictionary[id];
 
