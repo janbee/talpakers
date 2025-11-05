@@ -54,7 +54,7 @@ const UserListComponent: FC = () => {
 
   const tableCols = [
     {
-      name: 'App Build',
+      name: `App Build <br/> (${totals.withdrawals.length})`,
       render: (user: UserSupabaseModel) => <AppBuildCell user={user} />,
     },
     {
@@ -63,7 +63,6 @@ const UserListComponent: FC = () => {
     },
     {
       name: 'Version',
-
       render: (user: UserSupabaseModel) => <VersionCell user={user} />,
     },
     {
@@ -236,50 +235,6 @@ const UserListComponent: FC = () => {
                         />
                       </FormField>
                     </TableCell>
-                    {/*<AppBuildCell user={user} />
-
-
-                    <WeeklySummaryCell className={'md:flex-1'} textAlign={'center'} user={user} />
-
-                    <WeeklyProgressCell className={'md:w-full'} textAlign={'center'} user={user} />
-
-                    <BetsCell className={'md:w-[60px]'} user={user} />
-                    <NextWithdrawalCell className={'md:hidden'} user={user} />
-
-                    {!!restrictedCount && (
-                      <BetRestrictedCell className={'md:hidden'} textAlign={'center'} user={user} />
-                    )}
-
-                    <BonusCell className={'md:hidden'} user={user} textAlign={'center'} />
-
-                    <LastWeekWinnings className={'md:hidden'} textAlign={'center'} />
-
-                    <LottoTicketsCell className={'md:hidden'}  textAlign={'center'} />
-
-                    <LifetimeLossCell className={'md:hidden'} textAlign={'center'} />
-
-                    {hasFreeBet && <FreeBetCell className={'md:hidden'} extAlign={'center'} />}
-
-                    <TableCell className={'md:hidden'} collapsing textAlign={'center'}>
-                      Predictions
-                      {user.data.weeklyStatus?.predictions ?? 0}
-                    </TableCell>
-
-                    <TableCell
-                      className={classNames({
-                        'md:hidden': true,
-                        'text-green-dark': !!user.data?.settings?.electronAutoLogin,
-                        'text-red-dark': !user.data?.settings?.electronAutoLogin,
-                      })}
-                      collapsing
-                      textAlign={'center'}
-                    >
-                      {`${!!user.data?.settings?.electronAutoLogin}`}
-                    </TableCell>
-
-                    <LastLoginCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />
-                    <ActiveCell className={'md:flex-1 md:!text-right'} textAlign={'center'} user={user} />*/}
-
                     {tableCols.map(({ render, isVisible }: any, index: number) => {
                       return <React.Fragment key={index}>{isVisible === false ? null : render(user)}</React.Fragment>;
                     })}

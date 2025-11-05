@@ -5,7 +5,7 @@ import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/But
 import { orderBy, sum, sumBy } from 'lodash';
 import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { GetUserStatusUtil } from '../../../common/utils';
-import { getMTDates, UserSupabaseModel } from '@PlayAb/shared';
+import { getMTDates, UserSupabaseModel, WithdrawalModel } from '@PlayAb/shared';
 import { SharedApiSupabase } from '@PlayAb/services';
 import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -61,7 +61,9 @@ const useUseUserList = () => {
             return userStatus === UserStatusModel.InProgress;
           },
           (user) => {
-            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
+            const weeklySummary = user?.data.weeklySummary?.find(
+              (item) => item.data.weekStart === weekStart.toISOString()
+            );
             return weeklySummary?.data.totalStaked ?? 0;
           },
         ],
@@ -97,7 +99,9 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
+            const weeklySummary = user?.data.weeklySummary?.find(
+              (item) => item.data.weekStart === weekStart.toISOString()
+            );
             return weeklySummary?.data.totalEarnings ?? 0;
           },
         ],
@@ -108,7 +112,9 @@ const useUseUserList = () => {
         list,
         [
           (user) => {
-            const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
+            const weeklySummary = user?.data.weeklySummary?.find(
+              (item) => item.data.weekStart === weekStart.toISOString()
+            );
             return weeklySummary?.data.openBets ?? 0;
           },
         ],
@@ -231,6 +237,7 @@ const useUseUserList = () => {
   const totals = useMemo(() => {
     const { weekStart, lastWeekStart } = getMTDates();
     const allBonus: number[] = [];
+    const allWithdrawals: Array<WithdrawalModel[]> = [];
     const allLastWeekWinnings: number[] = [];
     list.forEach((item) => {
       const foundWeeklySummary = item.data.weeklySummary?.find(
@@ -251,11 +258,16 @@ const useUseUserList = () => {
           allLastWeekWinnings.push(bonus + foundLastWeekSummary.data.totalEarnings);
         }
       }
+
+      if (foundWeeklySummary && foundWeeklySummary.data.withdrawals?.length) {
+        allWithdrawals.push(foundWeeklySummary.data.withdrawals);
+      }
     });
 
     return {
       bonus: sum(allBonus),
       winnings: sum(allLastWeekWinnings),
+      withdrawals: allWithdrawals,
     };
   }, [list]);
 
