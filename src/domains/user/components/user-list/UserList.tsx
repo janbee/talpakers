@@ -144,7 +144,7 @@ const UserListComponent: FC = () => {
     {
       name: 'Last Login',
       className: {
-        'min-w-[50px]': true,
+        'min-w-[105px]': true,
       },
       render: (user: UserSupabaseModel) => <LastLoginCell user={user} />,
     },

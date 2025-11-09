@@ -469,7 +469,7 @@ export const AutoLoginCell: FC<UserTableCellProps> = (props) => {
 export const LastLoginCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
-  const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || new Date());
+  const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || user.updatedAt || new Date());
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
 
