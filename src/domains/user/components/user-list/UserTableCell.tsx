@@ -466,7 +466,7 @@ export const AutoLoginCell: FC<UserTableCellProps> = (props) => {
   );
 };
 
-/*export const LastLoginCell: FC<UserTableCellProps> = (props) => {
+export const LastLoginCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
   const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || new Date());
@@ -476,11 +476,11 @@ export const AutoLoginCell: FC<UserTableCellProps> = (props) => {
   const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
 
   return (
-    <TableCell className={'relative'} {...omit(props, ['user'])}>
-      <span style={{ color: bgColor }}>{getMTDates().fromNow(lastUpdate)} </span>
+    <TableCell className={'relative'} textAlign={'center'}>
+      <span style={{ color: bgColor }}>{getMTDates().fromNow(convertToMT(lastUpdate))} </span>
     </TableCell>
   );
-};*/
+};
 
 export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;

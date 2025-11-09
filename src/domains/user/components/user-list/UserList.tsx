@@ -20,11 +20,11 @@ import classNames from 'classnames';
 import {
   ActiveCell,
   AppBuildCell,
-  AutoLoginCell,
   BetRestrictedCell,
   BetsCell,
   BonusCell,
   FreeBetCell,
+  LastLoginCell,
   LastWeekWinningsCell,
   LifetimeLossCell,
   LottoTicketsCell,
@@ -142,14 +142,14 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <FreeBetCell user={user} />,
     },
     {
-      name: 'Auto <br /> Login',
+      name: 'Last Login',
       className: {
         'min-w-[50px]': true,
       },
-      render: (user: UserSupabaseModel) => <AutoLoginCell user={user} />,
+      render: (user: UserSupabaseModel) => <LastLoginCell user={user} />,
     },
     {
-      name: 'Active',
+      name: 'Last Update',
       className: {
         'min-w-[105px]': true,
       },
