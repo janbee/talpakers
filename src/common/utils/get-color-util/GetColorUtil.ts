@@ -1,4 +1,4 @@
-const GetColorUtil = (value: number) => {
+const GetColorUtil = (value: number, max:number) => {
   const colorArr = [
     '#adff2f',
     '#b2fa33',
@@ -31,7 +31,11 @@ const GetColorUtil = (value: number) => {
     '#fe675e',
     '#ff5f5f',
   ];
-  return colorArr[value];
+
+
+  const clampedHours = Math.max(0, Math.min(max, value));
+  const index = Math.floor((clampedHours / max) * (colorArr.length - 1));
+  return colorArr[index];
 };
 
 export default GetColorUtil;

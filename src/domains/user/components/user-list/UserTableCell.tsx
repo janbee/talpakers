@@ -257,9 +257,8 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   const cash = user.data.userSession?.cash ?? 0;
   const cashoutPercent = Math.floor((cashout / fixedAmount) * 100);
 
-  const nextCashOutPercent = (cashout / fixedAmount) * -30 + 30;
-  const bgColor = nextCashOutPercent > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(nextCashOutPercent));
-
+  const nextCashOutPercent = (cashout / fixedAmount) * -100 + 100;
+  const bgColor = GetColorUtil(nextCashOutPercent, 100);
   return (
     <TableCell className={'md:hidden'}>
       <div className={'flex justify-between'}>
@@ -471,9 +470,8 @@ export const LastLoginCell: FC<UserTableCellProps> = (props) => {
 
   const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || user.updatedAt || new Date());
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
-  const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
-
-  const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
+  const hoursPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asHours();
+  const bgColor = GetColorUtil(hoursPassed, 72);
 
   return (
     <TableCell className={'relative'} textAlign={'center'}>
@@ -493,7 +491,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
 
-  const bgColor = minutesPassed > 30 ? GetColorUtil(29) : GetColorUtil(Math.floor(minutesPassed));
+  const bgColor = GetColorUtil(minutesPassed, 30);
 
   const notifications = [];
 
