@@ -494,8 +494,9 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const bgColor = GetColorUtil(minutesPassed, 30);
 
   const notifications = [];
+  const twoFactorAuthValue = user.data?.userSession?.TWO_FACTOR_AUTH;
 
-  if (!user.data.userSession?.TWO_FACTOR_AUTH) {
+  if (typeof twoFactorAuthValue !== 'string' || !user.data.userSession?.TWO_FACTOR_AUTH) {
     notifications.push('Missing TWO_FACTOR_AUTH');
   }
 

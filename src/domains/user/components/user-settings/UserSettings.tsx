@@ -16,7 +16,6 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
     form
   } = useUserSettings();
 
-  console.log('gaga--------------------------userDetailsuserDetailsuserDetails-----------', userDetails);
   if (!userDetails) return null;
 
   console.log('gaga-------------------------------------UserSettingsComponent', userDetails);
@@ -161,6 +160,9 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                   </Button>
                 </div>
               </div>
+
+
+
               <div className={'flex flex-col items-start mb-5'}>
                 <span className={'text-md mb-2'}>Set Two Factor Auth</span>
                 <div className={'w-full'}>
@@ -175,6 +177,9 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
                   </Input>
                 </div>
               </div>
+
+
+
             </div>
             <hr className={'mt-2 mb-6'} />
             <Input className={'w-full mb-2'} placeholder="Password">
