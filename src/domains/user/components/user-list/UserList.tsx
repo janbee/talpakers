@@ -60,7 +60,7 @@ const UserListComponent: FC = () => {
         <>
           App Build <br />
           <Popup
-            position="bottom center"
+            position="right center"
             disabled={!totals.withdrawals.length}
             trigger={<span className={'cursor-pointer'}>({totals.withdrawals.length})</span>}
             flowing
@@ -69,6 +69,7 @@ const UserListComponent: FC = () => {
               {totals.withdrawals.map((withdrawal) => (
                 <div className={'flex flex-row justify-between gap-x-10'}>
                   <span>{withdrawal.build}</span>
+                  <span>{withdrawal.PaymentMethodInfo}</span>
                   <span>{dayjs(withdrawal.TransactionDateTime).utc().fromNow(true)}</span>
                 </div>
               ))}
