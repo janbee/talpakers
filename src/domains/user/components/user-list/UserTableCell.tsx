@@ -325,6 +325,8 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   });
   const bonus = weeklySummary?.data.bonuses?.[0];
 
+
+
   const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
   -H 'accept: application/json, text/plain, */*' \\
   -H 'accept-language: en-US,en;q=0.9' \\

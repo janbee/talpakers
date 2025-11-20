@@ -18,7 +18,7 @@ const useHeader = () => {
   }, []);
 
   const other = useMemo(() => {
-    const { webshare, captcha } = otherData;
+    const { webshare, captcha, solveCaptcha } = otherData;
     // Constants
     const BYTES_TO_GB = (bytes = 0) => Number((bytes / 1024 ** 3).toFixed(2));
     const BYTES_TO_MB = (bytes = 0) => Number((bytes / 1024 ** 2).toFixed(2));
@@ -35,9 +35,10 @@ const useHeader = () => {
     }
 
     return {
-      captcha: `Captcha: ${toMoney(otherData.captcha?.balance || 0)}`,
+      solveCaptcha: `SolveCaptcha: ${toMoney(solveCaptcha?.balance || 0)}`,
+      captcha: `2Captcha: ${toMoney(captcha?.balance || 0)}`,
       webshare: webshareTxt,
-    };
+    } as any;
   }, [otherData]);
 
   return { other };

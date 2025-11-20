@@ -5,14 +5,12 @@ import { Icon, Popup } from 'semantic-ui-react';
 import { version } from '../../../package.json';
 import dayjs from 'dayjs';
 import { PredictionPopup } from '../../domains/prediction';
-import { getMTDates, toMoney } from '@PlayAb/shared';
+import { getMTDates } from '@PlayAb/shared';
 import useHeader from './hooks/useHeader';
 
 const HeaderComponent: FC = () => {
   const { other } = useHeader();
   console.log('HeaderComponent-------------------------------------', other);
-
-
 
   return (
     <div data-testid="Header" className={'h-20 bg-black p-3 flex justify-between items-center'}>
@@ -42,8 +40,9 @@ const HeaderComponent: FC = () => {
           position="right center"
           trigger={<Icon circular inverted className={'cursor-pointer !text-xl'} name="database" />}
         >
-          <div>{other.captcha}</div>
-          <div>{other.webshare}</div>
+          {Object.keys(other).map((key) => {
+            return <div key={key}>{other?.[key]}</div>;
+          })}
         </Popup>
 
         <PredictionPopup />

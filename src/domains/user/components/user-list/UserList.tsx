@@ -8,6 +8,7 @@ import {
   FormField,
   Icon,
   Loader,
+  Popup,
   Table,
   TableBody,
   TableCell,
@@ -36,7 +37,8 @@ import {
 } from './UserTableCell';
 import useUserList from '../../hooks/useUserList';
 import { UserColumnSortModel, UserStatusModel } from '../../../../api/rxjs-client/models/custom.models';
-import { convertToMT, getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/shared';
+import { toMoney, UserSupabaseModel } from '@PlayAb/shared';
+import dayjs from 'dayjs';
 
 const UserListComponent: FC = () => {
   const {
@@ -52,11 +54,28 @@ const UserListComponent: FC = () => {
     totals,
   } = useUserList();
 
-
-
   const tableCols = [
     {
-      name: `App Build <br/> (${totals.withdrawals.length})`,
+      name: (
+        <>
+          App Build <br />
+          <Popup
+            position="bottom center"
+            disabled={!totals.withdrawals.length}
+            trigger={<span className={'cursor-pointer'}>({totals.withdrawals.length})</span>}
+            flowing
+          >
+            <Popup.Content>
+              {totals.withdrawals.map((withdrawal) => (
+                <div className={'flex flex-row justify-between gap-x-10'}>
+                  <span>{withdrawal.build}</span>
+                  <span>{dayjs(withdrawal.TransactionDateTime).utc().fromNow(true)}</span>
+                </div>
+              ))}
+            </Popup.Content>
+          </Popup>
+        </>
+      ),
       render: (user: UserSupabaseModel) => <AppBuildCell user={user} />,
     },
     {
@@ -68,7 +87,11 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <VersionCell user={user} />,
     },
     {
-      name: 'Weekly Summary <br /> (Bonus + Earnings = Total)',
+      name: (
+        <>
+          Weekly Summary <br /> (Bonus + Earnings = Total)
+        </>
+      ),
       className: {
         'min-w-[205px]': true,
       },
@@ -76,7 +99,11 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <WeeklySummaryCell user={user} />,
     },
     {
-      name: 'Weekly <br /> Progress',
+      name: (
+        <>
+          Weekly <br /> Progress
+        </>
+      ),
       className: {
         'min-w-[74px]': true,
       },
@@ -92,7 +119,11 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <BetsCell user={user} />,
     },
     {
-      name: 'Next <br /> Withdrawal',
+      name: (
+        <>
+          Next <br /> Withdrawal
+        </>
+      ),
       className: {
         'min-w-[105px]': true,
       },
@@ -100,7 +131,11 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <NextWithdrawalCell user={user} />,
     },
     {
-      name: 'Bet <br /> Restricted',
+      name: (
+        <>
+          Bet <br /> Restricted
+        </>
+      ),
       className: {
         'min-w-[75px]': true,
       },
@@ -108,14 +143,22 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <BetRestrictedCell user={user} />,
     },
     {
-      name: `Bonus <br /> (${toMoney(totals.bonus, 0)})`,
+      name: (
+        <>
+          Bonus <br /> ({toMoney(totals.bonus, 0)})
+        </>
+      ),
       className: {
         'min-w-[75px]': true,
       },
       render: (user: UserSupabaseModel) => <BonusCell user={user} />,
     },
     {
-      name: `Earnings <br /> (${toMoney(totals.winnings, 0)})`,
+      name: (
+        <>
+          Earnings <br /> ({toMoney(totals.winnings, 0)})
+        </>
+      ),
       className: {
         'min-w-[75px]': true,
       },
@@ -129,14 +172,22 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <LottoTicketsCell user={user} />,
     },
     {
-      name: 'Total <br /> Loss',
+      name: (
+        <>
+          Total <br /> Loss
+        </>
+      ),
       className: {
         'min-w-[75px]': true,
       },
       render: (user: UserSupabaseModel) => <LifetimeLossCell user={user} />,
     },
     {
-      name: 'Free <br /> Bet',
+      name: (
+        <>
+          Free <br /> Bet
+        </>
+      ),
       className: {
         'min-w-[75px]': true,
       },
@@ -159,6 +210,7 @@ const UserListComponent: FC = () => {
       render: (user: UserSupabaseModel) => <ActiveCell user={user} />,
     },
   ] as any;
+
   return (
     <div
       data-testid="UserList"
@@ -186,10 +238,10 @@ const UserListComponent: FC = () => {
             >
               <TableRow>
                 <TableHeaderCell collapsing>#</TableHeaderCell>
-                {tableCols.map(({ name, className, filter, isVisible, collapsing }: any) =>
+                {tableCols.map(({ name, className, filter, isVisible, collapsing }: any, index: number) =>
                   isVisible === false ? null : (
                     <TableHeaderCell
-                      key={name}
+                      key={index}
                       collapsing={collapsing === false ? undefined : true}
                       textAlign={'center'}
                       className={classNames({
@@ -197,7 +249,7 @@ const UserListComponent: FC = () => {
                         ...className,
                       })}
                     >
-                      <span dangerouslySetInnerHTML={{ __html: name }} />
+                      <span>{name}</span>
                       {filter && (
                         <Button
                           className={'absolute top-0 right-0 bottom-0 left-0 opacity-0'}
