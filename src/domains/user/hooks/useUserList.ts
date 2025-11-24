@@ -131,37 +131,45 @@ const useUserList = () => {
     [dates]
   );
 
-  useEffect(() => {
-    setLoading(true);
-    setError(false);
+  const fetchUsersWithWeeklySummary = useCallback(
+    (sortFilter: ButtonProps) => {
+      setLoading(true);
+      setError(false);
 
-    const user$ = SharedApiSupabase.getUsersWithWeeklySummary()
-      .pipe(tap(() => setLoading(false)))
-      .subscribe({
-        next: (res) => {
-          const userList = res.data ?? [];
-          setRawList(userList);
-          const sorted = getSort(userList, { filter: UserColumnSortModel.Earnings });
-          setList(sorted);
-        },
-        error: () => {
-          setError(true);
-          setLoading(false);
-        },
-      });
+      const user$ = SharedApiSupabase.getUsersWithWeeklySummary()
+        .pipe(tap(() => setLoading(false)))
+        .subscribe({
+          next: (res) => {
+            const userList = res.data ?? [];
+            setRawList(userList);
+            const sorted = getSort(userList, sortFilter);
+            setList(sorted);
+          },
+          error: () => {
+            setError(true);
+            setLoading(false);
+          },
+        });
+
+      return user$;
+    },
+    [getSort]
+  );
+
+  useEffect(() => {
+    const user$ = fetchUsersWithWeeklySummary({ filter: UserColumnSortModel.Earnings });
 
     return () => {
       user$.unsubscribe();
     };
-  }, [getSort]);
+  }, [fetchUsersWithWeeklySummary]);
 
   const handleOrderByStatus = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
       event.preventDefault();
-      const newList = getSort(rawList, data);
-      setList(newList);
+      fetchUsersWithWeeklySummary(data);
     },
-    [rawList, getSort]
+    [fetchUsersWithWeeklySummary]
   );
 
   const computedStats = useMemo(() => {
