@@ -325,8 +325,6 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   });
   const bonus = weeklySummary?.data.bonuses?.[0];
 
-
-
   const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
   -H 'accept: application/json, text/plain, */*' \\
   -H 'accept-language: en-US,en;q=0.9' \\
@@ -407,7 +405,23 @@ export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
 
   return (
     <TableCell className={'relative md:hidden'} textAlign={'center'}>
-      <span>{user.data.lottoTickets?.length}</span>
+      <span
+        className={classNames({
+          'text-green-dark': user.data.lottoTickets?.length,
+        })}
+      >
+        {user.data.lottoTickets?.length}
+      </span>
+    </TableCell>
+  );
+};
+
+export const TotalDepositsCell: FC<UserTableCellProps> = (props) => {
+  const { user } = props;
+
+  return (
+    <TableCell className={'relative md:hidden'} textAlign={'center'}>
+      <span>{toMoney(user.data.totalDeposits || 0, 0)}</span>
     </TableCell>
   );
 };

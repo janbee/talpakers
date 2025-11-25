@@ -31,6 +31,7 @@ import {
   LottoTicketsCell,
   NextWithdrawalCell,
   StatusCell,
+  TotalDepositsCell,
   VersionCell,
   WeeklyProgressCell,
   WeeklySummaryCell,
@@ -171,6 +172,17 @@ const UserListComponent: FC = () => {
         'min-w-[60px]': true,
       },
       render: (user: UserSupabaseModel) => <LottoTicketsCell user={user} />,
+    },
+    {
+      name: (
+        <>
+          Total <br /> Deposits
+        </>
+      ),
+      className: {
+        'min-w-[75px]': true,
+      },
+      render: (user: UserSupabaseModel) => <TotalDepositsCell user={user} />,
     },
     {
       name: (
