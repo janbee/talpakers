@@ -10,9 +10,11 @@ import { convertToMT, getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/sha
 import UserBetDetails from '../user-bet-details/UserBetDetails';
 import { toPascalCase } from '@react-native-community/cli-platform-android/build/commands/runAndroid/toPascalCase';
 import { sumBy } from 'lodash';
+import { Link } from 'react-router-dom';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserSupabaseModel;
+  buildId?: string;
 }
 
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
@@ -97,7 +99,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
           ))}
         </>
       )}
-      <span>{user.data.build}</span>
+      <Link to={`https://drive.google.com/uc?export=download&id=${props.buildId}`} className={`text-white hover:text-white`}>{user.data.build}</Link>
     </TableCell>
   );
 };

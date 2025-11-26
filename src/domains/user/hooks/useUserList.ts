@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const useUserList = () => {
   const [rawList, setRawList] = useState<UserSupabaseModel[]>([]);
   const [list, setList] = useState<UserSupabaseModel[]>([]);
+  const [gDriveList, setGDriveList] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
@@ -136,7 +137,7 @@ const useUserList = () => {
       setLoading(true);
       setError(false);
 
-      const user$ = SharedApiSupabase.getUsersWithWeeklySummary()
+      return SharedApiSupabase.getUsersWithWeeklySummary()
         .pipe(tap(() => setLoading(false)))
         .subscribe({
           next: (res) => {
@@ -150,16 +151,29 @@ const useUserList = () => {
             setLoading(false);
           },
         });
-
-      return user$;
     },
     [getSort]
   );
 
   useEffect(() => {
+    const gDrive$ = SharedApiSupabase.getGDriveList().subscribe((res) => {
+      const apkMap = res.reduce((acc: any, file: any) => {
+        const match = file.name.match(/^app-([A-Z]+)-release/);
+        if (match) {
+          const key = match[1]; // e.g. "LISA", "ROMMI"
+          acc[key] = file.id;
+        }
+        return acc;
+      }, {} as any);
+
+      console.log('gaga----------SharedApiSupabase---------------------------', apkMap);
+
+      setGDriveList(apkMap);
+    });
     const user$ = fetchUsersWithWeeklySummary({ filter: UserColumnSortModel.Earnings });
 
     return () => {
+      gDrive$.unsubscribe();
       user$.unsubscribe();
     };
   }, [fetchUsersWithWeeklySummary]);
@@ -290,6 +304,7 @@ const useUserList = () => {
     handleRowClick,
     selectedUserMemo: selectedUsers, // Renamed for consistency, but keeping the return key as-is
     totals,
+    gDriveList,
   };
 };
 

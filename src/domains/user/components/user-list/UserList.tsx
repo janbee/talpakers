@@ -53,6 +53,7 @@ const UserListComponent: FC = () => {
     selectedUserMemo,
     handleCheckboxMultiUserChange,
     totals,
+    gDriveList
   } = useUserList();
 
   const tableCols = [
@@ -68,7 +69,7 @@ const UserListComponent: FC = () => {
           >
             <Popup.Content>
               {totals.withdrawals.map((withdrawal) => (
-                <div className={'flex flex-row justify-between gap-x-10'}>
+                <div key={withdrawal.TransactionID} className={'flex flex-row justify-between gap-x-10'}>
                   <span>{withdrawal.build}</span>
                   <span>{withdrawal.PaymentMethodInfo}</span>
                   <span>{dayjs(withdrawal.TransactionDateTime).utc().fromNow(true)}</span>
@@ -78,7 +79,10 @@ const UserListComponent: FC = () => {
           </Popup>
         </>
       ),
-      render: (user: UserSupabaseModel) => <AppBuildCell user={user} />,
+      render: (user: UserSupabaseModel) => {
+        const buildId = gDriveList[user.data.build]
+        return <AppBuildCell user={user} buildId={buildId} />
+      },
     },
     {
       name: 'Status',
