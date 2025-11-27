@@ -28,8 +28,11 @@ const useHeader = () => {
 
       const usedGB = BYTES_TO_GB(webshare.bandwidth_total);
       const usedMB = BYTES_TO_MB(webshare.bandwidth_total);
-      const value = [usedGB && `${usedGB}GB`, usedMB && `${usedMB}MB`].find(Boolean) || '';
-      webshareTxt = `WebShare: ${value}`;
+      const value = [usedGB && `${usedGB}`, usedMB && `${usedMB}MB`].find(Boolean) || '';
+      const nextMonthDate = new Date();
+      nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
+      const nextMonth = nextMonthDate.toLocaleString('en-US', { month: 'short' });
+      webshareTxt = `WebShare: ${value}/250 - ${nextMonth} 8th`;
 
       console.log('gaga-------------------------------------', [usedGB && `${usedGB}GB`, usedMB && `${usedMB}MB`]);
     }
