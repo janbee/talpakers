@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import logo from '../../../src/assets/logo.png';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Icon, Popup } from 'semantic-ui-react';
 import { version } from '../../../package.json';
 import dayjs from 'dayjs';
@@ -10,6 +10,7 @@ import useHeader from './hooks/useHeader';
 
 const HeaderComponent: FC = () => {
   const { other } = useHeader();
+  const location = useLocation();
   console.log('HeaderComponent-------------------------------------', other);
 
   return (
@@ -35,6 +36,14 @@ const HeaderComponent: FC = () => {
       </div>
 
       <div className="flex items-center gap-2">
+        <Link to="/apks" aria-label="Navigate to APKs page">
+          <Icon
+            circular
+            inverted
+            name="android"
+            className={`cursor-pointer !text-xl ${location.pathname === '/apks' ? 'bg-gray-700' : ''}`}
+          />
+        </Link>
         <Popup
           size={'mini'}
           position="right center"
