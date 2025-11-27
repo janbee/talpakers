@@ -62,7 +62,7 @@ const UserListComponent: FC = () => {
         <>
           App Build <br />
           <Popup
-            position="right center"
+            position="bottom right"
             disabled={!totals.withdrawals.length}
             trigger={<span className={'cursor-pointer'}>({totals.withdrawals.length})</span>}
             flowing
