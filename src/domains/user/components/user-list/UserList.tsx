@@ -173,7 +173,7 @@ const UserListComponent: FC = () => {
     {
       name: 'Tickets',
       className: {
-        'min-w-[60px]': true,
+        'min-w-[100px]': true,
       },
       render: (user: UserSupabaseModel) => <LottoTicketsCell user={user} />,
     },

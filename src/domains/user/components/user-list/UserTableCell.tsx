@@ -412,7 +412,7 @@ export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
           'text-green-dark': user.data.lottoTickets?.length,
         })}
       >
-        {user.data.lottoTickets?.length}
+        {user.data.lottoTickets?.length} / {toMoney(user.data.totalPurchases || 0, 0)}
       </span>
     </TableCell>
   );
