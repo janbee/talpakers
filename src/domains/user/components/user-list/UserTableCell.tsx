@@ -107,6 +107,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
 export const StatusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const userStatus = GetUserStatusUtil(user);
+
   return (
     <TableCell className={'md:!min-w-[33%] md:!text-right'} textAlign={'center'}>
       {[userStatus].map((s, statusInd) => {

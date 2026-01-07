@@ -32,7 +32,7 @@ const useHeader = () => {
       const nextMonthDate = new Date();
       nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
       const nextMonth = nextMonthDate.toLocaleString('en-US', { month: 'short' });
-      webshareTxt = `WebShare: ${value}/250 - ${nextMonth} 8th`;
+      webshareTxt = `WebShare: ${value}/1TB`;
 
       console.log('gaga-------------------------------------', [usedGB && `${usedGB}GB`, usedMB && `${usedMB}MB`]);
     }
