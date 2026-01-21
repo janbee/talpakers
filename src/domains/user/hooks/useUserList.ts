@@ -196,6 +196,7 @@ const useUserList = () => {
     const allBonus: number[] = [];
     const allWithdrawals: Array<WithdrawalModel> = [];
     const allLastWeekWinnings: number[] = [];
+    const allWeeklyAproxWinnings: number[] = [];
 
     list.forEach((item) => {
       const userStatus = GetUserStatusUtil(item);
@@ -216,6 +217,7 @@ const useUserList = () => {
 
         const bonus = sumBy(weeklySummary.data.bonuses, 'Amount');
         allBonus.push(bonus);
+        allWeeklyAproxWinnings.push(weeklySummary.data.winnings);
 
         if (lastWeekSummary) {
           allLastWeekWinnings.push(bonus + lastWeekSummary.data.totalEarnings);
@@ -243,7 +245,8 @@ const useUserList = () => {
       hasFreeBet: hasAnyFreeBet,
       totals: {
         bonus: sum(allBonus),
-        winnings: sum(allLastWeekWinnings),
+        lastWeekWinnings: sum(allLastWeekWinnings),
+        weekWinnings: sum(allWeeklyAproxWinnings),
         withdrawals: sortedWithdrawals,
       },
     };

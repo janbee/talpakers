@@ -80,8 +80,8 @@ const UserListComponent: FC = () => {
         </>
       ),
       render: (user: UserSupabaseModel) => {
-        const buildId = gDriveList[user.data.build]
-        return <AppBuildCell user={user} buildId={buildId} />
+        const buildId = gDriveList[user.data.build];
+        return <AppBuildCell user={user} buildId={buildId} />;
       },
     },
     {
@@ -95,7 +95,7 @@ const UserListComponent: FC = () => {
     {
       name: (
         <>
-          Weekly Summary <br /> (Bonus + Earnings = Total)
+          Weekly Summary <br /> (Bonus + Earnings = {toMoney(totals.weekWinnings,0)})
         </>
       ),
       className: {
@@ -162,7 +162,7 @@ const UserListComponent: FC = () => {
     {
       name: (
         <>
-          Earnings <br /> ({toMoney(totals.winnings, 0)})
+          Earnings <br /> ({toMoney(totals.lastWeekWinnings, 0)})
         </>
       ),
       className: {
