@@ -53,7 +53,9 @@ const UserListComponent: FC = () => {
     selectedUserMemo,
     handleCheckboxMultiUserChange,
     totals,
-    gDriveList
+    gDriveList,
+    paidCheck,
+    handlePaidCheck,
   } = useUserList();
 
   const tableCols = [
@@ -63,16 +65,27 @@ const UserListComponent: FC = () => {
           App Build <br />
           <Popup
             position="bottom right"
+            on="click"
             disabled={!totals.withdrawals.length}
             trigger={<span className={'cursor-pointer'}>({totals.withdrawals.length})</span>}
             flowing
           >
             <Popup.Content>
               {totals.withdrawals.map((withdrawal) => (
-                <div key={withdrawal.TransactionID} className={'flex flex-row justify-between gap-x-10'}>
-                  <span>{withdrawal.build}</span>
-                  <span>{withdrawal.PaymentMethodInfo}</span>
-                  <span>{dayjs(withdrawal.TransactionDateTime).utc().fromNow(true)}</span>
+                <div
+                  key={withdrawal.TransactionID}
+                  className={
+                    'grid grid-cols-[auto_max-content_max-content_1fr_max-content] gap-x-6 text-left items-center'
+                  }
+                >
+                  <Checkbox
+                    checked={paidCheck[withdrawal.TransactionID]}
+                    onChange={(_, d) => handlePaidCheck(withdrawal.TransactionID, !!d.checked)}
+                  />
+                  <span className="min-w-28 truncate">{withdrawal.build}</span>
+                  <span className="min-w-10 truncate">{toMoney(Math.abs(withdrawal.Amount), 0)}</span>
+                  <span>{withdrawal.PaymentMethodInfo.replace('INTERAC e-Transfer®: ', '')}</span>
+                  <span className="min-w-10 truncate">{dayjs(withdrawal.TransactionDateTime).utc().fromNow(true)}</span>
                 </div>
               ))}
             </Popup.Content>
@@ -95,7 +108,7 @@ const UserListComponent: FC = () => {
     {
       name: (
         <>
-          Weekly Summary <br /> (Bonus + Earnings = {toMoney(totals.weekWinnings,0)})
+          Weekly Summary <br /> (Bonus + Earnings = {toMoney(totals.weekWinnings, 0)})
         </>
       ),
       className: {

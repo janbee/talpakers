@@ -5,10 +5,12 @@ import { ButtonProps } from 'semantic-ui-react/dist/commonjs/elements/Button/But
 import { orderBy, sum, sumBy } from 'lodash';
 import { UserColumnSortModel, UserStatusModel } from '../../../api/rxjs-client/models/custom.models';
 import { GetUserStatusUtil } from '../../../common/utils';
-import { getMTDates, UserSupabaseModel, WithdrawalModel } from '@PlayAb/shared';
+import { getMTDates, getWithExpiry, setWithExpiry, UserSupabaseModel, WithdrawalModel } from '@PlayAb/shared';
 import { SharedApiSupabase } from '@PlayAb/services';
 import { CheckboxProps } from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+const PaidCheck = 'paid-check';
 
 const useUserList = () => {
   const [rawList, setRawList] = useState<UserSupabaseModel[]>([]);
@@ -20,7 +22,10 @@ const useUserList = () => {
   const location = useLocation();
 
   const [selectedUsers, setSelectedUsers] = useState<Map<string, boolean>>(new Map());
-
+  const [paidCheck, setPaidCheck] = React.useState<Record<string, boolean>>(() => {
+    const [value] = getWithExpiry(PaidCheck);
+    return value ?? {};
+  });
   useEffect(() => {
     const usersFromUrl = location.pathname.replace('/users/', '').split(',').filter(Boolean);
     const newMap = new Map<string, boolean>();
@@ -30,6 +35,18 @@ const useUserList = () => {
   }, [location.pathname]);
 
   const dates = useMemo(() => getMTDates(), []);
+
+  const handlePaidCheck = React.useCallback((transactionId: string, checked: boolean) => {
+    setPaidCheck((prev) => {
+      const next = { ...prev, [transactionId]: checked };
+      if (!checked) delete next[transactionId];
+      const { weekEnd } = getMTDates();
+      const msUntilWeekEnd = weekEnd.getTime() - Date.now();
+      setWithExpiry(PaidCheck, next, msUntilWeekEnd);
+      return next;
+    });
+  }, []);
+
 
   const getSort = useCallback(
     (list: UserSupabaseModel[], data: ButtonProps) => {
@@ -308,6 +325,8 @@ const useUserList = () => {
     selectedUserMemo: selectedUsers, // Renamed for consistency, but keeping the return key as-is
     totals,
     gDriveList,
+    paidCheck,
+    handlePaidCheck
   };
 };
 
