@@ -11,6 +11,7 @@ import UserBetDetails from '../user-bet-details/UserBetDetails';
 import { toPascalCase } from '@react-native-community/cli-platform-android/build/commands/runAndroid/toPascalCase';
 import { sumBy } from 'lodash';
 import { Link } from 'react-router-dom';
+import UserPubnubComponent from './UserPubnub';
 
 interface UserTableCellProps extends StrictTableCellProps {
   user: UserSupabaseModel;
@@ -23,24 +24,10 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
   const withdrawal = weeklySummary?.data.withdrawals?.[0];
 
-  const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
-  -H 'accept: application/json, text/plain, */*' \\
-  -H 'accept-language: en-US,en;q=0.9' \\
-  -H 'content-type: application/json;charset=UTF-8' \\
-  --data-raw '${JSON.stringify({
-    BrandID: '128',
-    LanguageCode: 'ENG',
-    CountryCode: 'CA',
-    AFI: '128',
-    MMI: '0',
-    PlayerID: user.data.userSession?.EXTERNAL_PLAYER_ID,
-    SessionToken: user.data.userSession?.ISID,
-    TransactionType: 'COR',
-    DateFrom: weekStart.toISOString(),
-    DateTo: weekEnd.toISOString(),
-    PageSize: 1,
-    PageIndex: 1,
-  })}'`;
+  const gaga = ()=> {
+
+    return <div>asdasdas</div>
+  }
 
   return (
     <TableCell className={'md:!min-w-[33%] md:!text-center'}>
@@ -58,10 +45,6 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
               position="right center"
               trigger={
                 <div
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    navigator.clipboard.writeText(curl);
-                  }}
                   className={classNames({
                     'has-withdrawal rounded-full h-2 w-2 top-2 right-2 absolute cursor-pointer': true,
                     'bg-yellow-dark': status.Pending,
@@ -99,7 +82,17 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
           ))}
         </>
       )}
-      <Link to={`https://drive.google.com/uc?export=download&id=${props.buildId}`} className={`text-white hover:text-white`}>{user.data.build}</Link>
+
+      <Popup
+        position="right center"
+        on={'click'}
+        trigger={<span onClick={(event) => event.stopPropagation()} className={`text-white hover:text-white`}>{user.data.build}</span>}
+        flowing
+      >
+        <Popup.Content>
+          <UserPubnubComponent/>
+        </Popup.Content>
+      </Popup>
     </TableCell>
   );
 };
