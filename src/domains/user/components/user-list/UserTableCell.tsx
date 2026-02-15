@@ -89,8 +89,8 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
         trigger={<span onClick={(event) => event.stopPropagation()} className={`text-white hover:text-white`}>{user.data.build}</span>}
         flowing
       >
-        <Popup.Content>
-          <UserPubnubComponent/>
+        <Popup.Content className={'min-h-6'}>
+          <UserPubnubComponent user={user}/>
         </Popup.Content>
       </Popup>
     </TableCell>

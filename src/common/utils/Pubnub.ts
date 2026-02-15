@@ -1,25 +1,33 @@
-import { $PN, PNChannel } from '@PlayAb/shared'
-import { useEffect } from 'react'
+import { $PN } from '@PlayAb/shared';
+import { useEffect } from 'react';
 
 export function usePubnub(channel: string, onMessage: (msg: any) => void) {
   useEffect(() => {
     const PNListener = {
       message: function (event: any) {
-        onMessage(event.message)
-      }
-    }
+        onMessage(event.message);
+      },
+    };
     $PN.subscribe({
-      channels: [PNChannel.OpenAccount + channel]
-    })
+      channels: [channel],
+    });
 
-    $PN.addListener(PNListener)
+    $PN
+      .fetchMessages({
+        channels: [channel],
+        count: 1,
+      })
+      .then((r) => {
+        onMessage(r.channels[channel][0].message);
+      });
+
+    $PN.addListener(PNListener);
 
     return () => {
-      console.log('gaga-----------------------------------unsubscribe--');
       $PN.unsubscribe({
-        channels: [PNChannel.OpenAccount + channel]
-      })
-      $PN.removeListener(PNListener)
-    }
-  }, [channel, onMessage])
+        channels: [channel],
+      });
+      $PN.removeListener(PNListener);
+    };
+  }, [channel, onMessage]);
 }

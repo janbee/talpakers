@@ -1,53 +1,49 @@
 import * as React from 'react';
-import { CSSProperties, FC, useEffect } from 'react';
-import {
-  Button,
-  Checkbox,
-  Dimmer,
-  Form,
-  FormField,
-  Icon,
-  Loader,
-  Popup,
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-} from 'semantic-ui-react';
-import classNames from 'classnames';
-import {
-  ActiveCell,
-  AppBuildCell,
-  BetRestrictedCell,
-  BetsCell,
-  BonusCell,
-  FreeBetCell,
-  LastLoginCell,
-  LastWeekWinningsCell,
-  LifetimeLossCell,
-  LottoTicketsCell,
-  NextWithdrawalCell,
-  StatusCell,
-  TotalDepositsCell,
-  VersionCell,
-  WeeklyProgressCell,
-  WeeklySummaryCell,
-} from './UserTableCell';
-import useUserList from '../../hooks/useUserList';
-import { UserColumnSortModel, UserStatusModel } from '../../../../api/rxjs-client/models/custom.models';
-import { $PN, PNChannel, toMoney, UserSupabaseModel } from '@PlayAb/shared';
-import dayjs from 'dayjs';
+import { useCallback } from 'react';
+import { $PN, PNChannel, UserSupabaseModel } from '@PlayAb/shared';
 import { usePubnub } from '../../../../common/utils/Pubnub';
 
-const UserPubnubComponent: FC = () => {
-  usePubnub(PNChannel.AccountCount, (msg) => {
-    console.log('gaga---------------------------msg----------', msg);
-  })
+const UserPubnubComponent: React.FC<{ user: UserSupabaseModel }> = ({ user }) => {
+  const [machines, setMachines] = React.useState<{ [key: string]: number }>({});
 
-  return <div>asdasdas</div>
+  const onMessage = useCallback((msg: { data: { [key: string]: number } }) => {
+    console.log('gaga---------------------------msg----------', msg.data);
+    setMachines((prev) => ({ ...prev, ...msg.data }));
+  }, []);
+
+  usePubnub(PNChannel.AccountCount, onMessage);
+
+  const sendToMachine = useCallback(
+    (os: string) => {
+      $PN
+        .publish({
+          channel: PNChannel.OpenAccount,
+          message: {
+            account: user.data.build,
+            hostname: os,
+          },
+        })
+        .catch()
+        .finally();
+    },
+    [user.data.build]
+  );
+
+  return (
+    <div className={'cursor-pointer'}>
+      {Object.entries(machines).map(([hostname, count]) => (
+        <div
+          key={hostname}
+          onClick={(e) => {
+            e.stopPropagation();
+            sendToMachine(hostname);
+          }}
+        >
+          {hostname}: {count}
+        </div>
+      ))}
+    </div>
+  );
 };
 UserPubnubComponent.displayName = 'UserPubnubComponent';
 export default UserPubnubComponent;
