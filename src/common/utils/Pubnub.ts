@@ -15,10 +15,29 @@ export function usePubnub(channel: string, onMessage: (msg: any) => void) {
     $PN
       .fetchMessages({
         channels: [channel],
-        count: 1,
+        count: 10, // Get more messages to capture all hosts
       })
       .then((r) => {
-        onMessage(r.channels[channel][0].message);
+        const messages = r.channels[channel] || [];
+
+        // Aggregate by hostname (latest message per host)
+        const hostnameMap = new Map();
+
+        // Process messages in reverse (oldest to newest) so latest overwrites
+        messages.reverse().forEach((msg: any) => {
+          const data = msg.message.data;
+          // data is like { "hostname1": 5 } or { "hostname2": 3 }
+          Object.keys(data).forEach((hostname) => {
+            hostnameMap.set(hostname, data[hostname]);
+          });
+        });
+
+        // Convert to array or object
+        const allHostData = Object.fromEntries(hostnameMap);
+        console.log('All hosts:', allHostData);
+        // { "hostname1": 5, "hostname2": 3, "hostname3": 2 }
+
+        onMessage(allHostData);
       });
 
     $PN.addListener(PNListener);
