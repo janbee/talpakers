@@ -252,9 +252,14 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   const cashout = user.data.userSession?.cashout ?? 0;
   const cash = user.data.userSession?.cash ?? 0;
   const cashoutPercent = Math.floor((cashout / fixedAmount) * 100);
+  const wageringReq = user.data.userSession?.walletData.RemainingWageringBets || 0
 
+  console.log('gaga-------------------------------------', user.data.userSession?.walletData);
   const nextCashOutPercent = (cashout / fixedAmount) * -100 + 100;
   const bgColor = GetColorUtil(nextCashOutPercent, 100);
+
+
+
   return (
     <TableCell className={'md:hidden'}>
       <div className={'flex justify-between'}>
@@ -269,6 +274,11 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
           <Popup.Header>
             <span className={'text-green-light'}>Cashout at - {`${cashoutPercent}%`}</span>
           </Popup.Header>
+          {wageringReq > 0 && (
+            <Popup.Header>
+              <span className={'text-red-light'}>Remaining Wagering Bets - {toMoney(wageringReq, 0)}</span>
+            </Popup.Header>
+          )}
         </Popup>
         <span>/</span>
         <span>{toMoney(fixedAmount, 0)}</span>
