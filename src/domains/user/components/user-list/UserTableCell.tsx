@@ -252,7 +252,6 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   const cashout = user.data.userSession?.cashout ?? 0;
   const cash = user.data.userSession?.cash ?? 0;
   const cashoutPercent = Math.floor((cashout / fixedAmount) * 100);
-  const wageringReq = user.data.userSession?.walletData.RemainingWageringBets || 0
 
   console.log('gaga-------------------------------------', user.data.userSession?.walletData);
   const nextCashOutPercent = (cashout / fixedAmount) * -100 + 100;
@@ -274,11 +273,7 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
           <Popup.Header>
             <span className={'text-green-light'}>Cashout at - {`${cashoutPercent}%`}</span>
           </Popup.Header>
-          {wageringReq > 0 && (
-            <Popup.Header>
-              <span className={'text-red-light'}>Remaining Wagering Bets - {toMoney(wageringReq, 0)}</span>
-            </Popup.Header>
-          )}
+
         </Popup>
         <span>/</span>
         <span>{toMoney(fixedAmount, 0)}</span>
@@ -331,6 +326,9 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   });
   const bonus = weeklySummary?.data.bonuses?.[0];
 
+  const wageringReq = user.data.userSession?.walletData.RemainingWageringBets || 0;
+
+
   const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
   -H 'accept: application/json, text/plain, */*' \\
   -H 'accept-language: en-US,en;q=0.9' \\
@@ -360,10 +358,16 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
           <span
             onClick={() => navigator.clipboard.writeText(curl)}
             className={classNames({
-              'cursor-pointer': true,
+              'cursor-pointer relative': true,
               'text-green-dark': !!bonus?.Balance,
             })}
           >
+            <div
+              className={classNames({
+                'rounded-full size-1.5 -top-1 -right-2 absolute cursor-pointer': true,
+                'bg-red-dark': !!wageringReq,
+              })}
+            />
             {toMoney(bonus?.Amount || 0, 0)}
           </span>
         }
@@ -373,6 +377,9 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
           <span>Total Balance :{toMoney(bonus?.Balance || 0)}</span>
           <span> - </span>
           <span>{dayjs(bonus?.TransactionDateTime).fromNow()}</span>
+        </Popup.Header>
+        <Popup.Header className={'text-red-light'}>
+          <span>Wagering Requirements :{toMoney(wageringReq)}</span>
         </Popup.Header>
       </Popup>
     </TableCell>
