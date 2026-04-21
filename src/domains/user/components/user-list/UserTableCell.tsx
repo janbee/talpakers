@@ -328,27 +328,6 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
 
   const wageringReq = user.data.userSession?.walletData.RemainingWageringBets || 0;
 
-
-  const curl = `curl 'https://webapi.playalberta.ca/api/v1/Player/GetPlayerTransactionsAndShoppingCartsHistory?UniqueDeviceId=5632ff40-be41-49fe-a567-6e14bee92e86' \\
-  -H 'accept: application/json, text/plain, */*' \\
-  -H 'accept-language: en-US,en;q=0.9' \\
-  -H 'content-type: application/json;charset=UTF-8' \\
-  --data-raw '${JSON.stringify({
-    BrandID: '128',
-    LanguageCode: 'ENG',
-    PlatformType: 'W',
-    CountryCode: 'CA',
-    AFI: '128',
-    MMI: '0',
-    PlayerID: user.data.userSession?.EXTERNAL_PLAYER_ID,
-    SessionToken: user.data.userSession?.ISID,
-    TransactionType: 'BON',
-    DateFrom: weekStart.toISOString(),
-    DateTo: weekEnd.toISOString(),
-    PageSize: 1,
-    PageIndex: 1,
-  })}'`;
-
   return (
     <TableCell onClick={(event: any) => event.stopPropagation()} textAlign={'center'} className={'relative md:hidden'}>
       <Popup
@@ -356,7 +335,6 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
         disabled={!bonus?.Amount}
         trigger={
           <span
-            onClick={() => navigator.clipboard.writeText(curl)}
             className={classNames({
               'cursor-pointer relative': true,
               'text-green-dark': !!bonus?.Balance,
@@ -365,6 +343,7 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
             <div
               className={classNames({
                 'rounded-full size-1.5 -top-1 -right-2 absolute cursor-pointer': true,
+                'hidden': wageringReq === 0,
                 'bg-red-dark': !!wageringReq,
               })}
             />
@@ -378,9 +357,11 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
           <span> - </span>
           <span>{dayjs(bonus?.TransactionDateTime).fromNow()}</span>
         </Popup.Header>
-        <Popup.Header className={'text-red-light'}>
-          <span>Wagering Requirements :{toMoney(wageringReq)}</span>
-        </Popup.Header>
+        {wageringReq > 0 && (
+          <Popup.Header className={'text-red-light'}>
+            <span>Wagering Requirements :{toMoney(wageringReq)}</span>
+          </Popup.Header>
+        )}
       </Popup>
     </TableCell>
   );
