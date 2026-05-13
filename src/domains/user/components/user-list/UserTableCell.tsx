@@ -320,11 +320,19 @@ export const BetRestrictedCell: FC<UserTableCellProps> = (props) => {
 
 export const BonusCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const { weekStart, weekEnd } = getMTDates();
+  const { weekStart, lastWeekStart } = getMTDates();
   const weeklySummary = user.data.weeklySummary?.find((item) => {
     return item.data.weekStart === weekStart.toISOString();
   });
-  const bonus = weeklySummary?.data.bonuses?.[0];
+  const lastWeeklySummary = user.data.weeklySummary?.find((item) => {
+    return item.data.weekStart === lastWeekStart.toISOString();
+  });
+  const bonus = weeklySummary?.data.bonuses?.[0]
+  const potentialBonus = lastWeeklySummary?.data.potentialBonus || 0;
+  const Amount = bonus?.Amount || 0;
+  const isRed = Amount > 0 && Amount < potentialBonus;
+  const isGreen = Amount > 0 && Amount === potentialBonus;
+
 
   const wageringReq = user.data.userSession?.walletData.RemainingWageringBets || 0;
 
@@ -332,29 +340,32 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
     <TableCell onClick={(event: any) => event.stopPropagation()} textAlign={'center'} className={'relative md:hidden'}>
       <Popup
         position="top center"
-        disabled={!bonus?.Amount}
+        disabled={!Amount}
         trigger={
-          <span
-            className={classNames({
-              'cursor-pointer relative': true,
-              'text-green-dark': !!bonus?.Balance,
-            })}
-          >
-            <div
+          <div className={'flex justify-between'}>
+            <span
               className={classNames({
-                'rounded-full size-1.5 -top-1 -right-2 absolute cursor-pointer': true,
-                'hidden': wageringReq === 0,
-                'bg-red-dark': !!wageringReq,
+                'cursor-pointer relative': true,
+                'text-green-dark': isGreen,
+                'text-red-dark': isRed,
               })}
-            />
-            {toMoney(bonus?.Amount || 0, 0)}
-          </span>
+            >
+              <div
+                className={classNames({
+                  'rounded-full size-1.5 -top-1 -right-2 absolute cursor-pointer': true,
+                  hidden: wageringReq === 0,
+                  'bg-red-dark': !!wageringReq,
+                })}
+              />
+              {toMoney(Amount || 0, 0)}
+            </span>
+            <span>-</span>
+            <span> {toMoney(potentialBonus, 0)}</span>
+          </div>
         }
         flowing
       >
         <Popup.Header className={'text-green-light'}>
-          <span>Total Balance :{toMoney(bonus?.Balance || 0)}</span>
-          <span> - </span>
           <span>{dayjs(bonus?.TransactionDateTime).fromNow()}</span>
         </Popup.Header>
         {wageringReq > 0 && (
