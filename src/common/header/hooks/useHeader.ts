@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { SharedApiSupabase } from '@PlayAb/services';
-import { Get3rdPartyDataResponse, toMoney } from '@PlayAb/shared';
-
+import { SharedApiSupabase, Get3rdPartyDataResponse,  } from '@SharedLib';
+import { toMoney } from '@PlayAb/shared';
 const useHeader = () => {
   const [otherData, setOtherData] = useState<Get3rdPartyDataResponse>({});
 
@@ -9,8 +8,12 @@ const useHeader = () => {
     const obs = SharedApiSupabase.get3rdPartyData().subscribe((res) => {
       if (res.data) {
         setOtherData(res.data);
+        console.log('gaga------------------asdasdasasd-------------------', res);
+
       }
     });
+
+
 
     return () => {
       obs.unsubscribe();
