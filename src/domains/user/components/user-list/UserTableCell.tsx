@@ -334,7 +334,7 @@ export const BonusCell: FC<UserTableCellProps> = (props) => {
   const isGreen = Amount > 0 && Amount === potentialBonus;
 
 
-  const wageringReq = user.data.userSession?.walletData.RemainingWageringBets || 0;
+  const wageringReq = user.data.userSession?.walletData?.RemainingWageringBets || 0;
 
   return (
     <TableCell onClick={(event: any) => event.stopPropagation()} textAlign={'center'} className={'relative md:hidden'}>
