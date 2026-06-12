@@ -10,7 +10,6 @@ import { convertToMT, getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/sha
 import UserBetDetails from '../user-bet-details/UserBetDetails';
 import { toPascalCase } from '@react-native-community/cli-platform-android/build/commands/runAndroid/toPascalCase';
 import { sumBy } from 'lodash';
-import { Link } from 'react-router-dom';
 import UserPubnubComponent from './UserPubnub';
 
 interface UserTableCellProps extends StrictTableCellProps {
@@ -23,14 +22,32 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { weekStart, weekEnd } = getMTDates();
   const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
   const withdrawal = weeklySummary?.data.withdrawals?.[0];
-
-  const gaga = ()=> {
-
-    return <div>asdasdas</div>
-  }
+  const needsVerification = user.data.userSession?.GPD?.PlayerIDVerificationRequired
 
   return (
     <TableCell className={'md:!min-w-[33%] md:!text-center'}>
+      {needsVerification && (
+        <Popup
+          position="right center"
+          trigger={
+            <div
+              className={classNames({
+                'has-withdrawal rounded-full h-2 w-2 top-2 right-2 absolute cursor-pointer': true,
+                'bg-red-dark': needsVerification,
+              })}
+            />
+          }
+          flowing
+        >
+          <Popup.Header>
+            {(needsVerification && (
+              <div className={'withdrawal-header'}>
+                <span>Verification Required</span>
+              </div>)
+            )}
+          </Popup.Header>
+        </Popup>
+      )}
       {!!withdrawal && (
         <>
           {[
@@ -86,11 +103,15 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
       <Popup
         position="right center"
         on={'click'}
-        trigger={<span onClick={(event) => event.stopPropagation()} className={`text-white hover:text-white`}>{user.data.build}</span>}
+        trigger={
+          <span onClick={(event) => event.stopPropagation()} className={`text-white hover:text-white`}>
+            {user.data.build}
+          </span>
+        }
         flowing
       >
         <Popup.Content className={'min-h-6'}>
-          <UserPubnubComponent user={user}/>
+          <UserPubnubComponent user={user} />
         </Popup.Content>
       </Popup>
     </TableCell>
