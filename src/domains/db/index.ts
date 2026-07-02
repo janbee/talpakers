@@ -1,0 +1,1 @@
+export { default as DbTable } from './components/db-table/DbTable';

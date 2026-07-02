@@ -93,11 +93,12 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) =
     return null;
   }
 
+  console.log('gaga--------------------------------earningsearnings-----', earnings);
   const withdrawalStatus = [
     {
-      Pending: earnings.withdrawal.TransactionStatus === 'Pending',
-      Approved: earnings.withdrawal.TransactionStatus === 'Approved',
-      Processing: ['In Process', 'Sending to Processor'].includes(earnings.withdrawal.TransactionStatus),
+      Pending: earnings.withdrawal.data.TransactionStatus === 'Pending',
+      Approved: earnings.withdrawal.data.TransactionStatus === 'Approved',
+      Processing: ['In Process', 'Sending to Processor'].includes(earnings.withdrawal.data.TransactionStatus),
     },
   ];
 
@@ -130,15 +131,15 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) =
                   'text-blue-light': status.Processing,
                 })}
               >
-                {earnings.withdrawal?.TransactionStatus}
+                {earnings.withdrawal?.data.TransactionStatus}
               </span>
               )
               <span className={`transaction-wrap`}>
-                {` ${earnings.withdrawal?.TransactionDateTime && dayjs(earnings.withdrawal.TransactionDateTime).fromNow()}`}
+                {` ${earnings.withdrawal?.data.TransactionDateTime && dayjs(earnings.withdrawal.data.TransactionDateTime).fromNow()}`}
               </span>
             </Popup.Header>
             <Popup.Content>
-              {`${earnings.withdrawal?.PaymentMethodInfo} ${toMoney(earnings.withdrawal?.Amount ?? 0)}`}
+              {`${earnings.withdrawal?.data.PaymentMethodInfo} ${toMoney(earnings.withdrawal?.data.Amount ?? 0)}`}
             </Popup.Content>
           </Popup>
         );

@@ -55,6 +55,12 @@ export default defineConfig({
     BUILD_DATE: JSON.stringify(new Date().valueOf()),
   },
   cacheDir: '../../node_modules/.vite/apps/PlayAbWeb',
+
+  test: {
+    globals: true,
+    setupFiles: ['./src/__tests__/setup.ts'],
+    environment: 'jsdom',
+  },
   base: '/talpakers/',
   server: {
     port: 3001,

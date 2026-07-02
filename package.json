@@ -1,6 +1,6 @@
 {
   "name": "play-ab-web",
-  "version": "0.0.235",
+  "version": "0.0.236",
   "homepage": "https://janbee.github.io/talpakers",
   "private": true,
   "scripts": {
@@ -17,5 +17,9 @@
     "gen:common:component": "echo 'Enter Page name in PascalCase' && read cmpName && npx generate-react-cli component $cmpName --type=common",
     "gen:hook:component": "echo 'Enter Page name in CamelCase prefix with \"use\"' && read cmpName && npx generate-react-cli component $cmpName --type=hook",
     "gen:page:component": "echo 'Enter Page name in PascalCase' && read cmpName && npx generate-react-cli component $cmpName --type=page"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "jsdom": "^29.1.1"
   }
 }

@@ -1,4 +1,4 @@
-import { StatusType, WithdrawalModel } from '@PlayAb/shared';
+import { StatusType, WithdrawalModel, WithdrawalSupabaseModel } from '@PlayAb/shared';
 
 export interface MoneyModel {
   currency?: 'USD' | 'CAD';
@@ -28,7 +28,7 @@ export interface EarningsModel {
   totalEarnings: number;
   loading: boolean;
   fetch: number;
-  withdrawal?: WithdrawalModel;
+  withdrawal?: WithdrawalSupabaseModel;
   emails: string[];
 }
 
