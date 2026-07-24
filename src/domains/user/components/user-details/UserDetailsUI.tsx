@@ -93,7 +93,6 @@ export const WithdrawalPopup: FC<{ earnings: EarningsModel }> = ({ earnings }) =
     return null;
   }
 
-  console.log('gaga--------------------------------earningsearnings-----', earnings);
   const withdrawalStatus = [
     {
       Pending: earnings.withdrawal.data.TransactionStatus === 'Pending',

@@ -1,4 +1,4 @@
-import { StatusType, WithdrawalModel, WithdrawalSupabaseModel } from '@PlayAb/shared';
+import { StatusType, WithdrawalSupabaseModel } from '@PlayAb/shared';
 
 export interface MoneyModel {
   currency?: 'USD' | 'CAD';
@@ -6,13 +6,17 @@ export interface MoneyModel {
 }
 
 export enum UserStatusModel {
-  IsDone = 'Done', InProgress = 'InProgress', IsWaiting = 'Waiting',
+  IsDone = 'Done',
+  InProgress = 'InProgress',
+  IsWaiting = 'Waiting',
 }
 
 export enum UserColumnSortModel {
-  Earnings = 'earnings', OpenBets = 'openBets', NextWithdrawal = 'nextWithdrawal', Active = 'active',
+  Earnings = 'earnings',
+  OpenBets = 'openBets',
+  NextWithdrawal = 'nextWithdrawal',
+  Active = 'active',
 }
-
 
 export interface EarningsModel {
   _id: string;
