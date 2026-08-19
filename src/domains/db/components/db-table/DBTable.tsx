@@ -83,19 +83,23 @@ const DbTableComponent: FC = () => {
         )}
 
         {cleanupMessage && (
-          <Message
-            onDismiss={dismissCleanupMessage}
-            negative={cleanupMessage.type === 'error'}
-            positive={cleanupMessage.type === 'success'}
-            className={classNames('mb-4')}
+          <div
+            className={classNames('absolute top-16 left-0 right-0 z-30 flex justify-center px-4 pointer-events-none')}
           >
-            {cleanupMessage.text}
-          </Message>
+            <Message
+              onDismiss={dismissCleanupMessage}
+              negative={cleanupMessage.type === 'error'}
+              positive={cleanupMessage.type === 'success'}
+              className={classNames('pointer-events-auto shadow-lg')}
+            >
+              {cleanupMessage.text}
+            </Message>
+          </div>
         )}
 
         <hr />
 
-        <Form className={classNames('flex-1 overflow-auto mt-4')}>
+        <Form className={classNames('flex-1 overflow-auto mt-4 [scrollbar-gutter:stable]')}>
           <Table
             size="small"
             compact
@@ -103,6 +107,7 @@ const DbTableComponent: FC = () => {
             celled
             inverted
             unstackable
+            fixed
             aria-label="Database table storage usage breakdown"
           >
             <Table.Header className={classNames('bg-neutral-900 sticky top-0 z-10')}>
@@ -158,7 +163,7 @@ const DbTableComponent: FC = () => {
                                 <Button
                                   size="mini"
                                   negative
-                                  loading={cleanupLoading === table.table}
+                                  loading={cleanupLoading.has(table.table)}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     executeCleanup(schema, table.table);

@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import classNames from 'classnames';
-import dayjs from 'dayjs';
 import { Popup } from 'semantic-ui-react';
 import { toMoney } from '@PlayAb/shared';
 import { AccountBucket, MonthlyWithdrawalSummary } from '../../hooks/useYearlySummary';
@@ -12,15 +11,6 @@ export interface MonthlyCardProps {
   externalSummary?: MonthlyWithdrawalSummary;
   outsideSummary?: MonthlyWithdrawalSummary;
 }
-
-const formatDates = (dates: string[]): string => {
-  if (!dates.length) return 'No withdrawals';
-  const sorted = [...dates].sort();
-  const items = sorted.map((d) => `• ${dayjs(d).format('MMM D, h:mm A')}`);
-  const header =
-    sorted.length === 1 ? '1 withdrawal:' : `${sorted.length} withdrawals:`;
-  return `${header}\n${items.join('\n')}`;
-};
 
 const AccountRow: FC<{ bucket: AccountBucket }> = ({ bucket }) => {
   const isOwned = bucket.ownership === 'owned';
@@ -37,14 +27,13 @@ const AccountRow: FC<{ bucket: AccountBucket }> = ({ bucket }) => {
             : 'text-neutral-300'
       )}
     >
-      <span className={classNames('font-semibold truncate')}>{bucket.name}</span>
-      <Popup
-        content={`${isOutside ? 'Outside: ' : ''}${formatDates(bucket.dates)}`}
-        position="top center"
-        trigger={
-          <span className={classNames('ml-2 whitespace-nowrap cursor-pointer')}>{toMoney(bucket.amount)}</span>
-        }
-      />
+      <span className={classNames('font-semibold truncate')}>
+        {bucket.name}
+        {bucket.count > 1 && (
+          <span className={classNames('ml-1 font-normal text-neutral-400')}>({bucket.count}x)</span>
+        )}
+      </span>
+      <span className={classNames('ml-2 whitespace-nowrap')}>{toMoney(bucket.amount)}</span>
     </div>
   );
 };
@@ -63,7 +52,7 @@ export const MonthlyCard: FC<MonthlyCardProps> = ({ summary, hasData, ownedSumma
     <div
       data-testid={`MonthlyCard-${monthLabel}`}
       className={classNames(
-        'month-card flex flex-col w-[300px] min-h-[280px] bg-neutral-900 rounded-lg mr-4 mt-4 p-3 dark:text-white',
+        'month-card flex flex-col w-full min-h-[280px] bg-neutral-900 rounded-lg p-3 dark:text-white',
         {
           'opacity-60': !hasData,
         }
@@ -71,7 +60,7 @@ export const MonthlyCard: FC<MonthlyCardProps> = ({ summary, hasData, ownedSumma
     >
       <div className={'month-content flex flex-col h-full'}>
         <div className={'month-name flex items-center justify-between'}>
-          <span className={'text-lg font-semibold'}>{monthLabel}</span>
+          <span className={'text-2xl font-semibold'}>{monthLabel}</span>
           <Popup
             content={`${count} withdrawal${count === 1 ? '' : 's'} this month`}
             position="top center"
@@ -84,7 +73,7 @@ export const MonthlyCard: FC<MonthlyCardProps> = ({ summary, hasData, ownedSumma
         </div>
 
         <div className={'flex justify-between items-center mt-1'}>
-          <span className={'text-sm text-neutral-400'}>Withdrawals</span>
+          <span className={'text-lg text-neutral-400'}>Withdrawals</span>
           <Popup
             disabled={!hasData}
             content={`${count} withdrawal${count === 1 ? '' : 's'} this month`}
@@ -92,7 +81,7 @@ export const MonthlyCard: FC<MonthlyCardProps> = ({ summary, hasData, ownedSumma
             trigger={
               <span
                 className={classNames({
-                  'text-red-dark font-semibold text-lg': hasData,
+                  'text-green-dark font-semibold text-2xl': hasData,
                   'text-neutral-500': !hasData,
                 })}
               >

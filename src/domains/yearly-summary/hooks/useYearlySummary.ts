@@ -23,22 +23,7 @@ export interface AccountBucket {
 
 export const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-// Flat amount credited per external withdrawal — represents one cashout step.
-export const EXTERNAL_PER_WITHDRAWAL_AMOUNT = 100;
-
-// Cashout step that qualifies an external account to be included in this summary.
-export const FIXED_AMOUNT_FILTER = 200;
-
-// Pick the contribution amount for a withdrawal based on whether it's owned or external.
-// Owned: use the actual transaction Amount. External: use the flat per-step amount.
-const contributionFor = (withdrawal: WithdrawalSupabaseModel, ownership: AccountOwnership): number => {
-  if (ownership === 'owned') {
-    return Math.abs(withdrawal.data?.Amount ?? 0);
-  }
-  return EXTERNAL_PER_WITHDRAWAL_AMOUNT;
-};
-
-// Names (as they appear in accounts.json) that you own. Everything else with fixedAmount === 200 is "external".
+// Names (as they appear in accounts.json) that you own.
 export const OWNED_ACCOUNT_NAMES: ReadonlySet<string> = new Set([
   'MERS',
   'MAKSE',
@@ -47,12 +32,60 @@ export const OWNED_ACCOUNT_NAMES: ReadonlySet<string> = new Set([
   'NNAS',
   'AMOS',
 ]);
+export const EXTERNAL_50_ACCOUNT_NAMES: ReadonlySet<string> = new Set(['KIM']);
+
+// Cashout step that qualifies an external account to be included in this summary.
+export const FIXED_AMOUNT_FILTER = 200;
+
+// The per-withdrawal amount for an external tier comes from its set's naming
+// convention: EXTERNAL_<N>_ACCOUNT_NAMES → $N. Adding a new set picks up its rate.
+const rateFromSetName = (setName: string): number => {
+  const match = /EXTERNAL_(\d+)_ACCOUNT_NAMES/.exec(setName);
+  return match ? Number(match[1]) : 0;
+};
+
+// Flat per-tier rates, derived from the set naming convention.
+// 'owned' and 'outside' use the actual transaction Amount instead.
+const TIER_RATES: Record<AccountOwnership, number> = {
+  owned: 0,
+  outside: 0,
+  external: rateFromSetName('EXTERNAL_100_ACCOUNT_NAMES'),
+  external50: rateFromSetName('EXTERNAL_50_ACCOUNT_NAMES'),
+};
+
+const contributionFor = (withdrawal: WithdrawalSupabaseModel, ownership: AccountOwnership): number => {
+  if (ownership === 'owned' || ownership === 'outside') {
+    return Math.abs(withdrawal.data?.Amount ?? 0);
+  }
+  return TIER_RATES[ownership];
+};
+
+
 
 const ACTIVE_STATUSES = ['Approved'];
 
 type AccountsRecord = Record<string, [string, string, { cashoutEmail?: string; maintainCash?: number; fixedAmount?: number } | null, ...unknown[]]>;
 
-export type AccountOwnership = 'owned' | 'external';
+// The accounts object lives inside the GH-hosted bot bundle as an embedded
+// JSON.parse('<json>'). Mirror of the bundle's own getPlayJsExtracts logic.
+export const extractGhAccounts = (jsString: string | null | undefined): AccountsRecord | null => {
+  if (!jsString) return null;
+  try {
+    for (const [, match] of jsString.matchAll(/JSON\.parse\('([\s\S]*?)'\)/g)) {
+      if (match.includes('"JERO"')) {
+        const start = match.lastIndexOf('{', match.indexOf('"JERO"'));
+        if (start === -1) return null;
+        const parsed = JSON.parse(match.substring(start)) as AccountsRecord;
+        return parsed && typeof parsed === 'object' ? parsed : null;
+      }
+    }
+  } catch {
+    return null;
+  }
+  return null;
+};
+
+export type AccountOwnership = 'owned' | 'external' | 'external50' | 'outside';
 
 export interface AccountEntrySummary {
   name: string;
@@ -79,31 +112,50 @@ const collectEmailsForEntry = (entry: [string, string, { cashoutEmail?: string }
   return primary ? [primary] : [];
 };
 
+// The $100 external tier is derived rather than hardcoded: every account in the
+// records with fixedAmount === 200 that isn't owned and isn't in the $50 set.
+export const getExternal100AccountNames = (
+  records: AccountsRecord = accounts as unknown as AccountsRecord
+): ReadonlySet<string> => {
+  const names = new Set<string>();
+  Object.entries(records).forEach(([name, entry]) => {
+    if (OWNED_ACCOUNT_NAMES.has(name) || EXTERNAL_50_ACCOUNT_NAMES.has(name)) return;
+    if (getFixedAmount(entry[2]) === FIXED_AMOUNT_FILTER) names.add(name);
+  });
+  return names;
+};
+
 export const getFilteredAccounts = (records: AccountsRecord = accounts as unknown as AccountsRecord): AccountEntrySummary[] => {
+  const external100 = getExternal100AccountNames(records);
   return Object.entries(records)
     .map<AccountEntrySummary | null>(([name, entry]) => {
       const fixedAmount = getFixedAmount(entry[2]);
       const isOwned = OWNED_ACCOUNT_NAMES.has(name);
-      // Keep the entry if it's an owned account (any fixedAmount) OR has the qualifying fixedAmount.
-      if (!isOwned && fixedAmount !== FIXED_AMOUNT_FILTER) return null;
+      const isExternal100 = external100.has(name);
+      const isExternal50 = EXTERNAL_50_ACCOUNT_NAMES.has(name);
+      // Keep the entry only if it's in one of the curated account lists.
+      if (!isOwned && !isExternal100 && !isExternal50) return null;
       const emails = collectEmailsForEntry(entry as [string, string, { cashoutEmail?: string } | null, ...unknown[]]);
-      const ownership: AccountOwnership = isOwned ? 'owned' : 'external';
+      const ownership: AccountOwnership = isOwned ? 'owned' : isExternal50 ? 'external50' : 'external';
       return { name, emails, fixedAmount, ownership };
     })
     .filter((entry): entry is AccountEntrySummary => entry !== null);
 };
 
-// Accounts in accounts.json that are NOT in the summary (not owned and fixedAmount !== 200).
-// Surfaced as "Outside" so the user can see what they could add by editing accounts.json.
+// Accounts in accounts.json that are NOT in the summary (not owned and not in the
+// external 100/50 tiers). Surfaced as "Outside" so the user can see what they could add.
 export const getOutsideAccounts = (records: AccountsRecord = accounts as unknown as AccountsRecord): AccountEntrySummary[] => {
+  const external100 = getExternal100AccountNames(records);
   return Object.entries(records)
     .map<AccountEntrySummary | null>(([name, entry]) => {
       const fixedAmount = getFixedAmount(entry[2]);
       const isOwned = OWNED_ACCOUNT_NAMES.has(name);
-      // Include only entries that didn't pass the filter above.
-      if (isOwned || fixedAmount === FIXED_AMOUNT_FILTER) return null;
+      const isExternal100 = external100.has(name);
+      const isExternal50 = EXTERNAL_50_ACCOUNT_NAMES.has(name);
+      // Include only entries that aren't in any summary tier above.
+      if (isOwned || isExternal100 || isExternal50) return null;
       const emails = collectEmailsForEntry(entry as [string, string, { cashoutEmail?: string } | null, ...unknown[]]);
-      return { name, emails, fixedAmount, ownership: 'external' as AccountOwnership };
+      return { name, emails, fixedAmount, ownership: 'outside' as AccountOwnership };
     })
     .filter((entry): entry is AccountEntrySummary => entry !== null)
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -133,7 +185,7 @@ const sumWithdrawalsByMonth = (
   year: number,
   filteredEntries: AccountEntrySummary[],
   emailToBuild: Map<string, string>,
-  inSummary: boolean = true
+  inSummary = true
 ): MonthlyWithdrawalSummary[] => {
   const months = buildEmptyMonths();
   const ownershipByName = new Map<string, AccountOwnership>();
@@ -198,12 +250,25 @@ const sumWithdrawalsByMonth = (
 export const useYearlySummary = () => {
   const [withdrawals, setWithdrawals] = useState<WithdrawalSupabaseModel[]>([]);
   const [outsideWithdrawals, setOutsideWithdrawals] = useState<WithdrawalSupabaseModel[]>([]);
+  const [ghAccounts, setGhAccounts] = useState<AccountsRecord | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [year] = useState<number>(() => dayjs().year());
 
-  const filteredAccounts = useMemo(() => getFilteredAccounts(), []);
-  const outsideAccountList = useMemo(() => getOutsideAccounts(), []);
+  // Prefer the accounts embedded in the GH-hosted bundle; fall back to the local accounts.json.
+  const accountsRecord: AccountsRecord = ghAccounts ?? (accounts as unknown as AccountsRecord);
+
+  useEffect(() => {
+    const sub = SharedApiSupabase.getPlayAbFromGH()
+      .pipe(map(extractGhAccounts))
+      .subscribe((records) => {
+        if (records) setGhAccounts(records);
+      });
+    return () => sub.unsubscribe();
+  }, []);
+
+  const filteredAccounts = useMemo(() => getFilteredAccounts(accountsRecord), [accountsRecord]);
+  const outsideAccountList = useMemo(() => getOutsideAccounts(accountsRecord), [accountsRecord]);
   const allBuilds = useMemo(
     () => Array.from(new Set(filteredAccounts.map((entry) => entry.name))),
     [filteredAccounts]
@@ -286,6 +351,7 @@ export const useYearlySummary = () => {
 
   const ownedAccounts = filteredAccounts.filter((e) => e.ownership === 'owned');
   const externalAccounts = filteredAccounts.filter((e) => e.ownership === 'external');
+  const external50Accounts = filteredAccounts.filter((e) => e.ownership === 'external50');
   const outsideAccounts = outsideAccountList;
 
   const isOwnedWithdrawal = (w: WithdrawalSupabaseModel): boolean => {
@@ -349,6 +415,7 @@ export const useYearlySummary = () => {
     filteredAccounts,
     ownedAccounts,
     externalAccounts,
+    external50Accounts,
     outsideAccounts,
     allBuilds,
     outsideBuilds,

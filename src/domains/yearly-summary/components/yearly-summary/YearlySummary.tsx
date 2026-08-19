@@ -3,15 +3,27 @@ import classNames from 'classnames';
 import { Button, Dimmer, Icon, Label, Loader, Message } from 'semantic-ui-react';
 import { toMoney } from '@PlayAb/shared';
 import MonthlyCard from './MonthlyCard';
-import useYearlySummary, { AccountEntrySummary } from '../../hooks/useYearlySummary';
+import useYearlySummary, { AccountEntrySummary, MonthlyWithdrawalSummary } from '../../hooks/useYearlySummary';
 
 interface AccountLabelRowProps {
   title: string;
-  color: 'blue' | 'green' | 'red' | 'grey' | 'orange';
+  color: 'blue' | 'green' | 'red' | 'grey' | 'orange' | 'yellow';
   entries: AccountEntrySummary[];
+  amounts?: Record<string, number>;
 }
 
-const AccountLabelRow: FC<AccountLabelRowProps> = ({ title, color, entries }) => {
+// Aggregate each account's total contribution across all months of the year.
+const toAccountAmounts = (summaries: MonthlyWithdrawalSummary[]): Record<string, number> => {
+  const amounts: Record<string, number> = {};
+  summaries.forEach((month) => {
+    month.perAccount.forEach((bucket) => {
+      amounts[bucket.name] = (amounts[bucket.name] ?? 0) + bucket.amount;
+    });
+  });
+  return amounts;
+};
+
+const AccountLabelRow: FC<AccountLabelRowProps> = ({ title, color, entries, amounts }) => {
   if (entries.length === 0) return null;
 
   return (
@@ -20,11 +32,17 @@ const AccountLabelRow: FC<AccountLabelRowProps> = ({ title, color, entries }) =>
         {title} ({entries.length})
       </div>
       <div className={classNames('flex flex-row flex-wrap gap-2')}>
-        {entries.map((entry) => (
-          <Label key={entry.name} color={color} className={classNames('!break-all')}>
-            <span className={classNames('font-semibold')}>{entry.name}</span>
-          </Label>
-        ))}
+        {entries.map((entry) => {
+          const amount = amounts?.[entry.name] ?? 0;
+          return (
+            <Label key={entry.name} color={color} className={classNames('!break-all')}>
+              <span className={classNames('font-semibold')}>{entry.name}</span>
+              {amount > 0 && (
+                <span className={classNames('ml-1 font-normal opacity-80')}>{toMoney(amount)}</span>
+              )}
+            </Label>
+          );
+        })}
       </div>
     </div>
   );
@@ -46,15 +64,18 @@ const YearlySummaryComponent: FC = () => {
     retry,
     ownedAccounts,
     externalAccounts,
+    external50Accounts,
     outsideAccounts,
   } = useYearlySummary();
 
-  const hasAccounts = ownedAccounts.length + externalAccounts.length > 0;
+  const hasAccounts = ownedAccounts.length + externalAccounts.length + external50Accounts.length > 0;
+  const ownedAmounts = toAccountAmounts(ownedMonthlySummary);
+  const outsideAmounts = toAccountAmounts(outsideMonthlySummary);
   const totalExternalAmount = totalYearAmount - totalOwnedAmount;
   const totalExternalCount = totalYearCount - totalOwnedCount;
 
   return (
-    <div data-testid="YearlySummary" className={classNames('w-full m-4 bg-neutral-800 rounded-lg relative')}>
+    <div data-testid="YearlySummary" className={classNames('w-full m-4 bg-neutral-800 rounded-lg relative overflow-hidden')}>
       <div className={classNames('flex flex-col p-4 h-full min-w-[370px]')}>
         <div className={classNames('flex flex-row items-start justify-between h-12')}>
           <span className={classNames('dark:text-white text-2xl')}>Yearly Summary — {year}</span>
@@ -67,32 +88,17 @@ const YearlySummaryComponent: FC = () => {
           />
         </div>
 
-        <div className={classNames('mt-2 text-sm text-neutral-400')}>
-          Accounts with <code className={classNames('text-neutral-200')}>fixedAmount === 200</code>
-          {hasAccounts && (
-            <>
-              {' '}· {ownedAccounts.length} owned · {externalAccounts.length} external
-              {' '}· external withdrawals counted as <code className={classNames('text-neutral-200')}>$100</code> each
-              {' '}· owned withdrawals use the actual amount
-            </>
-          )}
-          {outsideAccounts.length > 0 && (
-            <>
-              {' '}· {outsideAccounts.length} outside (not in summary)
-            </>
-          )}
-        </div>
-
-        <AccountLabelRow title="Owned" color="green" entries={ownedAccounts} />
+        <AccountLabelRow title="Owned" color="green" entries={ownedAccounts} amounts={ownedAmounts} />
         <AccountLabelRow title="External" color="grey" entries={externalAccounts} />
-        <AccountLabelRow title="Outside" color="orange" entries={outsideAccounts} />
+        <AccountLabelRow title="External 50" color="yellow" entries={external50Accounts} />
+        <AccountLabelRow title="Outside" color="orange" entries={outsideAccounts} amounts={outsideAmounts} />
 
         {!hasAccounts && !loading && !error && (
           <Message info className={classNames('mt-4')}>
-            <Message.Header>No accounts with fixedAmount === 200</Message.Header>
+            <Message.Header>No accounts configured</Message.Header>
             <p>
-              No entries in <code>accounts.json</code> have a <code>fixedAmount</code> of{' '}
-              <code>200</code>. Add at least one to see withdrawals here.
+              No entries in <code>accounts.json</code> are in the owned or external account lists.
+              Add at least one to see withdrawals here.
             </p>
           </Message>
         )}
@@ -108,7 +114,7 @@ const YearlySummaryComponent: FC = () => {
         )}
 
         {hasAccounts && !error && (
-          <div className={classNames('mt-2')}>
+          <>
             <div className={classNames('flex flex-row items-center justify-between mt-4 dark:text-white gap-4')}>
               <div className={classNames('flex flex-col')}>
                 <span className={classNames('text-xs uppercase tracking-wide text-neutral-400')}>All</span>
@@ -132,8 +138,8 @@ const YearlySummaryComponent: FC = () => {
 
             <hr className={classNames('mt-4 mb-2 border-neutral-700')} />
 
-            <div className={classNames('flex-1 overflow-auto mt-2')}>
-              <div className={classNames('flex flex-row flex-wrap')}>
+            <div className={classNames('flex-1 min-h-0 overflow-auto mt-2 [scrollbar-gutter:stable]')}>
+              <div className={classNames('grid grid-cols-4 gap-4')}>
                 {monthlySummary.map((summary) => {
                   const ownedSummary = ownedMonthlySummary.find((o) => o.month === summary.month);
                   const extSummary = externalMonthlySummary.find((o) => o.month === summary.month);
@@ -151,7 +157,7 @@ const YearlySummaryComponent: FC = () => {
                 })}
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
       <Dimmer active={loading}>

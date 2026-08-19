@@ -2,10 +2,12 @@ import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
 import dayjs from 'dayjs';
 import {
-  EXTERNAL_PER_WITHDRAWAL_AMOUNT,
+  EXTERNAL_50_ACCOUNT_NAMES,
   FIXED_AMOUNT_FILTER,
   MONTH_LABELS,
   OWNED_ACCOUNT_NAMES,
+  extractGhAccounts,
+  getExternal100AccountNames,
   getFilteredAccounts,
   getOutsideAccounts,
 } from './useYearlySummary';
@@ -15,8 +17,21 @@ describe('useYearlySummary helpers', () => {
     expect(MONTH_LABELS).toEqual(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
   });
 
-  test('EXTERNAL_PER_WITHDRAWAL_AMOUNT is 100', () => {
-    expect(EXTERNAL_PER_WITHDRAWAL_AMOUNT).toBe(100);
+  test('EXTERNAL_50_ACCOUNT_NAMES contains KIM', () => {
+    expect(Array.from(EXTERNAL_50_ACCOUNT_NAMES)).toEqual(['KIM']);
+  });
+
+  test('getExternal100AccountNames derives $100 accounts from fixedAmount 200 minus owned and $50 accounts', () => {
+    const fixture = {
+      LANNIE: ['l@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      MAKSE: ['m@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      KIM: ['k@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      ANNIE: ['a@x.com', 'pw', { fixedAmount: 100 } as { fixedAmount?: number }, 'uid', []],
+    };
+
+    const result = getExternal100AccountNames(fixture);
+
+    expect(Array.from(result).sort()).toEqual(['LANNIE']);
   });
 
   test('FIXED_AMOUNT_FILTER is 200', () => {
@@ -27,23 +42,37 @@ describe('useYearlySummary helpers', () => {
     expect(dayjs().year()).toBeGreaterThan(2000);
   });
 
-  test('getFilteredAccounts keeps only entries with fixedAmount === 200', () => {
+  test('extractGhAccounts pulls the accounts object out of the GH bundle string', () => {
+    const bundle = `stuff JSON.parse('{"JERO":["j@x.com","pw",null,"uid"],"ANNIE":["a@x.com","pw",{"fixedAmount":200},"uid"]}') more stuff`;
+
+    const result = extractGhAccounts(bundle);
+
+    expect(result?.['JERO']?.[0]).toBe('j@x.com');
+    expect(result?.['ANNIE']?.[2]).toEqual({ fixedAmount: 200 });
+  });
+
+  test('extractGhAccounts returns null for garbage or missing bundles', () => {
+    expect(extractGhAccounts('no json here')).toBeNull();
+    expect(extractGhAccounts(undefined)).toBeNull();
+  });
+
+  test('getFilteredAccounts keeps only entries in the curated account lists', () => {
     const fixture = {
-      ALICE: ['a@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
-      BOB: ['b@x.com', 'pw', { fixedAmount: 100 } as { fixedAmount?: number }, 'uid', []],
+      LANNIE: ['l@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      MAKSE: ['m@x.com', 'pw', { fixedAmount: 100 } as { fixedAmount?: number }, 'uid', []],
       CARL: ['c@x.com', 'pw', null, 'uid', []],
     };
 
     const result = getFilteredAccounts(fixture);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].name).toBe('ALICE');
-    expect(result[0].emails).toContain('a@x.com');
+    expect(result).toHaveLength(2);
+    expect(result.map((r) => r.name).sort()).toEqual(['LANNIE', 'MAKSE']);
+    expect(result[0].emails).toContain('l@x.com');
   });
 
   test('getFilteredAccounts prefers cashoutEmail when present', () => {
     const fixture = {
-      DAVE: [
+      MAKSE: [
         'login@x.com',
         'pw',
         { cashoutEmail: 'payout@x.com', fixedAmount: 200 } as { cashoutEmail?: string; fixedAmount?: number },
@@ -60,7 +89,7 @@ describe('useYearlySummary helpers', () => {
 
   test('getFilteredAccounts falls back to login email when cashoutEmail is missing', () => {
     const fixture = {
-      ERIN: ['login@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      MERS: ['login@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
     };
 
     const result = getFilteredAccounts(fixture);
@@ -92,16 +121,19 @@ describe('useYearlySummary helpers', () => {
   test('getFilteredAccounts classifies entries by ownership', () => {
     const fixture = {
       MAKSE: ['m@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
-      BAJO: ['b@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      LANNIE: ['l@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      KIM: ['k@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
     };
 
     const result = getFilteredAccounts(fixture);
 
     const makse = result.find((r) => r.name === 'MAKSE');
-    const bajo = result.find((r) => r.name === 'BAJO');
+    const lannie = result.find((r) => r.name === 'LANNIE');
+    const kim = result.find((r) => r.name === 'KIM');
 
     expect(makse?.ownership).toBe('owned');
-    expect(bajo?.ownership).toBe('external');
+    expect(lannie?.ownership).toBe('external');
+    expect(kim?.ownership).toBe('external50');
   });
 
   test('getFilteredAccounts keeps owned accounts even when fixedAmount is not 200', () => {
@@ -122,13 +154,14 @@ describe('useYearlySummary helpers', () => {
   });
 
   test('getOutsideAccounts returns entries that are not in the summary', () => {
-    // MAKSE (owned) and LEIZYL (external fixedAmount=200) are in the summary.
-    // JERO (fixedAmount=undefined) and ANNIE (fixedAmount=100) are outside.
+    // MAKSE (owned) and LANNIE (fixedAmount 200 → external 100) are in the summary.
+    // JERO (no fixedAmount) and ANNIE (fixedAmount 100) are outside.
     const fixture = {
       MAKSE: ['m@x.com', 'pw', { fixedAmount: 100 } as { fixedAmount?: number }, 'uid', []],
-      LEIZYL: ['l@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      LANNIE: ['l@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
       JERO: ['j@x.com', 'pw', null, 'uid', []],
       ANNIE: ['a@x.com', 'pw', { fixedAmount: 100 } as { fixedAmount?: number }, 'uid', []],
+      LEIZYL: ['z@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
     };
 
     const result = getOutsideAccounts(fixture);
@@ -139,7 +172,7 @@ describe('useYearlySummary helpers', () => {
   test('getOutsideAccounts returns an empty array when every entry is in the summary', () => {
     const fixture = {
       MAKSE: ['m@x.com', 'pw', { fixedAmount: 100 } as { fixedAmount?: number }, 'uid', []],
-      LEIZYL: ['l@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
+      LANNIE: ['l@x.com', 'pw', { fixedAmount: 200 } as { fixedAmount?: number }, 'uid', []],
     };
 
     expect(getOutsideAccounts(fixture)).toEqual([]);
