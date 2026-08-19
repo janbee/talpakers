@@ -428,16 +428,42 @@ export const LastWeekWinningsCell: FC<UserTableCellProps> = (props) => {
 
 export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
+  const tickets = user.data.lottoTickets ?? [];
 
   return (
     <TableCell className={'relative md:hidden'} textAlign={'center'}>
-      <span
-        className={classNames({
-          'text-green-dark': user.data.lottoTickets?.length,
-        })}
+      <Popup
+        on="hover"
+        position="top center"
+        disabled={!tickets.length}
+        flowing
+        trigger={
+          <span
+            className={classNames({
+              'text-green-dark cursor-pointer': tickets.length,
+            })}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {tickets.length} / {toMoney(user.data.totalPurchases || 0, 0)}
+          </span>
+        }
       >
-        {user.data.lottoTickets?.length} / {toMoney(user.data.totalPurchases || 0, 0)}
-      </span>
+        <Popup.Content>
+          {tickets.map((ticket, index) => (
+            <div
+              key={`${ticket.TicketId}-${index}`}
+              className={classNames('flex flex-row justify-between gap-x-6 text-left items-center py-1', {
+                'border-t border-neutral-700': index > 0,
+              })}
+            >
+              <span className={'font-semibold whitespace-nowrap'}>{ticket.GameName}</span>
+              <span className={'text-neutral-400 whitespace-nowrap'}>
+                {dayjs(ticket.DrawDate).format('MMM D, YYYY h:mm A')}
+              </span>
+            </div>
+          ))}
+        </Popup.Content>
+      </Popup>
     </TableCell>
   );
 };
