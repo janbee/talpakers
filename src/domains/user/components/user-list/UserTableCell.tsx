@@ -449,19 +449,56 @@ export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
         }
       >
         <Popup.Content>
-          {tickets.map((ticket, index) => (
-            <div
-              key={`${ticket.TicketId}-${index}`}
-              className={classNames('flex flex-row justify-between gap-x-6 text-left items-center py-1', {
-                'border-t border-neutral-700': index > 0,
-              })}
-            >
-              <span className={'font-semibold whitespace-nowrap'}>{ticket.GameName}</span>
-              <span className={'text-neutral-400 whitespace-nowrap'}>
-                {dayjs(ticket.DrawDate).format('MMM D, YYYY h:mm A')}
-              </span>
-            </div>
-          ))}
+          {tickets.map((ticket, index) => {
+            const selections = (ticket.Lines ?? []).flatMap(
+              (line) => line.PlayerSelection?.LinesSelections ?? []
+            );
+            return (
+              <div
+                key={`${ticket.TicketId}-${index}`}
+                className={classNames('flex flex-col gap-y-1 py-1 text-left', {
+                  'border-t border-neutral-700': index > 0,
+                })}
+              >
+                <div className={'flex flex-row justify-between gap-x-6 items-center'}>
+                  <span className={'font-semibold whitespace-nowrap'}>{ticket.GameName}</span>
+                  <span className={'text-neutral-400 whitespace-nowrap'}>
+                    {dayjs(ticket.DrawDate).format('MMM D, YYYY h:mm A')}
+                  </span>
+                </div>
+                {selections.map((selection, sIndex) => (
+                  <div key={sIndex} className={'flex flex-row items-center gap-x-2'}>
+                    <span className={'flex flex-row gap-x-1'}>
+                      {selection.Base.map((num) => (
+                        <span
+                          key={num}
+                          className={
+                            'bg-neutral-700 text-white rounded-full h-5 w-5 text-[10px] flex items-center justify-center'
+                          }
+                        >
+                          {num}
+                        </span>
+                      ))}
+                    </span>
+                    {!!selection.Extra?.length && (
+                      <span className={'flex flex-row gap-x-1'}>
+                        {selection.Extra.map((extra, eIndex) => (
+                          <span
+                            key={`${extra}-${eIndex}`}
+                            className={
+                              'bg-yellow-dark text-dark rounded-full h-5 w-5 text-[10px] flex items-center justify-center'
+                            }
+                          >
+                            {extra}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </Popup.Content>
       </Popup>
     </TableCell>

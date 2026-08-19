@@ -60,11 +60,20 @@ const DbTableComponent: FC = () => {
   });
 
   return (
-    <div data-testid="DbTable" className={classNames('w-full m-4 bg-neutral-800 rounded-lg relative')}>
+    <div
+      data-testid="DbTable"
+      className={classNames('w-full m-4 bg-neutral-800 rounded-lg relative overflow-hidden h-[calc(100vh-112px)]')}
+    >
       <div className={classNames('flex flex-col p-4 h-full')}>
         <div className={classNames('flex flex-row items-start justify-between h-12')}>
           <span className={classNames('dark:text-white text-2xl')}>Database Usage</span>
-          <Icon circular inverted className={classNames('cursor-pointer !text-xl !mt-[-3px]')} name="refresh" onClick={retry} />
+          <Icon
+            circular
+            inverted
+            className={classNames('cursor-pointer !text-xl !mt-[-3px]')}
+            name="refresh"
+            onClick={retry}
+          />
         </div>
 
         {dbUsage?.used && (
@@ -99,95 +108,105 @@ const DbTableComponent: FC = () => {
 
         <hr />
 
-        <Form className={classNames('flex-1 overflow-auto mt-4 [scrollbar-gutter:stable]')}>
-          <Table
-            size="small"
-            compact
-            striped
-            celled
-            inverted
-            unstackable
-            fixed
-            aria-label="Database table storage usage breakdown"
-          >
-            <Table.Header className={classNames('bg-neutral-900 sticky top-0 z-10')}>
-              <Table.Row>
-                <Table.HeaderCell textAlign="center" width={1}></Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">TABLE / SCHEMA</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">DATA SIZE</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">TOTAL SIZE</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">INDEX & TOAST</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center" width={3}>
-                  ACTIONS
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {sortedSchemas.length > 0 ? (
-                sortedSchemas.map(([schema, tables]) => {
-                  const isExpanded = expandedSchemas.has(schema);
-                  const stats = schemaStats[schema];
-
-                  return (
-                    <Fragment key={schema}>
-                      <Table.Row
-                        className={classNames('!bg-neutral-850 hover:!bg-neutral-800 cursor-pointer')}
-                        onClick={() => toggleSchema(schema)}
-                      >
-                        <Table.Cell textAlign="center">
-                          <Icon name={isExpanded ? 'chevron down' : 'chevron right'} className={classNames('!m-0')} />
-                        </Table.Cell>
-                        <Table.Cell className={classNames('!font-semibold !text-blue-300')}>📦 {schema}</Table.Cell>
-                        <Table.Cell textAlign="center" className={classNames('!text-yellow-300')}>
-                          {formatBytes(stats.dataBytes)}
-                        </Table.Cell>
-                        <Table.Cell textAlign="center" className={classNames('!text-yellow-300')}>
-                          {formatBytes(stats.totalBytes)}
-                        </Table.Cell>
-                        <Table.Cell textAlign="center">
-                          {formatBytes(stats.totalBytes - stats.dataBytes)}
-                        </Table.Cell>
-                        <Table.Cell></Table.Cell>
-                      </Table.Row>
-
-                      {isExpanded &&
-                        tables.map((table, index) => (
-                          <Table.Row key={`${schema}-${table.table}-${index}`} className={classNames('!bg-neutral-900')}>
-                            <Table.Cell></Table.Cell>
-                            <Table.Cell className={classNames('!pl-8')}>→ {table.table}</Table.Cell>
-                            <Table.Cell textAlign="center">{table.data_pretty}</Table.Cell>
-                            <Table.Cell textAlign="center">{table.total_pretty}</Table.Cell>
-                            <Table.Cell textAlign="center">{table.index_and_toast_pretty}</Table.Cell>
-                            <Table.Cell textAlign="center">
-                              {schema === 'auth' && (
-                                <Button
-                                  size="mini"
-                                  negative
-                                  loading={cleanupLoading.has(table.table)}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    executeCleanup(schema, table.table);
-                                  }}
-                                >
-                                  🧹 Cleanup
-                                </Button>
-                              )}
-                            </Table.Cell>
-                          </Table.Row>
-                        ))}
-                    </Fragment>
-                  );
-                })
-              ) : (
+        <div className={'flex-1 min-h-0 overflow-auto mt-4 [scrollbar-gutter:stable]'}>
+          <Form>
+            <Table
+              size="small"
+              compact
+              striped
+              celled
+              inverted
+              unstackable
+              aria-label="Database table storage usage breakdown"
+            >
+              <Table.Header className={classNames('bg-neutral-900 sticky top-0 z-10')}>
                 <Table.Row>
-                  <Table.Cell colSpan={6} textAlign="center" className={classNames('!py-8')}>
-                    <span className={classNames('text-neutral-400')}>No table data available</span>
-                  </Table.Cell>
+                  <Table.HeaderCell textAlign="center" width={1}></Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center" width={4}>
+                    TABLE / SCHEMA
+                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center" width={2}>
+                    DATA SIZE
+                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center" width={2}>
+                    TOTAL SIZE
+                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center" width={3}>
+                    INDEX & TOAST
+                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center" width={3}>
+                    ACTIONS
+                  </Table.HeaderCell>
                 </Table.Row>
-              )}
-            </Table.Body>
-          </Table>
-        </Form>
+              </Table.Header>
+              <Table.Body>
+                {sortedSchemas.length > 0 ? (
+                  sortedSchemas.map(([schema, tables]) => {
+                    const isExpanded = expandedSchemas.has(schema);
+                    const stats = schemaStats[schema];
+
+                    return (
+                      <Fragment key={schema}>
+                        <Table.Row
+                          className={classNames('!bg-neutral-850 hover:!bg-neutral-800 cursor-pointer')}
+                          onClick={() => toggleSchema(schema)}
+                        >
+                          <Table.Cell textAlign="center">
+                            <Icon name={isExpanded ? 'chevron down' : 'chevron right'} className={classNames('!m-0')} />
+                          </Table.Cell>
+                          <Table.Cell className={classNames('!font-semibold !text-blue-300')}>📦 {schema}</Table.Cell>
+                          <Table.Cell textAlign="center" className={classNames('!text-yellow-300')}>
+                            {formatBytes(stats.dataBytes)}
+                          </Table.Cell>
+                          <Table.Cell textAlign="center" className={classNames('!text-yellow-300')}>
+                            {formatBytes(stats.totalBytes)}
+                          </Table.Cell>
+                          <Table.Cell textAlign="center">{formatBytes(stats.totalBytes - stats.dataBytes)}</Table.Cell>
+                          <Table.Cell></Table.Cell>
+                        </Table.Row>
+
+                        {isExpanded &&
+                          tables.map((table, index) => (
+                            <Table.Row
+                              key={`${schema}-${table.table}-${index}`}
+                              className={classNames('!bg-neutral-900')}
+                            >
+                              <Table.Cell></Table.Cell>
+                              <Table.Cell className={classNames('!pl-8')}>→ {table.table}</Table.Cell>
+                              <Table.Cell textAlign="center">{table.data_pretty}</Table.Cell>
+                              <Table.Cell textAlign="center">{table.total_pretty}</Table.Cell>
+                              <Table.Cell textAlign="center">{table.index_and_toast_pretty}</Table.Cell>
+                              <Table.Cell textAlign="center">
+                                {schema === 'auth' && table.table !== 'users' && (
+                                  <Button
+                                    size="mini"
+                                    negative
+                                    loading={cleanupLoading.has(table.table)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      executeCleanup(schema, table.table);
+                                    }}
+                                  >
+                                    🧹 Cleanup
+                                  </Button>
+                                )}
+                              </Table.Cell>
+                            </Table.Row>
+                          ))}
+                      </Fragment>
+                    );
+                  })
+                ) : (
+                  <Table.Row>
+                    <Table.Cell colSpan={6} textAlign="center" className={classNames('!py-8')}>
+                      <span className={classNames('text-neutral-400')}>No table data available</span>
+                    </Table.Cell>
+                  </Table.Row>
+                )}
+              </Table.Body>
+            </Table>
+          </Form>
+        </div>
       </div>
       <Dimmer active={loading}>
         <Loader />
