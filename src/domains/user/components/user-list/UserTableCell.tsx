@@ -428,7 +428,7 @@ export const LastWeekWinningsCell: FC<UserTableCellProps> = (props) => {
 
 export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
-  const tickets = user.data.lottoTickets ?? [];
+  const tickets = Array.isArray(user.data.lottoTickets) ? user.data.lottoTickets : [];
 
   return (
     <TableCell className={'relative md:hidden'} textAlign={'center'}>
@@ -450,7 +450,7 @@ export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
       >
         <Popup.Content>
           {tickets.map((ticket, index) => {
-            const selections = (ticket.Lines ?? []).flatMap(
+            const selections = (Array.isArray(ticket.Lines) ? ticket.Lines : []).flatMap(
               (line) => line.PlayerSelection?.LinesSelections ?? []
             );
             return (
@@ -469,7 +469,7 @@ export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
                 {selections.map((selection, sIndex) => (
                   <div key={sIndex} className={'flex flex-row items-center gap-x-2'}>
                     <span className={'flex flex-row gap-x-1'}>
-                      {selection.Base.map((num) => (
+                      {(Array.isArray(selection.Base) ? selection.Base : []).map((num) => (
                         <span
                           key={num}
                           className={
