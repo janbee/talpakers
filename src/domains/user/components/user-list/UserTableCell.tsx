@@ -510,7 +510,7 @@ export const TotalDepositsCell: FC<UserTableCellProps> = (props) => {
 
   return (
     <TableCell className={'relative md:hidden'} textAlign={'center'}>
-      <span>{toMoney(user.data.totalDeposits || 0, 0)}</span>
+      <span>{toMoney(user.data.totalDeposits || 0, 0)}  / {toMoney(user.data.totalWithdrawals || 0, 0)}</span>
     </TableCell>
   );
 };

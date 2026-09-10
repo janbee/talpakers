@@ -194,7 +194,7 @@ const UserListComponent: FC = () => {
     {
       name: (
         <>
-          Total <br /> Deposits
+          Total <br /> DP / WD
         </>
       ),
       className: {
