@@ -507,10 +507,24 @@ export const LottoTicketsCell: FC<UserTableCellProps> = (props) => {
 
 export const TotalDepositsCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
+  const totalWD = user.data.totalWithdrawals || 0;
+  const totalDP = user.data.totalDeposits || 0;
+  const total = totalWD - totalDP;
 
   return (
-    <TableCell className={'relative md:hidden'} textAlign={'center'}>
-      <span>{toMoney(user.data.totalDeposits || 0, 0)}  / {toMoney(user.data.totalWithdrawals || 0, 0)}</span>
+    <TableCell className={'relative md:hidden flex justify-evenly'} textAlign={'center'}>
+      <span className={'block w-full text-green-dark'}>{toMoney(totalWD, 0)}</span>
+      {' - '}
+      <span className={'block w-full text-red-dark'}>{toMoney(totalDP, 0)}</span> {' = '}
+      <span
+        className={classNames({
+          'block w-full': true,
+          'text-red-dark': total < 0,
+          'text-green-dark': total > 0,
+        })}
+      >
+        {toMoney(total, 0)}
+      </span>
     </TableCell>
   );
 };

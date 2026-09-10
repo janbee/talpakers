@@ -194,11 +194,11 @@ const UserListComponent: FC = () => {
     {
       name: (
         <>
-          Total <br /> DP / WD
+          Total <br /> WD - DP = $
         </>
       ),
       className: {
-        'min-w-[75px]': true,
+        'min-w-[190px]': true,
       },
       render: (user: UserSupabaseModel) => <TotalDepositsCell user={user} />,
     },
