@@ -33,7 +33,9 @@ const StateControlComponent: FC<StateControlProps> = ({ build }) => {
     >
       <div className="text-center">
         <div className="text-xs uppercase tracking-wider text-neutral-500">Account</div>
-        <div className="font-mono  break-all" style={{fontSize: 30}}>{build}</div>
+        <div className="font-mono  break-all" style={{ fontSize: 30 }}>
+          {build}
+        </div>
       </div>
 
       <div className="flex items-center justify-center gap-6  " style={{ marginTop: 20 }}>
@@ -45,7 +47,7 @@ const StateControlComponent: FC<StateControlProps> = ({ build }) => {
           style={{ backgroundColor: 'green', width: 100, marginRight: 10 }}
           className={`${buttonBase} ${startClasses} aspect-square flex flex-col gap-2`}
         >
-          <Icon name="play" className="!text-7xl" />
+          <Icon name="play" style={{ fontSize: 25 }} />
           Start
         </button>
 
@@ -57,7 +59,7 @@ const StateControlComponent: FC<StateControlProps> = ({ build }) => {
           style={{ backgroundColor: 'red', width: 100, marginLeft: 10 }}
           className={`${buttonBase} ${stopClasses} w-1/2 aspect-square flex flex-col gap-2`}
         >
-          <Icon name="stop" className="!text-7xl p-0 m-0" />
+          <Icon name="stop" style={{ fontSize: 25 }} />
           Stop
         </button>
       </div>
