@@ -26,6 +26,7 @@ const UserPubnubComponent: React.FC<{ user: UserSupabaseModel }> = ({ user }) =>
 
   const sendToMachine = useCallback(
     (os: string) => {
+      console.log('gaga-------------------------------------1', );
       $PN
         .publish({
           channel: PNChannel.OpenAccount,
@@ -40,18 +41,34 @@ const UserPubnubComponent: React.FC<{ user: UserSupabaseModel }> = ({ user }) =>
     [user.data.build]
   );
 
+  const sendCloseToMachine = useCallback(
+    (os: string) => {
+      $PN
+        .publish({
+          channel: PNChannel.CloseAccount,
+          message: {
+            account: user.data.build,
+            hostname: os,
+          },
+        })
+        .catch()
+        .finally();
+    },
+    [user.data.build]
+  );
+
   return (
     <div className={'cursor-pointer'}>
       {Object.entries(machines).map(([hostname, count]) => (
-        <div
+          <div
           key={hostname}
-          onClick={(e) => {
-            e.stopPropagation();
-            sendToMachine(hostname);
-          }}
-        >
-          {hostname}: {count}
-        </div>
+            onClick={(e) => {
+              e.stopPropagation();
+              sendToMachine(hostname);
+            }}
+          >
+            {hostname}: {count}
+          </div>
       ))}
     </div>
   );
