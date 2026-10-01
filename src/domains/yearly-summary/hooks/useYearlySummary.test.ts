@@ -17,8 +17,8 @@ describe('useYearlySummary helpers', () => {
     expect(MONTH_LABELS).toEqual(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
   });
 
-  test('EXTERNAL_50_ACCOUNT_NAMES contains KIM', () => {
-    expect(Array.from(EXTERNAL_50_ACCOUNT_NAMES)).toEqual(['KIM']);
+  test('EXTERNAL_50_ACCOUNT_NAMES contains KIM and AMOS', () => {
+    expect(Array.from(EXTERNAL_50_ACCOUNT_NAMES).sort()).toEqual(['AMOS', 'KIM']);
   });
 
   test('getExternal100AccountNames derives $100 accounts from fixedAmount 200 minus owned and $50 accounts', () => {
@@ -114,8 +114,8 @@ describe('useYearlySummary helpers', () => {
     expect(result[0].emails).toEqual(['payout@x.com']);
   });
 
-  test('OWNED_ACCOUNT_NAMES contains the six owned accounts', () => {
-    expect(Array.from(OWNED_ACCOUNT_NAMES).sort()).toEqual(['AMOS', 'CABDI', 'MAKSE', 'MERCI', 'MERS', 'NNAS']);
+  test('OWNED_ACCOUNT_NAMES contains the five owned accounts', () => {
+    expect(Array.from(OWNED_ACCOUNT_NAMES).sort()).toEqual(['CABDI', 'MAKSE', 'MERCI', 'MERS', 'NNAS']);
   });
 
   test('getFilteredAccounts classifies entries by ownership', () => {

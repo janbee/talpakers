@@ -30,9 +30,9 @@ export const OWNED_ACCOUNT_NAMES: ReadonlySet<string> = new Set([
   'CABDI',
   'MERCI',
   'NNAS',
-  'AMOS',
 ]);
-export const EXTERNAL_50_ACCOUNT_NAMES: ReadonlySet<string> = new Set(['KIM']);
+// External accounts that cash out at a flat $50 per withdrawal.
+export const EXTERNAL_50_ACCOUNT_NAMES: ReadonlySet<string> = new Set(['KIM', 'AMOS']);
 
 // Cashout step that qualifies an external account to be included in this summary.
 export const FIXED_AMOUNT_FILTER = 200;
