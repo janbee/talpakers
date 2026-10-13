@@ -510,12 +510,56 @@ export const TotalDepositsCell: FC<UserTableCellProps> = (props) => {
   const totalWD = user.data.totalWithdrawals || 0;
   const totalDP = user.data.totalDeposits || 0;
   const total = totalWD - totalDP;
+  const deposits = Array.isArray(user.data.deposits) ? user.data.deposits : [];
 
   return (
     <TableCell className={'relative md:hidden flex justify-evenly'} textAlign={'center'}>
       <span className={'block w-full text-green-dark'}>{toMoney(totalWD, 0)}</span>
       {' - '}
-      <span className={'block w-full text-red-dark'}>{toMoney(totalDP, 0)}</span> {' = '}
+      <Popup
+        className={'!w-[320px]'}
+        position="bottom center"
+        on="hover"
+        flowing
+        trigger={
+          <span
+            className={'block w-full text-red-dark cursor-pointer'}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {toMoney(totalDP, 0)}
+          </span>
+        }
+      >
+        <Popup.Header className={'text-red-light'}>
+          <span>Latest 5 Deposits</span>
+        </Popup.Header>
+        <Popup.Content>
+          {deposits.length === 0 ? (
+            <div className={'py-2 text-center text-neutral-400'}>No deposits yet</div>
+          ) : (
+            deposits.slice(0, 5).map((deposit, index) => (
+              <div
+                key={`${deposit.TransactionID}-${index}`}
+                className={classNames(
+                  'flex flex-row items-center justify-between gap-x-4 py-1 text-left',
+                  { 'border-t border-neutral-700': index > 0 },
+                )}
+              >
+                <span className={'whitespace-nowrap text-neutral-400'}>
+                  {dayjs(deposit.TransactionDateTime).fromNow()}
+                </span>
+                <span className={'flex-1 truncate text-white'}>
+                  {deposit.PaymentMethodInfo?.replace('INTERAC e-Transfer®: ', '')}
+                </span>
+                <span className={'whitespace-nowrap text-green-light'}>
+                  {toMoney(deposit.Amount, 0)}
+                </span>
+              </div>
+            ))
+          )}
+        </Popup.Content>
+      </Popup>
+      {' = '}
       <span
         className={classNames({
           'block w-full': true,
