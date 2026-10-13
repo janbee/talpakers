@@ -519,7 +519,7 @@ export const TotalDepositsCell: FC<UserTableCellProps> = (props) => {
       <Popup
         className={'!w-[320px]'}
         position="bottom center"
-        on="hover"
+        on="click"
         flowing
         trigger={
           <span
@@ -533,11 +533,11 @@ export const TotalDepositsCell: FC<UserTableCellProps> = (props) => {
         <Popup.Header className={'text-red-light'}>
           <span>Latest Deposits</span>
         </Popup.Header>
-        <Popup.Content>
+        <Popup.Content className={'max-h-72 overflow-y-auto'}>
           {deposits.length === 0 ? (
             <div className={'py-2 text-center text-neutral-400'}>No deposits yet</div>
           ) : (
-            deposits.slice(0, 5).map((deposit, index) => (
+            deposits.map((deposit, index) => (
               <div
                 key={`${deposit.TransactionID}-${index}`}
                 className={classNames(
