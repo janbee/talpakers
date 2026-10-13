@@ -531,7 +531,7 @@ export const TotalDepositsCell: FC<UserTableCellProps> = (props) => {
         }
       >
         <Popup.Header className={'text-red-light'}>
-          <span>Latest 5 Deposits</span>
+          <span>Latest Deposits</span>
         </Popup.Header>
         <Popup.Content>
           {deposits.length === 0 ? (
