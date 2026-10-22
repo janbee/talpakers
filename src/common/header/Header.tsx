@@ -1,7 +1,11 @@
+// @ts-ignore
+// @ts-ignore
+
 import { FC } from 'react';
 import logo from '../../../src/assets/logo.png';
 import { Link, useLocation } from 'react-router-dom';
 import { Icon, Popup } from 'semantic-ui-react';
+// @ts-expect-error - yes
 import { version } from '../../../package.json';
 import dayjs from 'dayjs';
 import { PredictionPopup } from '../../domains/prediction';

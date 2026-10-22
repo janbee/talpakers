@@ -6,6 +6,7 @@ const useHeader = () => {
 
   useEffect(() => {
     const obs = SharedApiSupabase.get3rdPartyData().subscribe((res) => {
+      console.log('gaga-----------------123123------------resresres--------1', res);
       if (res.data) {
         setOtherData(res.data);
         console.log('gaga------------------asdasdasasd-------------------', res);

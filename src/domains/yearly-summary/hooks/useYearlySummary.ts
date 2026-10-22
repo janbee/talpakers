@@ -30,6 +30,8 @@ export const OWNED_ACCOUNT_NAMES: ReadonlySet<string> = new Set([
   'CABDI',
   'MERCI',
   'NNAS',
+  'LITO',
+  'JAY',
 ]);
 // External accounts that cash out at a flat $50 per withdrawal.
 export const EXTERNAL_50_ACCOUNT_NAMES: ReadonlySet<string> = new Set(['KIM', 'AMOS']);
@@ -76,6 +78,7 @@ export const extractGhAccounts = (jsString: string | null | undefined): Accounts
         const start = match.lastIndexOf('{', match.indexOf('"JERO"'));
         if (start === -1) return null;
         const parsed = JSON.parse(match.substring(start)) as AccountsRecord;
+
         return parsed && typeof parsed === 'object' ? parsed : null;
       }
     }
