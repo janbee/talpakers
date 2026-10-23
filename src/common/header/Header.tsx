@@ -1,22 +1,13 @@
-// @ts-ignore
-// @ts-ignore
-
 import { FC } from 'react';
 import logo from '../../../src/assets/logo.png';
-import { Link, useLocation } from 'react-router-dom';
-import { Icon, Popup } from 'semantic-ui-react';
-// @ts-expect-error - yes
+import { Link } from 'react-router-dom';
+import { Popup } from 'semantic-ui-react';
 import { version } from '../../../package.json';
 import dayjs from 'dayjs';
 import { PredictionPopup } from '../../domains/prediction';
 import { getMTDates } from '@PlayAb/shared';
-import useHeader from './hooks/useHeader';
 
 const HeaderComponent: FC = () => {
-  const { other } = useHeader();
-  const location = useLocation();
-  console.log('HeaderComponent-------------------------------------', other);
-
   return (
     <div data-testid="Header" className={'h-20 bg-black p-3 flex justify-between items-center'}>
       <div className="flex-1">
@@ -40,24 +31,6 @@ const HeaderComponent: FC = () => {
       </div>
 
       <div className="flex items-center gap-2">
-        <Link to="/apks" aria-label="Navigate to APKs page">
-          <Icon
-            circular
-            inverted
-            name="android"
-            className={`cursor-pointer !text-xl ${location.pathname === '/apks' ? 'bg-gray-700' : ''}`}
-          />
-        </Link>
-        <Popup
-          size={'mini'}
-          position="right center"
-          trigger={<Icon circular inverted className={'cursor-pointer !text-xl'} name="database" />}
-        >
-          {Object.keys(other).map((key) => {
-            return <div key={key}>{other?.[key]}</div>;
-          })}
-        </Popup>
-
         <PredictionPopup />
       </div>
     </div>

@@ -12,6 +12,7 @@
   },
   "include": [
     "jest.config.ts",
+    "package.json",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",

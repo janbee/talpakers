@@ -59,7 +59,7 @@ const contributionFor = (withdrawal: WithdrawalSupabaseModel, ownership: Account
   if (ownership === 'owned' || ownership === 'outside') {
     return Math.abs(withdrawal.data?.Amount ?? 0);
   }
-  return TIER_RATES[ownership];
+  return (Math.abs(withdrawal.data.Amount) / 2) || TIER_RATES[ownership];
 };
 
 
@@ -200,7 +200,11 @@ const sumWithdrawalsByMonth = (
   const seenIds = new Set<string>();
 
   withdrawals.forEach((item) => {
+
+
     const { data } = item;
+
+
     if (!data?.TransactionDateTime) return;
     if (!ACTIVE_STATUSES.includes(data.TransactionStatus)) return;
     if (item._id && seenIds.has(item._id)) return;
@@ -231,6 +235,7 @@ const sumWithdrawalsByMonth = (
       existingBucket.amount += contribution;
       existingBucket.dates.push(data.TransactionDateTime);
     } else {
+
       month.perAccount.push({
         name: resolved,
         count: 1,
