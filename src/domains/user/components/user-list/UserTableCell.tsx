@@ -274,7 +274,6 @@ export const NextWithdrawalCell: FC<UserTableCellProps> = (props) => {
   const cash = user.data.userSession?.cash ?? 0;
   const cashoutPercent = Math.floor((cashout / fixedAmount) * 100);
 
-  console.log('gaga-------------------------------------', user.data.userSession?.walletData);
   const nextCashOutPercent = (cashout / fixedAmount) * -100 + 100;
   const bgColor = GetColorUtil(nextCashOutPercent, 100);
 

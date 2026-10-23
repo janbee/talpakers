@@ -26,7 +26,6 @@ const UserPubnubComponent: React.FC<{ user: UserSupabaseModel }> = ({ user }) =>
 
   const sendToMachine = useCallback(
     (os: string) => {
-      console.log('gaga-------------------------------------1', );
       $PN
         .publish({
           channel: PNChannel.OpenAccount,

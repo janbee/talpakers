@@ -183,8 +183,6 @@ const useUserList = () => {
         return acc;
       }, {} as any);
 
-      console.log('gaga----------SharedApiSupabase---------------------------', apkMap);
-
       setGDriveList(apkMap);
     });
     const user$ = fetchUsersWithWeeklySummary({ filter: UserColumnSortModel.Earnings });

@@ -9,7 +9,6 @@ import PredictionBetsInfoComponent from '../prediction-bets-info/PredictionBetsI
 
 const PredictionListComponent: FC = () => {
   const { list, reload, loading, listStatus } = usePredictionList();
-  console.log('gaga-------------------------------------PredictionListComponent render', loading);
   return (
     <div data-testid="PredictionList" className={'flex flex-1 flex-col overflow-hidden'}>
       <div className={'flex flex-row items-start justify-between h-10'}>
@@ -83,7 +82,7 @@ const PredictionListComponent: FC = () => {
                     'text-red-dark': bet1Rate > bet2Rate,
                   })}
                 >
-                  ({bet1Rate}){updatedBet1Rate && ` - ${updatedBet1Rate}`}
+                  ({bet1Rate?.toFixed(2)}){updatedBet1Rate && ` - ${updatedBet1Rate}`}
                 </span>
               </div>
 
@@ -98,7 +97,7 @@ const PredictionListComponent: FC = () => {
                     'text-red-dark': bet2Rate > bet1Rate,
                   })}
                 >
-                  {updatedBet2Rate && `${updatedBet2Rate} - `}({bet2Rate})
+                  {updatedBet2Rate && `${updatedBet2Rate} - `}({bet2Rate?.toFixed(2)})
                 </span>
                 &nbsp;
                 <span

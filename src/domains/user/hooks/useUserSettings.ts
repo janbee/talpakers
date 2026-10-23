@@ -69,7 +69,6 @@ const useUseUserSettings = () => {
         .subscribe({
           next: (res) => {
             setLoading(false);
-            console.log('gaga-------------------------------------', res);
           },
           error: (err: { error: string }) => {
             setLoading(false);

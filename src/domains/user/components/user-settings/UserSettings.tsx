@@ -18,7 +18,6 @@ const UserSettingsComponent: FC<UserSettingsProps> = ({ userDetails }) => {
 
   if (!userDetails) return null;
 
-  console.log('gaga-------------------------------------UserSettingsComponent', userDetails);
   return (<div data-testid="UserSettings">
       <Icon
         circular
