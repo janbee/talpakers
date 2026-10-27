@@ -84,7 +84,7 @@ const PredictionListComponent: FC = () => {
                     'text-red-dark': bet1Rate > bet2Rate,
                   })}
                 >
-                  {team1PubSentiment && `${team1PubSentiment}`}({bet1Rate?.toFixed(2)})
+                  ({bet1Rate?.toFixed(2)}) {team1PubSentiment && `(${team1PubSentiment})`}
                   {updatedBet1Rate && ` - ${updatedBet1Rate}`}
                 </span>
               </div>
@@ -100,8 +100,8 @@ const PredictionListComponent: FC = () => {
                     'text-red-dark': bet2Rate > bet1Rate,
                   })}
                 >
-                  {updatedBet2Rate && `${updatedBet2Rate} - `}({bet2Rate?.toFixed(2)}){' '}
                   {team1PubSentiment && `(${team2PubSentiment})`}
+                  {updatedBet2Rate && `${updatedBet2Rate} - `}({bet2Rate?.toFixed(2)}){' '}
                 </span>
                 &nbsp;
                 <span
