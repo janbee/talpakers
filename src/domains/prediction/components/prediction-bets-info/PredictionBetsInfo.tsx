@@ -8,7 +8,6 @@ interface PredictionBetsInfoProps {
 }
 
 const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo }) => {
-
   if (!usersBetInfo || usersBetInfo.length === 0) {
     return null;
   }
@@ -27,33 +26,38 @@ const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo
             content: {
               content: (
                 <>
-                  {usersBetInfo.map((bet) => {
-                    const staked = bet.staked || 0;
-                    const teams = bet.teams || '';
-                    const winnings = bet.winnings || 0;
+                  {usersBetInfo
+                    .sort((a, b) => parseFloat(b.staked) - parseFloat(a.staked))
+                    .map((bet) => {
+                      const staked = bet.staked || 0;
+                      const teams = bet.teams || '';
+                      const winnings = bet.winnings || 0;
 
-                    return (
-                      <div
-                        key={bet.build}
-                        className={classNames({
-                          'flex gap-1 justify-between': true,
-                          'text-green-dark': winnings > 0,
-                          'text-yellow-dark': winnings === 0,
-                          'text-red-dark': winnings < 0 && bet.status !== 'Placed',
-                          'text-white': bet.status === 'Placed',
-                        })}
-                      >
-                        <div className={'flex-1'}>{bet.build}</div>
-                        <Popup position={'left center'} trigger={<div className={'flex-1 text-center'}>{staked}</div>}>
-                          <Popup.Content>
-                            <div className={'flex-1 text-center'}>{teams}</div>
-                          </Popup.Content>
-                        </Popup>
-                        <div className={'flex-1 text-center'}>{bet.odds}</div>
-                        <div className={'flex-[0.7] text-end'}>{toMoney(winnings)}</div>
-                      </div>
-                    );
-                  })}
+                      return (
+                        <div
+                          key={bet.build}
+                          className={classNames({
+                            'flex gap-1 justify-between': true,
+                            'text-green-dark': winnings > 0,
+                            'text-yellow-dark': winnings === 0,
+                            'text-red-dark': winnings < 0 && bet.status !== 'Placed',
+                            'text-white': bet.status === 'Placed',
+                          })}
+                        >
+                          <div className={'flex-1'}>{bet.build}</div>
+                          <Popup
+                            position={'left center'}
+                            trigger={<div className={'flex-1 text-center'}>{staked}</div>}
+                          >
+                            <Popup.Content>
+                              <div className={'flex-1 text-center'}>{teams}</div>
+                            </Popup.Content>
+                          </Popup>
+                          <div className={'flex-1 text-center'}>{bet.odds}</div>
+                          <div className={'flex-[0.7] text-end'}>{toMoney(winnings)}</div>
+                        </div>
+                      );
+                    })}
                 </>
               ),
             },
