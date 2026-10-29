@@ -27,7 +27,11 @@ const PredictionBetsInfoComponent: FC<PredictionBetsInfoProps> = ({ usersBetInfo
               content: (
                 <>
                   {usersBetInfo
-                    .sort((a, b) => parseFloat(b.staked) - parseFloat(a.staked))
+                    .sort((a, b) => {
+                      const valA = parseFloat(a.staked.replace(/[^0-9.-]+/g, '')) || 0;
+                      const valB = parseFloat(b.staked.replace(/[^0-9.-]+/g, '')) || 0;
+                      return valB - valA; // Highest first
+                    })
                     .map((bet) => {
                       const staked = bet.staked || 0;
                       const teams = bet.teams || '';
