@@ -1,8 +1,11 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
 import classNames from 'classnames';
 import { toMoney } from '@PlayAb/shared';
 import useAccountState from '../hooks/useAccountState';
+import useBuilds from '../hooks/useBuilds';
+import BuildSelect from './BuildSelect';
 
 interface StateControlProps {
   build: string;
@@ -17,9 +20,32 @@ const startClasses =
 const stopClasses = 'bg-red-600 hover:bg-red-500 active:bg-red-700 disabled:bg-neutral-700 disabled:text-neutral-500';
 
 const StateControlComponent: FC<StateControlProps> = ({ build }) => {
+  const navigate = useNavigate();
+  const { builds, loading: buildsLoading, error: buildsError } = useBuilds();
+
+  // Build names are case insensitive, but the API/URL form wins for display.
+  const knownBuild = useMemo(
+    () => builds.find((item) => item.toUpperCase() === build.trim().toUpperCase()) ?? '',
+    [builds, build]
+  );
+
+  // The backend stores the canonical spelling (`data->>build`), so queries and
+  // pubnub messages must use it too: `bajo` in the URL is not `BAJO` to Supabase.
+  const effectiveBuild = knownBuild || build;
+
   const { hasTarget, lastAction, start, stop, clearLastAction, totals, totalsLoading, user } = useAccountState({
-    build,
+    build: effectiveBuild,
   });
+
+  // Only flag an unknown build when the list actually loaded; a failed or empty
+  // lookup must not accuse the URL of being wrong.
+  const buildIsUnknown = !buildsLoading && !buildsError && builds.length > 0 && !!build.trim() && !knownBuild;
+
+  // Keep the URL on the canonical spelling so it can be shared/refreshed safely.
+  useEffect(() => {
+    if (!knownBuild || knownBuild === build) return;
+    navigate(`/state/${encodeURIComponent(knownBuild)}`, { replace: true });
+  }, [build, knownBuild, navigate]);
 
   // Auto-clear the confirmation after 4s
   useEffect(() => {
@@ -34,23 +60,33 @@ const StateControlComponent: FC<StateControlProps> = ({ build }) => {
     'text-white': totals.totalEarnings === 0,
   });
 
+  const handleSelectBuild = (next: string) => {
+    if (!next) return;
+    // `replace` keeps the unknown / miss-cased build out of the back history.
+    navigate(`/state/${encodeURIComponent(next)}`, { replace: true });
+  };
+
   return (
     <div
       data-testid="StateControl"
       className="h-full w-full bg-neutral-900 text-white flex flex-col items-center justify-center p-6 gap-8"
     >
-      <div className="text-center">
-        <div className="text-xs uppercase tracking-wider text-neutral-500">Account</div>
-        <div className="font-mono  break-all" style={{ fontSize: 30 }}>
-          {build}
-        </div>
+      <div className="flex flex-col items-center gap-2 text-center">
+        <BuildSelect
+          builds={builds}
+          value={knownBuild}
+          loading={buildsLoading}
+          requestedBuild={build}
+          unknown={buildIsUnknown}
+          onSelect={handleSelectBuild}
+        />
       </div>
 
       <div
         data-testid="StateControl-Totals"
         className={classNames(
           'w-full max-w-md grid grid-cols-3 gap-4 rounded-lg border border-neutral-700 bg-neutral-800/60 px-6 py-4 text-center',
-          { 'opacity-60': totalsLoading && !user }
+          { 'opacity-60': (totalsLoading && !user) || buildIsUnknown }
         )}
       >
         <div data-testid="StateControl-TotalDeposits" className="flex flex-col gap-1">
@@ -106,7 +142,7 @@ const StateControlComponent: FC<StateControlProps> = ({ build }) => {
           >
             {lastAction === 'start' ? '✓ Started' : '✓ Stopped'}
           </div>
-        ) : !hasTarget ? (
+        ) : !hasTarget && !buildIsUnknown ? (
           <div className="text-center text-xs text-neutral-500">Waiting for a desktop to report…</div>
         ) : null}
       </div>
