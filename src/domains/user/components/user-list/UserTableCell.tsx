@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { GetColorUtil, GetUserStatusUtil } from '../../../../common/utils';
 import { StrictTableCellProps } from 'semantic-ui-react/dist/commonjs/collections/Table/TableCell';
 import dayjs from 'dayjs';
-import { convertToMT, getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/shared';
+import { ALBERTA_TIMEZONE, convertToMT, getMTDates, toMoney, UserSupabaseModel } from '@PlayAb/shared';
 import UserBetDetails from '../user-bet-details/UserBetDetails';
 import { toPascalCase } from '@react-native-community/cli-platform-android/build/commands/runAndroid/toPascalCase';
 import { sumBy } from 'lodash';
@@ -20,6 +20,7 @@ interface UserTableCellProps extends StrictTableCellProps {
 export const AppBuildCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
   const { weekStart, weekEnd } = getMTDates();
+
   const weeklySummary = user?.data.weeklySummary?.find((item) => item.data.weekStart === weekStart.toISOString());
   const withdrawal = weeklySummary?.data.withdrawals?.[0];
   const needsVerification = user.data.userSession?.GPD?.PlayerIDVerificationRequired
@@ -40,10 +41,10 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
           flowing
         >
           <Popup.Header>
-            {(needsVerification && (
+            {needsVerification && (
               <div className={'withdrawal-header'}>
                 <span>Verification Required</span>
-              </div>)
+              </div>
             )}
           </Popup.Header>
         </Popup>
@@ -52,6 +53,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
         <>
           {[
             {
+              Declined: withdrawal.TransactionStatus === 'Declined',
               Pending: withdrawal.TransactionStatus === 'Pending',
               Approved: withdrawal.TransactionStatus === 'Approved',
               Processing: ['In Process', 'Sending to Processor'].includes(withdrawal.TransactionStatus),
@@ -64,6 +66,7 @@ export const AppBuildCell: FC<UserTableCellProps> = (props) => {
                 <div
                   className={classNames({
                     'has-withdrawal rounded-full h-2 w-2 top-2 right-2 absolute cursor-pointer': true,
+                    'bg-red-dark': status.Declined,
                     'bg-yellow-dark': status.Pending,
                     'bg-green-dark': status.Approved,
                     'bg-blue-dark': status.Processing,
@@ -631,7 +634,7 @@ export const LastLoginCell: FC<UserTableCellProps> = (props) => {
   const { user } = props;
 
   const lastUpdate = new Date(user.data.userSession?.GPD?.lastLogin || user.updatedAt || new Date());
-  const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
+  const lastUpdate$ = dayjs(lastUpdate).tz(ALBERTA_TIMEZONE);
   const hoursPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asHours();
   const bgColor = GetColorUtil(hoursPassed, 72);
 
@@ -650,7 +653,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
   const date = user.updatedAt || user.createdAt || new Date();
   const lastUpdate = new Date(date);
   const metadata = weeklySummary?.data.metadata;
-  const lastUpdate$ = dayjs(lastUpdate).tz('America/Denver');
+  const lastUpdate$ = dayjs(lastUpdate).tz(ALBERTA_TIMEZONE);
   const minutesPassed = dayjs.duration(-lastUpdate$.diff(Date.now())).asMinutes();
 
   const bgColor = GetColorUtil(minutesPassed, 30);
@@ -664,7 +667,7 @@ export const ActiveCell: FC<UserTableCellProps> = (props) => {
 
   Object.keys(metadata || {}).forEach((key) => {
     if (metadata?.[key]) {
-      notifications.push(`${toPascalCase(key)} ${dayjs(metadata[key]).tz('America/Denver').fromNow()}`);
+      notifications.push(`${toPascalCase(key)} ${dayjs(metadata[key]).tz(ALBERTA_TIMEZONE).fromNow()}`);
     }
   });
 

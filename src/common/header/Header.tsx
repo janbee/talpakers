@@ -26,7 +26,7 @@ const HeaderComponent: FC = () => {
           <div>
             v{version} build {dayjs(BUILD_DATE).fromNow()}
           </div>
-          <div>MT: {getMTDates().formatDate()}</div>
+          <div>AB: {getMTDates().formatDate()}</div>
         </Popup>
       </div>
 
